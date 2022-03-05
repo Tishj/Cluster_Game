@@ -6,11 +6,12 @@
 /*   By: tbruinem <tbruinem@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2022/03/05 11:59:23 by tbruinem      #+#    #+#                 */
-/*   Updated: 2022/03/05 15:02:17 by tbruinem      ########   odam.nl         */
+/*   Updated: 2022/03/05 16:00:18 by tbruinem      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "MLX42/MLX42.h"
+#include "Board.h"
 #include "Util.h"
 #include "Draw.h"
 #include "MLX.h"
@@ -52,6 +53,45 @@ void	draw_fill(mlx_image_t* target, unsigned int color) {
 	}
 }
 
+void drawCircle(mlx_image_t* target, int xc, int yc, int x, int y, unsigned int color)
+{
+	draw_pixel(target, color, (v2){xc+x,yc+y});
+	draw_pixel(target, color, (v2){xc-x, yc+y});
+	draw_pixel(target, color, (v2){xc+x, yc-y});
+	draw_pixel(target, color, (v2){xc-x, yc-y});
+	draw_pixel(target, color, (v2){xc+y, yc+x});
+	draw_pixel(target, color, (v2){xc-y, yc+x});
+	draw_pixel(target, color, (v2){xc+y, yc-x});
+	draw_pixel(target, color, (v2){xc-y, yc-x});
+}
+
+void draw_circle(mlx_image_t* target, int xc, int yc, int r, unsigned int color)
+{
+	int x = 0, y = r;
+	int d = 3 - 2 * r;
+	drawCircle(target, xc, yc, x, y, color);
+	while (y >= x)
+	{
+		// for each pixel we will
+		// draw all eight pixels
+		 
+		x++;
+ 
+		// check for decision parameter
+		// and correspondingly
+		// update d, x, y
+		if (d > 0)
+		{
+			y--;
+			d = d + 4 * (x - y) + 10;
+		}
+		else
+			d = d + 4 * x + 6;
+		drawCircle(target, xc, yc, x, y, color);
+		// delay(50);
+	}
+}
+
 float HexWidth(float height)
 {
 	return (float)(4 * (height / 2 / sqrt(3)));
@@ -82,11 +122,25 @@ void	get_hex_points(v2* points, float height, float row, float col)
 	points[5] = (v2){(int)(x + width * 0.25),(int)(y + height / 2)};
 }
 
-void	draw_hexagon_sides(mlx_image_t* target, unsigned int color, size_t row, size_t col) {
-	v2	points[6];
-
-	get_hex_points(points, 75, row, col);
+void	draw_hexagon_sides(mlx_image_t* target, unsigned int color, v2* points) {
 	for (size_t i = 0; i < 6; i++) {
 		draw_line(target, color, points[i], points[(i+1)%6]);
 	}
+}
+
+static const unsigned int color_mapping[] = {
+	[BLUE0] = 0x55c1dbff,
+	[RED0] = 0xb03d2bff
+};
+
+void	draw_slot(Slot* slot, mlx_image_t* target) {
+	v2	points[6];
+
+	get_hex_points(points, 75, slot->position.y, slot->position.x);
+	draw_hexagon_sides(target, CLR_RED, points);
+
+	if (slot->color == EMPTY)
+		return;
+	v2 middle = (v2){points[0].x + ((points[3].x - points[0].x) / 2), points[0].y};
+	draw_circle(target, middle.x, middle.y, 30, color_mapping[slot->color]);
 }

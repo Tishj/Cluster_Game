@@ -6,7 +6,7 @@
 /*   By: tbruinem <tbruinem@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2022/03/05 11:34:12 by tbruinem      #+#    #+#                 */
-/*   Updated: 2022/03/05 15:03:52 by tbruinem      ########   odam.nl         */
+/*   Updated: 2022/03/05 16:00:38 by tbruinem      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,4 +39,6 @@ void	game_loop(void* param) {
 	mlx_get_mouse_pos(mlx(), &x, &y);
 	// draw_line(game->image, CLR_WHITE, (v2){WINDOW_WIDTH/2, WINDOW_HEIGHT/2}, (v2){x,y});
 	render(game);
+	// draw_circle(game->image, WINDOW_WIDTH/2, WINDOW_HEIGHT/2, 30, CLR_RED);
+	// draw_pixel(game->image, CLR_WHITE, (v2){WINDOW_WIDTH/2, WINDOW_HEIGHT/2});
 }

@@ -6,7 +6,7 @@
 /*   By: tbruinem <tbruinem@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2022/03/05 08:55:31 by tbruinem      #+#    #+#                 */
-/*   Updated: 2022/03/05 15:05:56 by tbruinem      ########   odam.nl         */
+/*   Updated: 2022/03/05 15:59:52 by tbruinem      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -115,10 +115,9 @@ static const Range ranges[] = {
 };
 
 void	board_render(Board* board, mlx_image_t* target) {
-	(void)board;
 	for (size_t row = 0; row < 7; row++) {
 		for (size_t col = ranges[row].start; col < ranges[row].end; col++) {
-			draw_hexagon_sides(target, CLR_RED, row, col);
+			draw_slot(&board->map[row][col], target);
 		}
 	}
 }

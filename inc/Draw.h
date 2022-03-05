@@ -6,7 +6,7 @@
 /*   By: tbruinem <tbruinem@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2022/03/05 12:10:31 by tbruinem      #+#    #+#                 */
-/*   Updated: 2022/03/05 15:02:34 by tbruinem      ########   odam.nl         */
+/*   Updated: 2022/03/05 15:57:21 by tbruinem      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,6 +23,8 @@
 void	draw_pixel(mlx_image_t* target, unsigned int color, v2 pos);
 void	draw_line(mlx_image_t* target, unsigned int color, v2 start, v2 end);
 void	draw_fill(mlx_image_t* target, unsigned int color);
-void	draw_hexagon_sides(mlx_image_t* target, unsigned int color, size_t row, size_t col);
+void	draw_hexagon_sides(mlx_image_t* target, unsigned int color, v2* points);
+void	draw_circle(mlx_image_t* target, int xc, int yc, int r, unsigned int color);
+void	draw_slot(Slot* slot, mlx_image_t* target);
 
 #endif
