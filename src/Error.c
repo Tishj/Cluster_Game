@@ -6,11 +6,13 @@
 /*   By: tbruinem <tbruinem@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2022/03/04 23:00:42 by tbruinem      #+#    #+#                 */
-/*   Updated: 2022/03/04 23:00:43 by tbruinem      ########   odam.nl         */
+/*   Updated: 2022/03/05 10:23:27 by tbruinem      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "Error.h"
+#include <stdlib.h>
+#include <stdio.h>
 #include <stdnoreturn.h>
 
 static const char* ErrorString[] = {

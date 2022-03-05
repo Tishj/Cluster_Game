@@ -6,11 +6,13 @@
 /*   By: tbruinem <tbruinem@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2022/03/05 08:55:31 by tbruinem      #+#    #+#                 */
-/*   Updated: 2022/03/05 09:40:31 by tbruinem      ########   odam.nl         */
+/*   Updated: 2022/03/05 10:33:05 by tbruinem      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "Board.h"
+#include <stddef.h>
+#include "Util.h"
 
 bool	board_inside(v2 pos) {
 	const int col = pos.x;
@@ -36,16 +38,16 @@ bool	board_inside(v2 pos) {
 }
 
 static const v2 neighbour_offset[] = {
-	[SOUTH] =		{0,1},
-	[SOUTHWEST] =	{-1,1},
-	[NORTHWEST] =	{-1,0},
-	[NORTH] =		{0,-1},
-	[NORTHEAST] =	{1,0},
-	[SOUTHEAST] =	{1,1}
+	[SIDE_SOUTH] =		{0,1},
+	[SIDE_SOUTHWEST] =	{-1,1},
+	[SIDE_NORTHWEST] =	{-1,0},
+	[SIDE_NORTH] =		{0,-1},
+	[SIDE_NORTHEAST] =	{1,0},
+	[SIDE_SOUTHEAST] =	{1,1}
 };
 
 void	slot_init(Slot* slot, int row, int col) {
-	slot->position = v2(col, row);
+	slot->position = (v2){col, row};
 	slot->color = EMPTY;
 	for (size_t i = SIDE_SOUTH; i < SIDE_SIZE; i++) {
 		const v2 offset = neighbour_offset[i];
@@ -64,21 +66,21 @@ void	board_init(Board* board) {
 
 	for (size_t row = 0; row < 7; row++) {
 		if (row == 0) {
-			slot_init(&board->slots[row][3]);
+			slot_init(&board->map[row][3], row, 3);
 		}
 		else if (row == 1) {
 			for (size_t col = 2; col < 5; col++) {
-				slot_init(&board->slots[row][col]);
+				slot_init(&board->map[row][col], row, col);
 			}
 		}
 		else if (row == 2) {
 			for (size_t col = 1; col < 6; col++) {
-				slot_init(&board->slots[row][col]);
+				slot_init(&board->map[row][col], row, col);
 			}
 		}
 		else {
 			for (size_t col = 0; col < 7; col++) {
-				slot_init(&board->slots[row][col]);
+				slot_init(&board->map[row][col], row, col);
 			}
 		}
 	}

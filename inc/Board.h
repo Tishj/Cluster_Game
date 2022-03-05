@@ -6,14 +6,14 @@
 /*   By: tbruinem <tbruinem@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2022/03/05 08:55:45 by tbruinem      #+#    #+#                 */
-/*   Updated: 2022/03/05 10:08:08 by tbruinem      ########   odam.nl         */
+/*   Updated: 2022/03/05 11:46:15 by tbruinem      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef BOARD_H
 # define BOARD_H
 
-#include "cute_math2d.h"
+#include "Util.h"
 #include <stdbool.h>
 
 //(SIDE_SIZE + Rotation) % SIDE_SIZE == BoardSide
@@ -48,5 +48,7 @@ typedef struct Board {
 	Slot		map[7][7];
 	BoardSide	side;
 }	Board;
+
+void	board_init(Board* board);
 
 #endif

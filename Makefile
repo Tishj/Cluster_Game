@@ -6,7 +6,7 @@
 #    By: tbruinem <tbruinem@student.codam.nl>         +#+                      #
 #                                                    +#+                       #
 #    Created: 2022/02/07 16:04:49 by tbruinem      #+#    #+#                  #
-#    Updated: 2022/03/04 22:54:09 by tbruinem      ########   odam.nl          #
+#    Updated: 2022/03/05 11:53:57 by tbruinem      ########   odam.nl          #
 #                                                                              #
 # **************************************************************************** #
 
@@ -23,9 +23,15 @@ LIBS =	mlx/libmlx42.a \
 HEADERS = platformer.h
 LINKER := $(foreach lib,$(LIBS),-L $(LIBDIR)/$(dir $(lib)) $(patsubst lib%.a,-l%,$(notdir $(lib)))) -ldl -lglfw
 LIBS := $(foreach lib, $(LIBS), $(LIBDIR)/$(lib))
-INCLUDES := -I ${INCDIR} -I lib/mlx42/include -I lib/vec/incl
+INCLUDES := -I ${INCDIR} -I lib/mlx/include -I lib/vec/incl
 
-SRC =	main.c
+SRC =	main.c \
+		Error.c \
+		MLX.c \
+		Command.c \
+		Board.c \
+		Game.c \
+		Util.c
 
 OBJ := $(addprefix $(OBJDIR)/, $(SRC:%.c=%.o))
 SRC := $(addprefix $(SRCDIR)/, $(SRC))
@@ -43,7 +49,7 @@ $(NAME): $(OBJ) $(LIBS)
 	@echo "Compiling Cluster..."
 	gcc $(FLAGS) $(OBJ) -o $(NAME) $(INCLUDES) $(LINKER)
 
-lib/mlx42/libmlx42.a:
+lib/mlx/libmlx42.a:
 	@$(MAKE) -sC $(dir $@)
 
 lib/vec/libvec.a:

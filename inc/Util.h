@@ -1,35 +1,23 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        ::::::::            */
-/*   Game.h                                             :+:    :+:            */
+/*   Util.h                                             :+:    :+:            */
 /*                                                     +:+                    */
 /*   By: tbruinem <tbruinem@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
-/*   Created: 2022/03/04 23:13:04 by tbruinem      #+#    #+#                 */
-/*   Updated: 2022/03/05 11:54:37 by tbruinem      ########   odam.nl         */
+/*   Created: 2022/03/05 10:26:07 by tbruinem      #+#    #+#                 */
+/*   Updated: 2022/03/05 10:26:57 by tbruinem      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef GAME_H
-# define GAME_H
+#ifndef UTIL_H
+# define UTIL_H
 
-#include "Util.h"
-#include "MLX42/MLX42.h"
-#include <stddef.h>
-#include "Board.h"
+typedef struct v2 {
+	float	x;
+	float	y;
+}	v2;
 
-typedef enum PlayerType {
-	BLUE,
-	RED
-}	PlayerType;
-
-typedef struct Game {
-	Board			board;
-	mlx_image_t*	image;
-	size_t			turn_count;
-}	Game;
-
-void	game_loop(void* param);
-void	game_init(Game* game);
+v2	v2add(v2 a, v2 b);
 
 #endif
