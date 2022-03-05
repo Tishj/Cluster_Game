@@ -6,7 +6,7 @@
 /*   By: tbruinem <tbruinem@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2022/03/05 08:55:31 by tbruinem      #+#    #+#                 */
-/*   Updated: 2022/03/05 15:59:52 by tbruinem      ########   odam.nl         */
+/*   Updated: 2022/03/05 16:02:23 by tbruinem      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -120,6 +120,10 @@ void	board_render(Board* board, mlx_image_t* target) {
 			draw_slot(&board->map[row][col], target);
 		}
 	}
+}
+
+void	board_update_slot(Board* board, int row, int col, PelletType color) {
+	board->map[row][col].color = color;
 }
 
 void	board_init(Board* board) {
