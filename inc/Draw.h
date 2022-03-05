@@ -1,37 +1,28 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        ::::::::            */
-/*   Game.h                                             :+:    :+:            */
+/*   Draw.h                                             :+:    :+:            */
 /*                                                     +:+                    */
 /*   By: tbruinem <tbruinem@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
-/*   Created: 2022/03/04 23:13:04 by tbruinem      #+#    #+#                 */
-/*   Updated: 2022/03/05 12:42:27 by tbruinem      ########   odam.nl         */
+/*   Created: 2022/03/05 12:10:31 by tbruinem      #+#    #+#                 */
+/*   Updated: 2022/03/05 15:02:34 by tbruinem      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef GAME_H
-# define GAME_H
+#ifndef DRAW_H
+# define DRAW_H
 
-#include "Util.h"
 #include "MLX42/MLX42.h"
-#include <stddef.h>
-#include "Board.h"
+#include "Util.h"
 
-#define SIDE_LENGTH 75
+#define CLR_TRANSPARENT 0x00000000
+#define CLR_WHITE		0xffffffff
+#define CLR_RED			0xff0000ff
 
-typedef enum PlayerType {
-	BLUE,
-	RED
-}	PlayerType;
-
-typedef struct Game {
-	Board			board;
-	mlx_image_t*	image;
-	size_t			turn_count;
-}	Game;
-
-void	game_loop(void* param);
-void	game_init(Game* game);
+void	draw_pixel(mlx_image_t* target, unsigned int color, v2 pos);
+void	draw_line(mlx_image_t* target, unsigned int color, v2 start, v2 end);
+void	draw_fill(mlx_image_t* target, unsigned int color);
+void	draw_hexagon_sides(mlx_image_t* target, unsigned int color, size_t row, size_t col);
 
 #endif

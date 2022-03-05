@@ -6,7 +6,7 @@
 #    By: tbruinem <tbruinem@student.codam.nl>         +#+                      #
 #                                                    +#+                       #
 #    Created: 2022/02/07 16:04:49 by tbruinem      #+#    #+#                  #
-#    Updated: 2022/03/05 11:53:57 by tbruinem      ########   odam.nl          #
+#    Updated: 2022/03/05 12:18:42 by tbruinem      ########   odam.nl          #
 #                                                                              #
 # **************************************************************************** #
 
@@ -31,6 +31,7 @@ SRC =	main.c \
 		Command.c \
 		Board.c \
 		Game.c \
+		Draw.c \
 		Util.c
 
 OBJ := $(addprefix $(OBJDIR)/, $(SRC:%.c=%.o))

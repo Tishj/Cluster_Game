@@ -6,7 +6,7 @@
 /*   By: tbruinem <tbruinem@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2022/03/05 08:55:45 by tbruinem      #+#    #+#                 */
-/*   Updated: 2022/03/05 11:46:15 by tbruinem      ########   odam.nl         */
+/*   Updated: 2022/03/05 15:03:12 by tbruinem      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,5 +50,7 @@ typedef struct Board {
 }	Board;
 
 void	board_init(Board* board);
+bool	board_inside(v2 pos);
+void	board_render(Board* board, mlx_image_t* target);
 
 #endif
