@@ -6,7 +6,7 @@
 /*   By: tbruinem <tbruinem@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2022/03/05 08:55:45 by tbruinem      #+#    #+#                 */
-/*   Updated: 2022/03/05 09:10:20 by tbruinem      ########   odam.nl         */
+/*   Updated: 2022/03/05 10:08:08 by tbruinem      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,7 +45,7 @@ typedef struct Slot {
 }	Slot;
 
 typedef struct Board {
-	Slot	map[7][7];
+	Slot		map[7][7];
 	BoardSide	side;
 }	Board;
 

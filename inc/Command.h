@@ -1,30 +1,29 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        ::::::::            */
-/*   main.c                                             :+:    :+:            */
+/*   Command.h                                          :+:    :+:            */
 /*                                                     +:+                    */
 /*   By: tbruinem <tbruinem@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
-/*   Created: 2022/03/04 22:54:27 by tbruinem      #+#    #+#                 */
-/*   Updated: 2022/03/05 10:12:21 by tbruinem      ########   odam.nl         */
+/*   Created: 2022/03/05 09:50:10 by tbruinem      #+#    #+#                 */
+/*   Updated: 2022/03/05 09:52:54 by tbruinem      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "cluster.h"
-#include "MLX.h"
+#ifndef COMMAND_H
+# define COMMAND_H
 
-//Provide absolute path to bot files to play the game. If empty inputs are controlled with the keyboard instead.
-int main(int argc, char **argv) {
-	//Keyboard input
-	if (argc == 1) {
-		;
-	}
-	else if (argc == 3) {
-		
-	}
-	else {
-		return (1);
-	}
-	
-	return (0);
-}
+typedef enum CommandType {
+	CMD_INVALID = -1,
+	CMD_PLACE,
+	CMD_ROTATE,
+}	CommandType;
+
+typedef struct Command {
+	CommandType	type;
+	int			value;
+}	Command;
+
+Command	command_parse(char* commandstring);
+
+#endif
