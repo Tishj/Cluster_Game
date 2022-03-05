@@ -1,0 +1,6 @@
+[submodule "lib/mlx"]
+	path = lib/mlx
+	url = https://github.com/W2Codam/MLX42.git
+[submodule "lib/vec"]
+	path = lib/vec
+	url = https://github.com/Tishj/vector_c.git
