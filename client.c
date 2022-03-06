@@ -1,26 +1,30 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        ::::::::            */
-/*   Player.h                                           :+:    :+:            */
+/*   client.c                                           :+:    :+:            */
 /*                                                     +:+                    */
 /*   By: tbruinem <tbruinem@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
-/*   Created: 2022/03/05 23:13:40 by tbruinem      #+#    #+#                 */
-/*   Updated: 2022/03/06 14:59:13 by tbruinem      ########   odam.nl         */
+/*   Created: 2022/03/05 23:42:39 by tbruinem      #+#    #+#                 */
+/*   Updated: 2022/03/06 14:52:30 by tbruinem      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef PLAYER_H
-# define PLAYER_H
-
 #include <stdio.h>
-#include <stdlib.h>
 #include <stdbool.h>
-typedef struct Player {
-	pid_t	pid;
-	int		input[2];
-	int		output[2];
-	bool	bot;
-}	Player;
+#include <unistd.h>
+#include <stdlib.h>
+#include <ctype.h>
+#include <string.h>
 
-#endif
+int main() {
+	while (true) {
+		char*	line = NULL;
+		size_t	bytes = 0;
+		if (getline(&line, &bytes, stdin) == -1) {
+			exit(1);
+		}
+		write(STDOUT_FILENO, line, strlen(line));
+		free(line);
+	}
+}
