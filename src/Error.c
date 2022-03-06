@@ -6,7 +6,7 @@
 /*   By: tbruinem <tbruinem@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2022/03/04 23:00:42 by tbruinem      #+#    #+#                 */
-/*   Updated: 2022/03/05 10:23:27 by tbruinem      ########   odam.nl         */
+/*   Updated: 2022/03/06 09:28:05 by tbruinem      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,6 +26,7 @@ static const char* ErrorString[] = {
 	[INVALID_MAP_TILE] = "INVALID MAP TILE"
 };
 
+//Dont call this directly, use FATAL(error_code) instead
 noreturn void	fatal(Error error_code, char* file, int line_number) {
 	printf("FATAL ERROR: %s(%u) - Encountered in file '%s' on line %u\n", ErrorString[error_code], error_code, file, line_number);
 	exit(1);

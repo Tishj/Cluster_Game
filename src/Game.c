@@ -6,7 +6,7 @@
 /*   By: tbruinem <tbruinem@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2022/03/05 11:34:12 by tbruinem      #+#    #+#                 */
-/*   Updated: 2022/03/05 16:00:38 by tbruinem      ########   odam.nl         */
+/*   Updated: 2022/03/06 09:30:47 by tbruinem      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,8 +22,10 @@ void	game_init(Game* game) {
 	board_init(&game->board);
 	game->turn_count = 0;
 	game->image = mlx_new_image(mlx(), WINDOW_WIDTH, WINDOW_HEIGHT);
+
 	draw_fill(game->image, CLR_TRANSPARENT);
 	mlx_image_to_window(mlx(), game->image, 0,0);
+	mlx_loop_hook(mlx(), game_loop, game);
 }
 
 void	render(Game* game) {
@@ -32,13 +34,14 @@ void	render(Game* game) {
 
 void	game_loop(void* param) {
 	Game*	game = param;
-	printf("GAME TURN_COUNT: %ld\n", game->turn_count++);
-	int x, y;
 
 	draw_fill(game->image, CLR_TRANSPARENT);
-	mlx_get_mouse_pos(mlx(), &x, &y);
-	// draw_line(game->image, CLR_WHITE, (v2){WINDOW_WIDTH/2, WINDOW_HEIGHT/2}, (v2){x,y});
 	render(game);
 	// draw_circle(game->image, WINDOW_WIDTH/2, WINDOW_HEIGHT/2, 30, CLR_RED);
 	// draw_pixel(game->image, CLR_WHITE, (v2){WINDOW_WIDTH/2, WINDOW_HEIGHT/2});
+}
+
+void	game_destroy(Game* game) {
+	mlx_delete_image(mlx(), game->image);
+	free(game);
 }

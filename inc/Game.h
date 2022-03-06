@@ -6,7 +6,7 @@
 /*   By: tbruinem <tbruinem@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2022/03/04 23:13:04 by tbruinem      #+#    #+#                 */
-/*   Updated: 2022/03/05 12:42:27 by tbruinem      ########   odam.nl         */
+/*   Updated: 2022/03/06 09:22:42 by tbruinem      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,7 +18,7 @@
 #include <stddef.h>
 #include "Board.h"
 
-#define SIDE_LENGTH 75
+#define HEX_HEIGHT 75
 
 typedef enum PlayerType {
 	BLUE,
@@ -33,5 +33,6 @@ typedef struct Game {
 
 void	game_loop(void* param);
 void	game_init(Game* game);
+void	game_destroy(Game* game);
 
 #endif

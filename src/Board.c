@@ -6,7 +6,7 @@
 /*   By: tbruinem <tbruinem@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2022/03/05 08:55:31 by tbruinem      #+#    #+#                 */
-/*   Updated: 2022/03/05 16:02:23 by tbruinem      ########   odam.nl         */
+/*   Updated: 2022/03/06 10:43:41 by tbruinem      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,12 +17,35 @@
 #include "Draw.h"
 #include "MLX.h"
 
-typedef struct Range {
-	size_t start;
-	size_t end;
-}	Range;
-
 static v2	no_neighbour = {-1,-1};
+
+//'lower_f' prototype
+bool	board_closer_to_bottom(void* a, void* b, void* extra) {
+	Slot*	slot_a = *(Slot**)(a);
+	Slot*	slot_b = *(Slot**)(b);
+
+	BoardSide	side = *(BoardSide*)extra;
+	switch (side) {
+		case SIDE_SOUTH: {
+			return (slot_a->position.y > slot_b->position.y);
+		};
+		case SIDE_SOUTHWEST: {
+			return (slot_a->position.x < slot_b->position.x);
+		};
+		case SIDE_NORTHWEST: {
+			return (slot_a->position.x < slot_b->position.x);
+		};
+		case SIDE_NORTH: {
+			return (slot_a->position.y < slot_b->position.y);
+		};
+		case SIDE_NORTHEAST: {
+			return (slot_a->position.x > slot_b->position.x);
+		};
+		case SIDE_SOUTHEAST: {
+			return (slot_a->position.x > slot_b->position.x);
+		};
+	}
+}
 
 bool	board_inside(v2 pos) {
 	const int col = pos.x;

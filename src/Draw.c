@@ -6,7 +6,7 @@
 /*   By: tbruinem <tbruinem@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2022/03/05 11:59:23 by tbruinem      #+#    #+#                 */
-/*   Updated: 2022/03/05 16:00:18 by tbruinem      ########   odam.nl         */
+/*   Updated: 2022/03/06 09:35:04 by tbruinem      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,7 +26,7 @@ void	draw_pixel(mlx_image_t* target, unsigned int color, v2 pos) {
 
 //Bresenham
 void	draw_line(mlx_image_t* target, unsigned int color, v2 start, v2 end) {
-	printf("START(X:%f|Y:%f) - END(X:%f|Y:%f)\n", start.x, start.y, end.x, end.y);
+	// printf("START(X:%f|Y:%f) - END(X:%f|Y:%f)\n", start.x, start.y, end.x, end.y);
 
 	int dx = abs((int)(end.x - start.x)), sx = start.x < end.x ? 1 : -1;
 	int dy = abs((int)(end.y - start.y)), sy = start.y < end.y ? 1 : -1;
@@ -53,7 +53,7 @@ void	draw_fill(mlx_image_t* target, unsigned int color) {
 	}
 }
 
-void drawCircle(mlx_image_t* target, int xc, int yc, int x, int y, unsigned int color)
+void draw_circle_points(mlx_image_t* target, int xc, int yc, int x, int y, unsigned int color)
 {
 	draw_pixel(target, color, (v2){xc+x,yc+y});
 	draw_pixel(target, color, (v2){xc-x, yc+y});
@@ -69,9 +69,10 @@ void draw_circle(mlx_image_t* target, int xc, int yc, int r, unsigned int color)
 {
 	int x = 0, y = r;
 	int d = 3 - 2 * r;
-	drawCircle(target, xc, yc, x, y, color);
-	while (y >= x)
-	{
+	(void)d;
+	draw_circle_points(target, xc, yc, x, y, color);
+	do {
+		draw_circle_points(target, xc, yc, x, y, color);
 		// for each pixel we will
 		// draw all eight pixels
 		 
@@ -87,12 +88,11 @@ void draw_circle(mlx_image_t* target, int xc, int yc, int r, unsigned int color)
 		}
 		else
 			d = d + 4 * x + 6;
-		drawCircle(target, xc, yc, x, y, color);
-		// delay(50);
 	}
+	while (y >= x);
 }
 
-float HexWidth(float height)
+float hex_width(float height)
 {
 	return (float)(4 * (height / 2 / sqrt(3)));
 }
@@ -100,7 +100,7 @@ float HexWidth(float height)
 void	get_hex_points(v2* points, float height, float row, float col)
 {
 	// Start with the leftmost corner of the upper left hexagon.
-	float width = HexWidth(height);
+	float width = hex_width(height);
 	float y = height / 2;
 	float x = 0;
 
@@ -129,8 +129,8 @@ void	draw_hexagon_sides(mlx_image_t* target, unsigned int color, v2* points) {
 }
 
 static const unsigned int color_mapping[] = {
-	[BLUE0] = 0x55c1dbff,
-	[RED0] = 0xb03d2bff
+	[BLUE0] =	0x55c1dbff,
+	[RED0] =	0xb03d2bff
 };
 
 void	draw_slot(Slot* slot, mlx_image_t* target) {
@@ -139,6 +139,7 @@ void	draw_slot(Slot* slot, mlx_image_t* target) {
 	get_hex_points(points, 75, slot->position.y, slot->position.x);
 	draw_hexagon_sides(target, CLR_RED, points);
 
+	//Draw pellet/token if present
 	if (slot->color == EMPTY)
 		return;
 	v2 middle = (v2){points[0].x + ((points[3].x - points[0].x) / 2), points[0].y};
