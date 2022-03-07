@@ -6,7 +6,7 @@
 /*   By: tbruinem <tbruinem@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2022/03/05 23:09:04 by tbruinem      #+#    #+#                 */
-/*   Updated: 2022/03/07 19:09:12 by tbruinem      ########   odam.nl         */
+/*   Updated: 2022/03/07 19:50:51 by tbruinem      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -124,6 +124,7 @@ Command	player_get_command(Player* player, Game* game, size_t timeout_duration) 
 	if (pthread_join(thread, (void**)&line) == -1) {
 		FATAL(MEMORY_ALLOCATION_FAIL);
 	}
+	//Untested
 	if (line == PTHREAD_CANCELED) {
 		return command;
 	}

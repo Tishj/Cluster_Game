@@ -6,7 +6,7 @@
 /*   By: tbruinem <tbruinem@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2022/03/04 22:54:27 by tbruinem      #+#    #+#                 */
-/*   Updated: 2022/03/07 17:23:59 by tbruinem      ########   odam.nl         */
+/*   Updated: 2022/03/07 19:37:25 by tbruinem      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,18 +14,18 @@
 #include "Game.h"
 
 void	simulate_game(Board* board) {
-	board_update_slot(board, 3, 0, BLUE0);
+	board_update_slot(board, 3, 0, RED1);
 	board_update_slot(board, 3, 1, BLUE0);
-	board_update_slot(board, 3, 2, BLUE0);
-	board_update_slot(board, 3, 3, BLUE0);
+	board_update_slot(board, 3, 2, BLUE1);
+	board_update_slot(board, 3, 3, RED0);
 	board_update_slot(board, 3, 4, BLUE0);
 
-	board_rotate(board, SIDE_NORTH);
+	board_rotate(board, SIDE_SOUTH);
 	// slot_neighbour_print(&board->map[2][2]);
 	slot_neighbour_print(&board->map[3][3]);
 	slot_neighbour_print(&board->map[2][2]);
 	// slot_fall(board, (v2){2,2}, SIDE_NORTHWEST);
-	printf("COLOR of X:1|Y:2 = %d\n", board->map[2][1].color);
+	dprintf(2, "COLOR of X:1|Y:2 = %d\n", board->map[2][1].color);
 }
 
 int main(int argc, char **argv) {

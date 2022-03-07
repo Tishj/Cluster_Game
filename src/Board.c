@@ -6,7 +6,7 @@
 /*   By: tbruinem <tbruinem@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2022/03/05 08:55:31 by tbruinem      #+#    #+#                 */
-/*   Updated: 2022/03/07 17:17:28 by tbruinem      ########   odam.nl         */
+/*   Updated: 2022/03/07 19:37:12 by tbruinem      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,10 +37,14 @@ static const char* side_string_mapping[] = {
 
 static v2	no_neighbour = {-1,-1};
 
+void	board_direction_print(Board* board) {
+	dprintf(2, "Direction: (%d) - %s\n", board->side, side_string_mapping[board->side]);
+}
+
 void	slot_neighbour_print(Slot* slot) {
-	printf("SLOT X:%d|Y:%d\n", (int)slot->position.x, (int)slot->position.y);
+	dprintf(2, "SLOT X:%d|Y:%d\n", (int)slot->position.x, (int)slot->position.y);
 	for (size_t i = 0; i < 6; i++) {
-		printf("Neighbour[%s] = X:%d,Y:%d\n", side_string_mapping[i], (int)slot->neighbours[i].x, (int)slot->neighbours[i].y);
+		dprintf(2, "Neighbour[%s] = X:%d,Y:%d\n", side_string_mapping[i], (int)slot->neighbours[i].x, (int)slot->neighbours[i].y);
 	}
 }
 
@@ -260,6 +264,10 @@ void	board_rotate(Board* board, BoardSide new_side) {
 	for (size_t i = 0; i < board->pellets_placed; i++) {
 		slot_fall(board, pellets[i]->position, board->side);
 	}
+}
+
+void	board_update_direction(Board* board, int cycles) {
+	board->side = (board->side + cycles) % 6;
 }
 
 void	board_render(Board* board, mlx_image_t* target) {

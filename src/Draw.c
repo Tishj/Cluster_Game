@@ -6,7 +6,7 @@
 /*   By: tbruinem <tbruinem@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2022/03/05 11:59:23 by tbruinem      #+#    #+#                 */
-/*   Updated: 2022/03/07 17:43:08 by tbruinem      ########   odam.nl         */
+/*   Updated: 2022/03/07 19:27:09 by tbruinem      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -120,6 +120,6 @@ void	draw_slot(Board* board, v2 pos, mlx_image_t* target) {
 	if (slot->color == EMPTY)
 		return;
 	v2 middle = (v2){slot->points[0].x + ((slot->points[3].x - slot->points[0].x) / 2), slot->points[0].y};
-	middle = rotate_point(board->center.x, board->center.y, -radians, middle);
+	// middle = rotate_point(board->center.x, board->center.y, -radians, middle);
 	draw_circle(target, middle.x, middle.y, 30, color_mapping[slot->color]);
 }

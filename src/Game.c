@@ -6,7 +6,7 @@
 /*   By: tbruinem <tbruinem@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2022/03/05 11:34:12 by tbruinem      #+#    #+#                 */
-/*   Updated: 2022/03/07 18:56:22 by tbruinem      ########   odam.nl         */
+/*   Updated: 2022/03/07 19:48:22 by tbruinem      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,6 +57,23 @@ void	render(Game* game) {
 	// draw_circle(game->image, game->board.center.x, game->board.center.y, 15, CLR_RED);
 }
 
+void	game_execute_command(Game* game, Player* player, Command command) {
+	switch (command.type) {
+		case CMD_INVALID: {
+			game->state.winner = !player->color;
+			break;
+		};
+		case CMD_PLACE: {
+			break;
+		};
+		case CMD_ROTATE: {
+			board_update_direction(&game->board, command.value);
+			board_rotate(&game->board, game->board.side);
+			break;
+		};
+	}
+}
+
 void	game_loop(void* param) {
 	Game*		game = param;
 	State*		state = &game->state;
@@ -66,16 +83,20 @@ void	game_loop(void* param) {
 	}
 
 	size_t	timeout_duration = state->turn_count ? ROUND_TIMEOUT_DURATION : INITIAL_TIMEOUT_DURATION;
+	Player*	current_player = &game->player[state->current_player];
 
-	const Command command = player_get_command(&game->player[state->current_player], game, timeout_duration);
+	const Command command = player_get_command(current_player, game, timeout_duration);
 	command_print(command);
-
+	game_execute_command(game, current_player, command);
+	board_direction_print(&game->board);
 	//Reset image, refactor this for the love of god....
 	draw_fill(game->image, CLR_TRANSPARENT);
 	render(game);
 
 	//Switch to other player (Blue -> Red | Red -> Blue)
 	state->current_player = !state->current_player;
+	if (state->current_player == PLAYER_BLUE)
+		state->turn_count += 1;
 }
 
 void	game_destroy(Game* game) {
