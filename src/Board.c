@@ -6,7 +6,7 @@
 /*   By: tbruinem <tbruinem@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2022/03/05 08:55:31 by tbruinem      #+#    #+#                 */
-/*   Updated: 2022/03/07 16:07:37 by tbruinem      ########   odam.nl         */
+/*   Updated: 2022/03/07 17:17:28 by tbruinem      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -133,7 +133,7 @@ bool	pellet_has_reached_bottom(Board* board, v2 neighbour_pos) {
 	}
 	//Neighbour is occupied by a color
 	const PelletType color = board->map[(int)neighbour_pos.y][(int)neighbour_pos.x].color;
-	if (color != -1) {
+	if (color != EMPTY) {
 		// printf("NEIGHBOUR OCCUPIED\n");
 		return true;
 	}

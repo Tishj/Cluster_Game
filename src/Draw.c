@@ -6,7 +6,7 @@
 /*   By: tbruinem <tbruinem@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2022/03/05 11:59:23 by tbruinem      #+#    #+#                 */
-/*   Updated: 2022/03/07 16:08:15 by tbruinem      ########   odam.nl         */
+/*   Updated: 2022/03/07 17:43:08 by tbruinem      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -70,9 +70,9 @@ void draw_circle_points(mlx_image_t* target, int xc, int yc, int x, int y, unsig
 void draw_circle(mlx_image_t* target, int xc, int yc, int r, unsigned int color)
 {
 	for(int y=-r; y<=r; y++)
-    	for(int x=-r; x<=r; x++)
-        	if(x*x+y*y <= r*r)
-            	draw_pixel(target, color, (v2){xc + x, yc+y});
+		for(int x=-r; x<=r; x++)
+			if(x*x+y*y <= r*r)
+				draw_pixel(target, color, (v2){xc + x, yc+y});
 }
 
 void	draw_hexagon_sides(mlx_image_t* target, unsigned int color, v2* points) {

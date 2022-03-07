@@ -6,12 +6,24 @@
 /*   By: tbruinem <tbruinem@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2022/03/05 10:27:13 by tbruinem      #+#    #+#                 */
-/*   Updated: 2022/03/07 14:56:15 by tbruinem      ########   odam.nl         */
+/*   Updated: 2022/03/07 18:21:49 by tbruinem      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "util.h"
 #include <math.h>
+#include <sys/time.h>
+
+unsigned long	time_msec(void)
+{
+	struct timeval	time;
+	unsigned long	ret;
+
+	gettimeofday(&time, NULL);
+	ret = (time.tv_sec * 1000);
+	ret += (time.tv_usec / 1000);
+	return (ret);
+}
 
 v2 rotate_point(float cx,float cy,float angle, v2 p)
 {

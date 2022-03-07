@@ -6,7 +6,7 @@
 /*   By: tbruinem <tbruinem@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2022/03/05 08:55:45 by tbruinem      #+#    #+#                 */
-/*   Updated: 2022/03/07 15:08:45 by tbruinem      ########   odam.nl         */
+/*   Updated: 2022/03/07 17:08:37 by tbruinem      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,8 +28,8 @@ typedef enum BoardCycle {
 	SIDE_SIZE
 }	BoardSide;
 
-//0 and 2 are BLUE
-//1 and 3 are RED
+//0 and 2 are PLAYER_BLUE
+//1 and 3 are PLAYER_RED
 //X % 2 == PlayerType
 typedef enum PelletType {
 	EMPTY = -1,
@@ -44,6 +44,7 @@ typedef struct Slot {
 	PelletType	color;
 	v2			position;
 	v2			points[6];
+	size_t		index;
 }	Slot;
 
 typedef struct Board {

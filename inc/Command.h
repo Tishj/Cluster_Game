@@ -6,7 +6,7 @@
 /*   By: tbruinem <tbruinem@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2022/03/05 09:50:10 by tbruinem      #+#    #+#                 */
-/*   Updated: 2022/03/05 09:52:54 by tbruinem      ########   odam.nl         */
+/*   Updated: 2022/03/07 18:56:13 by tbruinem      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,5 +25,6 @@ typedef struct Command {
 }	Command;
 
 Command	command_parse(char* commandstring);
+void	command_print(Command command);
 
 #endif

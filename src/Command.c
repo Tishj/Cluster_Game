@@ -6,7 +6,7 @@
 /*   By: tbruinem <tbruinem@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2022/03/05 09:53:25 by tbruinem      #+#    #+#                 */
-/*   Updated: 2022/03/05 10:24:03 by tbruinem      ########   odam.nl         */
+/*   Updated: 2022/03/07 19:06:40 by tbruinem      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,7 +29,17 @@ int	str2cmp(char** str2, size_t size, char* str) {
 	return -1;
 }
 
+void	command_print(Command command) {
+	if (command.type == CMD_INVALID) {
+		dprintf(2, "Command - INVALID - %d\n", command.value);
+	}
+	else {
+		dprintf(2, "Command - %s - %d\n", valid_commands[command.type], command.value);
+	}
+}
+
 Command	command_parse(char* commandstring) {
+	dprintf(2, "RECEIVED COMMAND: '%s'\n", commandstring);
 	char* const	space_pos = strchr(commandstring, ' ');
 	//Initialize to error
 	Command		res = {
