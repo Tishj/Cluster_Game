@@ -6,7 +6,7 @@
 /*   By: tbruinem <tbruinem@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2022/03/05 11:59:23 by tbruinem      #+#    #+#                 */
-/*   Updated: 2022/03/07 11:57:25 by tbruinem      ########   odam.nl         */
+/*   Updated: 2022/03/07 16:08:15 by tbruinem      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,6 +18,8 @@
 #include "Game.h"
 #include <math.h>
 #include <stdio.h>
+#include <strings.h>
+#include <string.h>
 
 void	draw_pixel(mlx_image_t* target, unsigned int color, v2 pos) {
 	if ((pos.x >= 0 && pos.x < target->width) && (pos.y >= 0 && pos.y < target->height))
@@ -67,59 +69,10 @@ void draw_circle_points(mlx_image_t* target, int xc, int yc, int x, int y, unsig
 
 void draw_circle(mlx_image_t* target, int xc, int yc, int r, unsigned int color)
 {
-	int x = 0, y = r;
-	int d = 3 - 2 * r;
-	(void)d;
-	draw_circle_points(target, xc, yc, x, y, color);
-	do {
-		draw_circle_points(target, xc, yc, x, y, color);
-		// for each pixel we will
-		// draw all eight pixels
-		 
-		x++;
- 
-		// check for decision parameter
-		// and correspondingly
-		// update d, x, y
-		if (d > 0)
-		{
-			y--;
-			d = d + 4 * (x - y) + 10;
-		}
-		else
-			d = d + 4 * x + 6;
-	}
-	while (y >= x);
-}
-
-float hex_width(float height)
-{
-	return (float)(4 * (height / 2 / sqrt(3)));
-}
-
-void	get_hex_points(v2* points, float height, float row, float col)
-{
-	// Start with the leftmost corner of the upper left hexagon.
-	float width = hex_width(height);
-	float y = height / 2;
-	float x = 0;
-
-	// Move down the required number of rows.
-	y += row * height;
-
-	// If the column is odd, move down half a hex more.
-	if ((int)col % 2 == 1) y += height / 2;
-
-	// Move over for the column number.
-	x += col * (width * 0.75f);
-
-	// Generate the points.
-	points[0] = (v2){(int)x,(int)y};
-	points[1] = (v2){(int)(x + width * 0.25),(int)(y - height / 2)};
-	points[2] = (v2){(int)(x + width * 0.75),(int)(y - height / 2)};
-	points[3] = (v2){(int)(x + width),(int)y};
-	points[4] = (v2){(int)(x + width * 0.75),(int)(y + height / 2)};
-	points[5] = (v2){(int)(x + width * 0.25),(int)(y + height / 2)};
+	for(int y=-r; y<=r; y++)
+    	for(int x=-r; x<=r; x++)
+        	if(x*x+y*y <= r*r)
+            	draw_pixel(target, color, (v2){xc + x, yc+y});
 }
 
 void	draw_hexagon_sides(mlx_image_t* target, unsigned int color, v2* points) {
@@ -133,15 +86,40 @@ static const unsigned int color_mapping[] = {
 	[RED0] =	0xb03d2bff
 };
 
-void	draw_slot(Slot* slot, mlx_image_t* target) {
-	v2	points[6];
+void	draw_slot(Board* board, v2 pos, mlx_image_t* target) {
+	Slot* slot = &board->map[(int)pos.y][(int)pos.x];
 
-	get_hex_points(points, 75, slot->position.y, slot->position.x);
+	//Create temporary copy of the points
+	v2	points[6];
+	memcpy(points, slot->points, sizeof(v2) * 6);
+
+	//Apply rotation to the points
+	double rotation_angle = 60 * board->side;
+	double radians = deg2rad(rotation_angle);
+
+	// for (size_t i = 0; i < 6; i++) {
+	// 	// //Offset the point based on the pivot
+	// 	// v2 position = {
+	// 	// 	.x = points[i].x - board->center.x,
+	// 	// 	.y = points[i].y - board->center.y
+	// 	// };
+
+	// 	// //Rotate the position by x degrees
+	// 	// position = v2rotate(position, radians);
+
+	// 	// //Re-add the pivot back to the point
+	// 	// points[i].x = position.x + board->center.x;
+	// 	// points[i].y = position.y + board->center.y;
+	// 	points[i] = rotate_point(board->center.x, board->center.y, radians, points[i]);
+	// }
+
 	draw_hexagon_sides(target, CLR_RED, points);
+	(void)radians;
 
 	//Draw pellet/token if present
 	if (slot->color == EMPTY)
 		return;
-	v2 middle = (v2){points[0].x + ((points[3].x - points[0].x) / 2), points[0].y};
+	v2 middle = (v2){slot->points[0].x + ((slot->points[3].x - slot->points[0].x) / 2), slot->points[0].y};
+	middle = rotate_point(board->center.x, board->center.y, -radians, middle);
 	draw_circle(target, middle.x, middle.y, 30, color_mapping[slot->color]);
 }

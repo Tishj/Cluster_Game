@@ -6,7 +6,7 @@
 /*   By: tbruinem <tbruinem@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2022/03/05 08:55:45 by tbruinem      #+#    #+#                 */
-/*   Updated: 2022/03/07 12:30:49 by tbruinem      ########   odam.nl         */
+/*   Updated: 2022/03/07 15:08:45 by tbruinem      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,12 +43,14 @@ typedef struct Slot {
 	v2			neighbours[6];
 	PelletType	color;
 	v2			position;
+	v2			points[6];
 }	Slot;
 
 typedef struct Board {
 	Slot		map[7][7];
 	BoardSide	side;
 	size_t		pellets_placed;
+	v2			center;
 }	Board;
 
 void	board_init(Board* board);
@@ -57,5 +59,6 @@ void	board_render(Board* board, mlx_image_t* target);
 void	board_update_slot(Board* board, int row, int col, PelletType color);
 void	slot_fall(Board* board, v2 position, BoardSide side);
 void	board_rotate(Board* board, BoardSide new_side);
+void	slot_neighbour_print(Slot* slot);
 
 #endif

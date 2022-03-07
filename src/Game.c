@@ -6,7 +6,7 @@
 /*   By: tbruinem <tbruinem@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2022/03/05 11:34:12 by tbruinem      #+#    #+#                 */
-/*   Updated: 2022/03/06 09:30:47 by tbruinem      ########   odam.nl         */
+/*   Updated: 2022/03/07 14:15:50 by tbruinem      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,6 +30,7 @@ void	game_init(Game* game) {
 
 void	render(Game* game) {
 	board_render(&game->board, game->image);
+	draw_circle(game->image, game->board.center.x, game->board.center.y, 15, CLR_RED);
 }
 
 void	game_loop(void* param) {

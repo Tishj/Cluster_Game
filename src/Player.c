@@ -6,7 +6,7 @@
 /*   By: tbruinem <tbruinem@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2022/03/05 23:09:04 by tbruinem      #+#    #+#                 */
-/*   Updated: 2022/03/06 15:44:41 by tbruinem      ########   odam.nl         */
+/*   Updated: 2022/03/07 13:31:28 by tbruinem      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,6 +21,7 @@
 //Bots get input sent to them from the game process
 //Bots sent output to the game process
 void	bot_init(Player* player, char* abspath) {
+	player->bot = true;
 	if (pipe(player->input) == -1) {
 		FATAL(MEMORY_ALLOCATION_FAIL);
 	}

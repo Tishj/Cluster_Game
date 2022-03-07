@@ -6,7 +6,7 @@
 /*   By: tbruinem <tbruinem@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2022/03/05 08:55:31 by tbruinem      #+#    #+#                 */
-/*   Updated: 2022/03/07 12:57:48 by tbruinem      ########   odam.nl         */
+/*   Updated: 2022/03/07 16:07:37 by tbruinem      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,8 +22,27 @@
 #include <strings.h>
 #include <string.h>
 #include "Sort.h"
+#include <math.h>
+
+#define HEXAGON_HEIGHT 75
+
+static const char* side_string_mapping[] = {
+	[SIDE_SOUTH] = "South",
+	[SIDE_SOUTHEAST] = "South East",
+	[SIDE_SOUTHWEST] = "South West",
+	[SIDE_NORTHWEST] = "North West",
+	[SIDE_NORTH] = "North",
+	[SIDE_NORTHEAST] = "North East"
+};
 
 static v2	no_neighbour = {-1,-1};
+
+void	slot_neighbour_print(Slot* slot) {
+	printf("SLOT X:%d|Y:%d\n", (int)slot->position.x, (int)slot->position.y);
+	for (size_t i = 0; i < 6; i++) {
+		printf("Neighbour[%s] = X:%d,Y:%d\n", side_string_mapping[i], (int)slot->neighbours[i].x, (int)slot->neighbours[i].y);
+	}
+}
 
 //'lower_f' prototype
 bool	board_closer_to_bottom(void* a, void* b, void* extra) {
@@ -84,6 +103,7 @@ bool	board_inside(v2 pos) {
 
 //Y offset of neighbours is based on the column being round or not
 static const v2* neighbour_offset[] = {
+	//Round
 	(v2[]){
 		[SIDE_SOUTH] =		{ 0,  1},
 		[SIDE_SOUTHWEST] =	{-1,  0},
@@ -92,6 +112,7 @@ static const v2* neighbour_offset[] = {
 		[SIDE_NORTHEAST] =	{ 1, -1},
 		[SIDE_SOUTHEAST] =	{ 1,  0}
 	},
+	//Odd
 	(v2[]){
 		[SIDE_SOUTH] =		{ 0,  1},
 		[SIDE_SOUTHWEST] =	{-1,  1},
@@ -103,12 +124,17 @@ static const v2* neighbour_offset[] = {
 };
 
 bool	pellet_has_reached_bottom(Board* board, v2 neighbour_pos) {
+	// printf("NEIGHBOUR: X:%d|Y:%d\n", (int)neighbour_pos.x, (int)neighbour_pos.y);
+
 	//No neighbour on this side
 	if (neighbour_pos.x == no_neighbour.x && neighbour_pos.y == no_neighbour.y) {
+		// printf("NO NEIGHBOUR\n");
 		return true;
 	}
 	//Neighbour is occupied by a color
-	if (board->map[(int)neighbour_pos.y][(int)neighbour_pos.x].color != EMPTY) {
+	const PelletType color = board->map[(int)neighbour_pos.y][(int)neighbour_pos.x].color;
+	if (color != -1) {
+		// printf("NEIGHBOUR OCCUPIED\n");
 		return true;
 	}
 	return false;
@@ -116,10 +142,9 @@ bool	pellet_has_reached_bottom(Board* board, v2 neighbour_pos) {
 
 void	slot_fall(Board* board, v2 position, BoardSide side) {
 	Slot* slot = &board->map[(int)position.y][(int)position.x];
-	v2	neighbour = slot->neighbours[side];
-
-	//fall should never be called for an empty slot
 	assert(slot->color != EMPTY);
+
+	v2	neighbour = slot->neighbours[side];
 
 	const PelletType color = slot->color;
 	while (!pellet_has_reached_bottom(board, neighbour)) {
@@ -130,14 +155,46 @@ void	slot_fall(Board* board, v2 position, BoardSide side) {
 	}
 }
 
+float hex_width(float height)
+{
+	return (float)(4 * (height / 2 / sqrt(3)));
+}
+
+void	get_hex_points(v2* points, float height, float row, float col)
+{
+	// Start with the leftmost corner of the upper left hexagon.
+	float width = hex_width(height);
+	float y = height / 2;
+	float x = 0;
+
+	// Move down the required number of rows.
+	y += row * height;
+
+	// If the column is odd, move down half a hex more.
+	if ((int)col % 2 == 1) y += height / 2;
+
+	// Move over for the column number.
+	x += col * (width * 0.75f);
+
+	// Generate the points.
+	points[0] = (v2){(int)x,(int)y};
+	points[1] = (v2){(int)(x + width * 0.25),(int)(y - height / 2)};
+	points[2] = (v2){(int)(x + width * 0.75),(int)(y - height / 2)};
+	points[3] = (v2){(int)(x + width),(int)y};
+	points[4] = (v2){(int)(x + width * 0.75),(int)(y + height / 2)};
+	points[5] = (v2){(int)(x + width * 0.25),(int)(y + height / 2)};
+}
+
 void	slot_init(Slot* slot, int row, int col) {
-	const v2*	offsets = neighbour_offset[col % 2 == 0];
+	bool round = (col % 2 != 0);
 
 	slot->position = (v2){col, row};
 	slot->color = EMPTY;
+	get_hex_points(slot->points, HEXAGON_HEIGHT, slot->position.y, slot->position.x);
 	for (size_t i = SIDE_SOUTH; i < SIDE_SIZE; i++) {
-		const v2 offset = offsets[i];
-		v2 pos = (v2){slot->position.x + offset.x, slot->position.y + offset.y};
+		v2 pos = neighbour_offset[round][i];
+		pos.x += col;
+		pos.y += row;
 		if (board_inside(pos)) {
 			slot->neighbours[i] = pos;
 		}
@@ -208,7 +265,7 @@ void	board_rotate(Board* board, BoardSide new_side) {
 void	board_render(Board* board, mlx_image_t* target) {
 	for (size_t row = 0; row < 7; row++) {
 		for (size_t col = ranges[row].start; col < ranges[row].end; col++) {
-			draw_slot(&board->map[row][col], target);
+			draw_slot(board, (v2){col, row}, target);
 		}
 	}
 }
@@ -230,4 +287,6 @@ void	board_init(Board* board) {
 			slot_init(&board->map[row][col], row, col);
 		}
 	}
+	Slot* center_slot = &board->map[3][3];
+	board->center = (v2){center_slot->points[0].x + ((center_slot->points[3].x - center_slot->points[0].x) / 2), center_slot->points[0].y};
 }
