@@ -6,7 +6,7 @@
 /*   By: tbruinem <tbruinem@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2022/03/05 08:55:31 by tbruinem      #+#    #+#                 */
-/*   Updated: 2022/03/07 16:07:37 by tbruinem      ########   odam.nl         */
+/*   Updated: 2022/03/07 16:51:02 by limartin      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,12 +27,12 @@
 #define HEXAGON_HEIGHT 75
 
 static const char* side_string_mapping[] = {
-	[SIDE_SOUTH] = "South",
-	[SIDE_SOUTHEAST] = "South East",
-	[SIDE_SOUTHWEST] = "South West",
-	[SIDE_NORTHWEST] = "North West",
-	[SIDE_NORTH] = "North",
-	[SIDE_NORTHEAST] = "North East"
+	[DIR_SOUTH] = "South",
+	[DIR_SOUTHEAST] = "South East",
+	[DIR_SOUTHWEST] = "South West",
+	[DIR_NORTHWEST] = "North West",
+	[DIR_NORTH] = "North",
+	[DIR_NORTHEAST] = "North East"
 };
 
 static v2	no_neighbour = {-1,-1};
@@ -54,22 +54,22 @@ bool	board_closer_to_bottom(void* a, void* b, void* extra) {
 
 	BoardSide	side = *(BoardSide*)extra;
 	switch (side) {
-		case SIDE_SOUTH: {
+		case DIR_SOUTH: {
 			return (slot_a->position.y > slot_b->position.y);
 		};
-		case SIDE_SOUTHWEST: {
+		case DIR_SOUTHWEST: {
 			return (slot_a->position.x < slot_b->position.x);
 		};
-		case SIDE_NORTHWEST: {
+		case DIR_NORTHWEST: {
 			return (slot_a->position.x < slot_b->position.x);
 		};
-		case SIDE_NORTH: {
+		case DIR_NORTH: {
 			return (slot_a->position.y < slot_b->position.y);
 		};
-		case SIDE_NORTHEAST: {
+		case DIR_NORTHEAST: {
 			return (slot_a->position.x > slot_b->position.x);
 		};
-		case SIDE_SOUTHEAST: {
+		case DIR_SOUTHEAST: {
 			return (slot_a->position.x > slot_b->position.x);
 		};
 		default: {
@@ -105,21 +105,21 @@ bool	board_inside(v2 pos) {
 static const v2* neighbour_offset[] = {
 	//Round
 	(v2[]){
-		[SIDE_SOUTH] =		{ 0,  1},
-		[SIDE_SOUTHWEST] =	{-1,  0},
-		[SIDE_NORTHWEST] =	{-1, -1},
-		[SIDE_NORTH] =		{ 0, -1},
-		[SIDE_NORTHEAST] =	{ 1, -1},
-		[SIDE_SOUTHEAST] =	{ 1,  0}
+		[DIR_SOUTH] =		{ 0,  1},
+		[DIR_SOUTHWEST] =	{-1,  0},
+		[DIR_NORTHWEST] =	{-1, -1},
+		[DIR_NORTH] =		{ 0, -1},
+		[DIR_NORTHEAST] =	{ 1, -1},
+		[DIR_SOUTHEAST] =	{ 1,  0}
 	},
 	//Odd
 	(v2[]){
-		[SIDE_SOUTH] =		{ 0,  1},
-		[SIDE_SOUTHWEST] =	{-1,  1},
-		[SIDE_NORTHWEST] =	{-1,  0},
-		[SIDE_NORTH] =		{ 0, -1},
-		[SIDE_NORTHEAST] =	{ 1,  0},
-		[SIDE_SOUTHEAST] =	{ 1,  1}
+		[DIR_SOUTH] =		{ 0,  1},
+		[DIR_SOUTHWEST] =	{-1,  1},
+		[DIR_NORTHWEST] =	{-1,  0},
+		[DIR_NORTH] =		{ 0, -1},
+		[DIR_NORTHEAST] =	{ 1,  0},
+		[DIR_SOUTHEAST] =	{ 1,  1}
 	},
 };
 
@@ -191,7 +191,7 @@ void	slot_init(Slot* slot, int row, int col) {
 	slot->position = (v2){col, row};
 	slot->color = EMPTY;
 	get_hex_points(slot->points, HEXAGON_HEIGHT, slot->position.y, slot->position.x);
-	for (size_t i = SIDE_SOUTH; i < SIDE_SIZE; i++) {
+	for (size_t i = DIR_SOUTH; i < DIR_SIZE; i++) {
 		v2 pos = neighbour_offset[round][i];
 		pos.x += col;
 		pos.y += row;
@@ -279,7 +279,7 @@ void	board_update_slot(Board* board, int row, int col, PelletType color) {
 
 void	board_init(Board* board) {
 	bzero(board, sizeof(Board));
-	board->side = SIDE_SOUTH;
+	board->side = DIR_SOUTH;
 	board->pellets_placed = 0;
 
 	for (size_t row = 0; row < 7; row++) {
@@ -290,3 +290,9 @@ void	board_init(Board* board) {
 	Slot* center_slot = &board->map[3][3];
 	board->center = (v2){center_slot->points[0].x + ((center_slot->points[3].x - center_slot->points[0].x) / 2), center_slot->points[0].y};
 }
+
+// void	temp_board_place(int side_size)
+// {
+// 	int mid = side_size - 1;
+// 	v2 
+// }
