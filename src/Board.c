@@ -6,7 +6,7 @@
 /*   By: tbruinem <tbruinem@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2022/03/05 08:55:31 by tbruinem      #+#    #+#                 */
-/*   Updated: 2022/03/07 16:51:02 by limartin      ########   odam.nl         */
+/*   Updated: 2022/03/07 18:04:41 by limartin      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -291,8 +291,44 @@ void	board_init(Board* board) {
 	board->center = (v2){center_slot->points[0].x + ((center_slot->points[3].x - center_slot->points[0].x) / 2), center_slot->points[0].y};
 }
 
-// void	temp_board_place(int side_size)
-// {
-// 	int mid = side_size - 1;
-// 	v2 
-// }
+void	temp_board_place(Board* board, int side_length)
+{
+	int mid = side_length - 1;
+	
+	v2 middle;
+	middle.y = mid;
+	middle.x = mid;
+
+	v2 north_point;
+	north_point.y = 0;
+	north_point.x = mid;
+
+	v2 ne_point;
+	ne_point.y = (int)((mid + 1) / 2);
+	ne_point.x = (int)(2 * mid);
+
+	v2 se_point;
+	se_point.y = (int)(mid * 1.5 + 0.5);
+	se_point.x = (int)(2 * mid);
+
+	v2 south_point;
+	south_point.y = (int)(mid * 2);
+	south_point.x = (int)(mid);
+
+	v2 sw_point;
+	sw_point.y = (int)(mid * 1.5 + 0.5);
+	sw_point.x = 0;
+
+	v2 nw_point;
+	nw_point.y = (int)((mid + 1) / 2);
+	nw_point.x = 0;
+
+	board_update_slot(board, middle.y, middle.x, BLUE0);
+	board_update_slot(board, north_point.y, north_point.x, BLUE0);
+	board_update_slot(board, ne_point.y, ne_point.x, BLUE0);
+	board_update_slot(board, se_point.y, se_point.x, BLUE0);
+	board_update_slot(board, south_point.y, south_point.x, BLUE0);
+	board_update_slot(board, sw_point.y, sw_point.x, BLUE0);
+	board_update_slot(board, nw_point.y, nw_point.x, BLUE0);
+
+}
