@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        ::::::::            */
-/*   Util.h                                             :+:    :+:            */
+/*   util.h                                             :+:    :+:            */
 /*                                                     +:+                    */
 /*   By: tbruinem <tbruinem@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2022/03/05 10:26:07 by tbruinem      #+#    #+#                 */
-/*   Updated: 2022/03/07 17:54:22 by tbruinem      ########   odam.nl         */
+/*   Updated: 2022/03/07 22:34:59 by tbruinem      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,5 +38,6 @@ int abs(int a);
 double		deg2rad(double angle);
 v2 rotate_point(float cx,float cy,float angle, v2 p);
 unsigned long	time_msec(void);
+void	wait_duration(size_t duration);
 
 #endif

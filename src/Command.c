@@ -6,7 +6,7 @@
 /*   By: tbruinem <tbruinem@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2022/03/05 09:53:25 by tbruinem      #+#    #+#                 */
-/*   Updated: 2022/03/07 19:06:40 by tbruinem      ########   odam.nl         */
+/*   Updated: 2022/03/07 22:18:47 by tbruinem      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,7 +39,7 @@ void	command_print(Command command) {
 }
 
 Command	command_parse(char* commandstring) {
-	dprintf(2, "RECEIVED COMMAND: '%s'\n", commandstring);
+	// dprintf(2, "RECEIVED COMMAND: '%s'\n", commandstring);
 	char* const	space_pos = strchr(commandstring, ' ');
 	//Initialize to error
 	Command		res = {

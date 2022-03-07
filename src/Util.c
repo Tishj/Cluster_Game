@@ -6,13 +6,24 @@
 /*   By: tbruinem <tbruinem@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2022/03/05 10:27:13 by tbruinem      #+#    #+#                 */
-/*   Updated: 2022/03/07 18:21:49 by tbruinem      ########   odam.nl         */
+/*   Updated: 2022/03/07 22:45:01 by tbruinem      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "util.h"
 #include <math.h>
 #include <sys/time.h>
+#include <unistd.h>
+
+void	wait_duration(size_t duration) {
+	const unsigned long start_msec = time_msec();
+
+	unsigned long current_time = time_msec();
+	while (current_time - start_msec < duration) {
+		usleep(100);
+		current_time = time_msec();
+	}
+}
 
 unsigned long	time_msec(void)
 {

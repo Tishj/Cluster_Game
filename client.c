@@ -6,7 +6,7 @@
 /*   By: tbruinem <tbruinem@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2022/03/05 23:42:39 by tbruinem      #+#    #+#                 */
-/*   Updated: 2022/03/07 19:02:57 by tbruinem      ########   odam.nl         */
+/*   Updated: 2022/03/07 21:50:12 by tbruinem      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,10 +16,9 @@
 #include <stdlib.h>
 #include <ctype.h>
 #include <string.h>
+#include <errno.h>
 
 int main() {
-	extern int errno;
-
 	while (true) {
 		char*	line = NULL;
 		size_t	bytes = 0;

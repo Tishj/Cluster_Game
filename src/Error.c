@@ -6,7 +6,7 @@
 /*   By: tbruinem <tbruinem@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2022/03/04 23:00:42 by tbruinem      #+#    #+#                 */
-/*   Updated: 2022/03/07 11:25:32 by tbruinem      ########   odam.nl         */
+/*   Updated: 2022/03/07 22:48:44 by tbruinem      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,7 +24,7 @@ static const char* ErrorString[] = {
 	[MEMORY_ALLOCATION_FAIL] = "MEMORY_ALLOCATION_FAIL",
 	[FILE_OPEN_FAIL] = "FILE_OPEN_FAIL",
 	[INVALID_MAP_TILE] = "INVALID MAP TILE",
-    [INVALID_SIDE] = "INVALID BOARD SIDE"
+	[INVALID_SIDE] = "INVALID BOARD SIDE"
 };
 
 //Dont call this directly, use FATAL(error_code) instead

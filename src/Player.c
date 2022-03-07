@@ -6,7 +6,7 @@
 /*   By: tbruinem <tbruinem@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2022/03/05 23:09:04 by tbruinem      #+#    #+#                 */
-/*   Updated: 2022/03/07 19:50:51 by tbruinem      ########   odam.nl         */
+/*   Updated: 2022/03/07 22:54:01 by tbruinem      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,10 +25,55 @@
 //Bots get input sent to them from the game process
 //Bots sent output to the game process
 
-Command	connection_get_command(Connection* connection, Game* game) {
-	(void)game;
-	(void)connection;
-	return (Command){};
+const Command invalid_command = {
+	.type = CMD_INVALID,
+	.value = -1
+};
+
+void*	read_line(void* param) {
+	Connection*	connection = param;
+	char*	line = NULL;
+	size_t	capacity = 0;
+
+	//Blocking - cant guarantee this will stop
+	if (getline(&line, &capacity, connection->handle) == -1) {
+		FATAL(MEMORY_ALLOCATION_FAIL);
+	}
+	if (line == NULL) {
+		return line;
+	}
+	for (size_t i = 0; line[i]; i++) {
+		if (line[i] == '\n')
+			line[i] = '\0';
+	}
+	return line;
+}
+
+Command	connection_get_command(Connection* connection, size_t timeout) {
+	pthread_t		thread;
+
+	//Start a thread that is going to try to read a line of input from the bot
+	if (pthread_create(&thread, NULL, read_line, connection) == -1) {
+		FATAL(MEMORY_ALLOCATION_FAIL);
+	}
+
+	wait_duration(timeout);
+
+	//Only timeout if the player is a bot
+	if (connection->bot) {
+		pthread_cancel(thread);
+	}
+	char*	line = NULL;
+	if (pthread_join(thread, (void**)&line) == -1) {
+		FATAL(MEMORY_ALLOCATION_FAIL);
+	}
+	//If the thread was canceled before it finished, it was timed out (Untested)
+	if (line == PTHREAD_CANCELED) {
+		return invalid_command;
+	}
+	Command command = command_parse(line);
+	free(line);
+	return command;
 }
 
 void	connection_init(Connection* connection, char* abspath, bool bot) {
@@ -73,66 +118,6 @@ void	connection_init(Connection* connection, char* abspath, bool bot) {
 	}
 }
 
-void*	read_line(void* param) {
-	Player*	player = param;
-	char*	line = NULL;
-	size_t	capacity = 0;
-
-	//Blocking - cant guarantee this will stop
-	if (getline(&line, &capacity, player->conn.handle) == -1) {
-		FATAL(MEMORY_ALLOCATION_FAIL);
-	}
-	if (line == NULL) {
-		return line;
-	}
-	for (size_t i = 0; line[i]; i++) {
-		if (line[i] == '\n')
-			line[i] = '\0';
-	}
-	return line;
-}
-
-Command	player_get_command(Player* player, Game* game, size_t timeout_duration) {
-	Command	command = {
-		.type = CMD_INVALID,
-		.value = -1
-	};
-
-	if (player->conn.bot) {
-		//send input to bot
-	}
-	(void)game;
-
-	const u_long 	start_msec = time_msec();
-	char*			line = NULL;
-	pthread_t		thread;
-
-	//Start a thread that is going to try to read a line of input from the bot
-	if (pthread_create(&thread, NULL, read_line, player) == -1) {
-		FATAL(MEMORY_ALLOCATION_FAIL);
-	}
-
-	u_long current_time = time_msec();
-	while (current_time - start_msec < timeout_duration) {
-		usleep(100);
-		current_time = time_msec();
-	}
-	//Only timeout if the player is a bot
-	if (player->conn.bot) {
-		pthread_cancel(thread);
-	}
-	if (pthread_join(thread, (void**)&line) == -1) {
-		FATAL(MEMORY_ALLOCATION_FAIL);
-	}
-	//Untested
-	if (line == PTHREAD_CANCELED) {
-		return command;
-	}
-	command = command_parse(line);
-	free(line);
-	return command;
-}
-
 void	player_send_input(Player* player, Game* game) {
 	if (player->conn.bot != true) {
 		return;
@@ -140,10 +125,15 @@ void	player_send_input(Player* player, Game* game) {
 	(void)game;
 }
 
-//Players sent output to the game process
+Command	player_get_command(Player* player, Game* game) {
+	player_send_input(player, game);
+	size_t	timeout_duration = game->state.turn_count ? ROUND_TIMEOUT_DURATION : INITIAL_TIMEOUT_DURATION;
+	return connection_get_command(&player->conn, timeout_duration);
+}
+
 void	player_init(Player* player, PlayerType color, char* abspath) {
 	bool	bot = abspath != NULL;
-	connection_init(&player->conn, abspath ? abspath : GAME_CLIENT, bot);
+	connection_init(&player->conn, bot ? abspath : GAME_CLIENT, bot);
 
 	player->color = color;
 }

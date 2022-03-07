@@ -6,7 +6,7 @@
 #    By: tbruinem <tbruinem@student.codam.nl>         +#+                      #
 #                                                    +#+                       #
 #    Created: 2022/02/07 16:04:49 by tbruinem      #+#    #+#                  #
-#    Updated: 2022/03/07 16:42:14 by tbruinem      ########   odam.nl          #
+#    Updated: 2022/03/07 21:52:08 by tbruinem      ########   odam.nl          #
 #                                                                              #
 # **************************************************************************** #
 
@@ -21,7 +21,7 @@ LIBS =	mlx/libmlx42.a \
 		vec/libvec.a
 
 HEADERS = platformer.h
-LINKER := $(foreach lib,$(LIBS),-L $(LIBDIR)/$(dir $(lib)) $(patsubst lib%.a,-l%,$(notdir $(lib)))) -ldl -lglfw
+LINKER := $(foreach lib,$(LIBS),-L $(LIBDIR)/$(dir $(lib)) $(patsubst lib%.a,-l%,$(notdir $(lib)))) -ldl -lglfw -lm -lpthread
 LIBS := $(foreach lib, $(LIBS), $(LIBDIR)/$(lib))
 INCLUDES := -I ${INCDIR} -I lib/mlx/include -I lib/vec/incl
 

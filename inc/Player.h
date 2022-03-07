@@ -6,7 +6,7 @@
 /*   By: tbruinem <tbruinem@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2022/03/05 23:13:40 by tbruinem      #+#    #+#                 */
-/*   Updated: 2022/03/07 18:51:31 by tbruinem      ########   odam.nl         */
+/*   Updated: 2022/03/07 22:52:55 by tbruinem      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,7 +19,6 @@
 #include "Command.h"
 
 typedef enum PlayerType {
-	PLAYER_NONE = -1,
 	PLAYER_BLUE,
 	PLAYER_RED
 }	PlayerType;
@@ -41,6 +40,6 @@ typedef struct Player {
 typedef struct Game Game;
 
 void	player_init(Player* player, PlayerType color, char* abspath);
-Command	player_get_command(Player* player, Game* game, size_t timeout_duration);
+Command	player_get_command(Player* player, Game* game);
 
 #endif
