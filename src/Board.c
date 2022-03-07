@@ -6,7 +6,7 @@
 /*   By: tbruinem <tbruinem@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2022/03/05 08:55:31 by tbruinem      #+#    #+#                 */
-/*   Updated: 2022/03/06 10:43:41 by tbruinem      ########   odam.nl         */
+/*   Updated: 2022/03/07 11:42:03 by tbruinem      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,6 +16,8 @@
 #include "Util.h"
 #include "Draw.h"
 #include "MLX.h"
+#include "Error.h"
+#include <assert.h>
 
 static v2	no_neighbour = {-1,-1};
 
@@ -44,7 +46,11 @@ bool	board_closer_to_bottom(void* a, void* b, void* extra) {
 		case SIDE_SOUTHEAST: {
 			return (slot_a->position.x > slot_b->position.x);
 		};
+		default: {
+			FATAL(INVALID_SIDE);
+		}
 	}
+	return false;
 }
 
 bool	board_inside(v2 pos) {
@@ -88,6 +94,34 @@ static const v2* neighbour_offset[] = {
 		[SIDE_SOUTHEAST] =	{ 1,  1}
 	},
 };
+
+bool	pellet_has_reached_bottom(Board* board, v2 neighbour_pos) {
+	//No neighbour on this side
+	if (neighbour_pos.x == no_neighbour.x && neighbour_pos.y == no_neighbour.y) {
+		return true;
+	}
+	//Neighbour is occupied by a color
+	if (board->map[neighbour_pos.y][neighbour_pos.x].color != EMPTY) {
+		return true;
+	}
+	return false;
+}
+
+void	slot_fall(Board* board, v2 position, BoardSide side) {
+	Slot* slot = &board->map[position.y][position.x];
+	v2	neighbour = slot->neighbours[side];
+
+	//fall should never be called for an empty slot
+	assert(slot->color != EMPTY);
+
+	const PelletType color = slot->color;
+	while (!pellet_has_reached_bottom(board, neighbour)) {
+		slot->color = EMPTY;
+		slot = &board->map[neighbour.y][neighbour.x];
+		slot->color = color;
+		neighbour = slot->neighbours[side];
+	}
+}
 
 void	slot_init(Slot* slot, int row, int col) {
 	const v2*	offsets = neighbour_offset[col % 2 == 0];

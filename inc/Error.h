@@ -6,7 +6,7 @@
 /*   By: tbruinem <tbruinem@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2022/03/04 23:00:53 by tbruinem      #+#    #+#                 */
-/*   Updated: 2022/03/04 23:01:23 by tbruinem      ########   odam.nl         */
+/*   Updated: 2022/03/07 11:24:18 by tbruinem      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,7 +21,8 @@ typedef enum {
 	GAME_LEVEL_MISSING,
 	MEMORY_ALLOCATION_FAIL,
 	FILE_OPEN_FAIL,
-	INVALID_MAP_TILE
+	INVALID_MAP_TILE,
+    INVALID_SIDE,
 }	Error;
 
 #define FATAL(x) fatal(x, __FILE__, __LINE__)
