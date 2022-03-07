@@ -6,7 +6,7 @@
 /*   By: tbruinem <tbruinem@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2022/03/05 08:55:31 by tbruinem      #+#    #+#                 */
-/*   Updated: 2022/03/07 18:04:41 by limartin      ########   odam.nl         */
+/*   Updated: 2022/03/07 19:20:56 by limartin      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -291,44 +291,46 @@ void	board_init(Board* board) {
 	board->center = (v2){center_slot->points[0].x + ((center_slot->points[3].x - center_slot->points[0].x) / 2), center_slot->points[0].y};
 }
 
-void	temp_board_place(Board* board, int side_length)
+void	calibrate_compass(Board* board, int side_length)
 {
 	int mid = side_length - 1;
 	
-	v2 middle;
-	middle.y = mid;
-	middle.x = mid;
+	board->compass[CENTRE].y = mid;
+	board->compass[CENTRE].x = mid;
+	board->compass[NORTH].y = 0;
+	board->compass[NORTH].x = mid;
+	board->compass[NORTHEAST].y = (int)((mid + 1) / 2);
+	board->compass[NORTHEAST].x = (int)(2 * mid);
+	board->compass[SOUTHEAST].y = (int)(mid * 1.5 + 0.5);
+	board->compass[SOUTHEAST].x = (int)(2 * mid);
+	board->compass[SOUTH].y = (int)(mid * 2);
+	board->compass[SOUTH].x = (int)(mid);
+	board->compass[SOUTHWEST].y = (int)(mid * 1.5 + 0.5);
+	board->compass[SOUTHWEST].x = 0;
+	board->compass[NORTHWEST].y = (int)((mid + 1) / 2);
+	board->compass[NORTHWEST].x = 0;
+}
 
-	v2 north_point;
-	north_point.y = 0;
-	north_point.x = mid;
+void temp_fill_top(Board* board, Facing gravity)
+{
+	//this formula looks a little odd because the enum CENTRE needs to be skipped.
+	Facing top_left = (gravity + 1) % (SIZE - 1) + 1;
+	Facing top_mid = (gravity + 2) % (SIZE - 1) + 1;
+	Facing top_right =(gravity + 3) % (SIZE - 1) + 1;
+	
+}
 
-	v2 ne_point;
-	ne_point.y = (int)((mid + 1) / 2);
-	ne_point.x = (int)(2 * mid);
-
-	v2 se_point;
-	se_point.y = (int)(mid * 1.5 + 0.5);
-	se_point.x = (int)(2 * mid);
-
-	v2 south_point;
-	south_point.y = (int)(mid * 2);
-	south_point.x = (int)(mid);
-
-	v2 sw_point;
-	sw_point.y = (int)(mid * 1.5 + 0.5);
-	sw_point.x = 0;
-
-	v2 nw_point;
-	nw_point.y = (int)((mid + 1) / 2);
-	nw_point.x = 0;
-
-	board_update_slot(board, middle.y, middle.x, BLUE0);
-	board_update_slot(board, north_point.y, north_point.x, BLUE0);
-	board_update_slot(board, ne_point.y, ne_point.x, BLUE0);
-	board_update_slot(board, se_point.y, se_point.x, BLUE0);
-	board_update_slot(board, south_point.y, south_point.x, BLUE0);
-	board_update_slot(board, sw_point.y, sw_point.x, BLUE0);
-	board_update_slot(board, nw_point.y, nw_point.x, BLUE0);
+void	temp_board_place(Board* board, int side_length)
+{
+	calibrate_compass(board, side_length);
+	temp_fill_top(board, SOUTH);
+	
+	// board_update_slot(board, board->compass[CENTRE].y, board->compass[CENTRE].x, BLUE0);
+	// board_update_slot(board, board->compass[NORTH].y, board->compass[NORTH].x, BLUE0);
+	// board_update_slot(board, board->compass[NORTHEAST].y, board->compass[NORTHEAST].x, BLUE0);
+	// board_update_slot(board, board->compass[SOUTHEAST].y, board->compass[SOUTHEAST].x, BLUE0);
+	// board_update_slot(board, board->compass[SOUTH].y, board->compass[SOUTH].x, BLUE0);
+	// board_update_slot(board, board->compass[SOUTHWEST].y, board->compass[SOUTHWEST].x, BLUE0);
+	// board_update_slot(board, board->compass[NORTHWEST].y, board->compass[NORTHWEST].x, BLUE0);
 
 }

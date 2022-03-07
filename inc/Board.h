@@ -6,7 +6,7 @@
 /*   By: tbruinem <tbruinem@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2022/03/05 08:55:45 by tbruinem      #+#    #+#                 */
-/*   Updated: 2022/03/07 16:44:23 by limartin      ########   odam.nl         */
+/*   Updated: 2022/03/07 18:46:11 by limartin      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,7 +26,18 @@ typedef enum BoardCycle {
 	DIR_NORTHEAST,
 	DIR_SOUTHEAST,
 	DIR_SIZE
-}	BoardSide;
+}	BoardSide; //deprectaed by facing?
+
+typedef enum Facing {
+	CENTRE, 
+	SOUTH,
+	SOUTHWEST,
+	NORTHWEST,
+	NORTH,
+	NORTHEAST,
+	SOUTHEAST,
+	SIZE
+}	Facing;
 
 //0 and 2 are BLUE
 //1 and 3 are RED
@@ -50,7 +61,8 @@ typedef struct Board {
 	Slot		map[7][7];
 	BoardSide	side;
 	size_t		pellets_placed;
-	v2			center;
+	v2			center; // deprecated by compass?
+	v2			compass[SIZE];
 }	Board;
 
 void	board_init(Board* board);
@@ -60,5 +72,6 @@ void	board_update_slot(Board* board, int row, int col, PelletType color);
 void	slot_fall(Board* board, v2 position, BoardSide side);
 void	board_rotate(Board* board, BoardSide new_side);
 void	slot_neighbour_print(Slot* slot);
+void	calibrate_compass(Board* board, int side_length);
 
 #endif
