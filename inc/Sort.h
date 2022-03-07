@@ -6,7 +6,7 @@
 /*   By: tbruinem <tbruinem@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2022/03/06 09:44:05 by tbruinem      #+#    #+#                 */
-/*   Updated: 2022/03/06 10:14:57 by tbruinem      ########   odam.nl         */
+/*   Updated: 2022/03/07 12:24:43 by tbruinem      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,5 +21,7 @@ typedef struct Lower {
 	lower_f	func;
 	void*	extra;
 }	Lower;
+
+void	quicksort(void* arr, Range range, size_t typesize, Lower lower);
 
 #endif

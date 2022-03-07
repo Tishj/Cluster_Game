@@ -6,7 +6,7 @@
 /*   By: tbruinem <tbruinem@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2022/03/05 08:55:31 by tbruinem      #+#    #+#                 */
-/*   Updated: 2022/03/07 11:57:25 by tbruinem      ########   odam.nl         */
+/*   Updated: 2022/03/07 12:57:48 by tbruinem      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,13 +18,20 @@
 #include "MLX.h"
 #include "Error.h"
 #include <assert.h>
+#include "vector.h"
+#include <strings.h>
+#include <string.h>
+#include "Sort.h"
 
 static v2	no_neighbour = {-1,-1};
 
 //'lower_f' prototype
 bool	board_closer_to_bottom(void* a, void* b, void* extra) {
-	Slot*	slot_a = *(Slot**)(a);
-	Slot*	slot_b = *(Slot**)(b);
+	Slot*	slot_a = *(Slot**)a;
+	Slot*	slot_b = *(Slot**)b;
+
+	// printf("Slot_A: %p\n", slot_a);
+	// printf("Slot_B: %p\n", slot_b);
 
 	BoardSide	side = *(BoardSide*)extra;
 	switch (side) {
@@ -171,6 +178,33 @@ static const Range ranges[] = {
 	}
 };
 
+void	board_rotate(Board* board, BoardSide new_side) {
+	Slot*	pellets[board->pellets_placed];
+	size_t	pellet_index = 0;
+
+	//Set the new side
+	board->side = new_side;
+
+	//Collect the pellets
+	for (size_t row = 0; row < 7 && pellet_index < board->pellets_placed; row++) {
+		for (size_t col = ranges[row].start; col < ranges[row].end && pellet_index < board->pellets_placed; col++) {
+			if (board->map[row][col].color != EMPTY) {
+				pellets[pellet_index] = &board->map[row][col];
+				pellet_index++;
+			}
+		}
+	}
+	//Sort them by closest to bottom first
+	quicksort(pellets, (Range){0,board->pellets_placed-1}, sizeof(Slot*), (Lower) {
+		.func = board_closer_to_bottom,
+		.extra = &board->side
+	});
+	//Let them all fall
+	for (size_t i = 0; i < board->pellets_placed; i++) {
+		slot_fall(board, pellets[i]->position, board->side);
+	}
+}
+
 void	board_render(Board* board, mlx_image_t* target) {
 	for (size_t row = 0; row < 7; row++) {
 		for (size_t col = ranges[row].start; col < ranges[row].end; col++) {
@@ -180,11 +214,16 @@ void	board_render(Board* board, mlx_image_t* target) {
 }
 
 void	board_update_slot(Board* board, int row, int col, PelletType color) {
+	if (board->map[row][col].color == EMPTY) {
+		board->pellets_placed++;
+	}
 	board->map[row][col].color = color;
 }
 
 void	board_init(Board* board) {
+	bzero(board, sizeof(Board));
 	board->side = SIDE_SOUTH;
+	board->pellets_placed = 0;
 
 	for (size_t row = 0; row < 7; row++) {
 		for (size_t col = ranges[row].start; col < ranges[row].end; col++) {
