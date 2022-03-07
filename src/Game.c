@@ -6,7 +6,7 @@
 /*   By: tbruinem <tbruinem@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2022/03/05 11:34:12 by tbruinem      #+#    #+#                 */
-/*   Updated: 2022/03/07 22:52:20 by tbruinem      ########   odam.nl         */
+/*   Updated: 2022/03/08 00:30:28 by tbruinem      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -66,6 +66,7 @@ void	game_execute_command(Game* game, Player* player, Command command) {
 			break;
 		};
 		case CMD_PLACE: {
+			board_place(&game->board, command.value, (int)player->color);
 			break;
 		};
 		case CMD_ROTATE: {
@@ -78,7 +79,7 @@ void	game_execute_command(Game* game, Player* player, Command command) {
 
 void	game_loop(void* param) {
 	Game*		game = param;
-	GameState*		state = &game->state;
+	GameState*	state = &game->state;
 
 	//Check for end condition
 	if (state->result == IN_PROGRESS && state->turn_count == MAX_TURN_COUNT) {

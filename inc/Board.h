@@ -6,7 +6,7 @@
 /*   By: tbruinem <tbruinem@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2022/03/05 08:55:45 by tbruinem      #+#    #+#                 */
-/*   Updated: 2022/03/07 19:25:49 by tbruinem      ########   odam.nl         */
+/*   Updated: 2022/03/08 00:35:34 by tbruinem      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,6 +16,7 @@
 #include "util.h"
 #include <stdbool.h>
 #include "vector.h"
+#include "Draw.h"
 
 //(SIDE_SIZE + Rotation) % SIDE_SIZE == BoardSide
 typedef enum BoardCycle {
@@ -52,6 +53,7 @@ typedef struct Board {
 	BoardSide	side;
 	size_t		pellets_placed;
 	v2			center;
+	Tween		tween;
 }	Board;
 
 void	board_init(Board* board);
@@ -63,5 +65,7 @@ void	board_rotate(Board* board, BoardSide new_side);
 void	slot_neighbour_print(Slot* slot);
 void	board_update_direction(Board* board, int cycles);
 void	board_direction_print(Board* board);
+
+void	board_place(Board* board, size_t index, PelletType color);
 
 #endif

@@ -6,7 +6,7 @@
 /*   By: tbruinem <tbruinem@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2022/03/05 11:59:23 by tbruinem      #+#    #+#                 */
-/*   Updated: 2022/03/07 19:27:09 by tbruinem      ########   odam.nl         */
+/*   Updated: 2022/03/08 00:38:29 by tbruinem      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,23 +28,34 @@ void	draw_pixel(mlx_image_t* target, unsigned int color, v2 pos) {
 
 //Bresenham
 void	draw_line(mlx_image_t* target, unsigned int color, v2 start, v2 end) {
-	// printf("START(X:%f|Y:%f) - END(X:%f|Y:%f)\n", start.x, start.y, end.x, end.y);
+	int x1 = start.x;
+	int y1 = start.y;
+	int x2 = end.x;
+	int y2 = end.y;
+	int dy = y2 - y1;
+	int dx = x2 - x1;
+	int x, y;
 
-	int dx = abs((int)(end.x - start.x)), sx = start.x < end.x ? 1 : -1;
-	int dy = abs((int)(end.y - start.y)), sy = start.y < end.y ? 1 : -1;
-	int err = (dx > dy ? dx : -dy) / 2;
-
-	while (draw_pixel(target, color, (v2){start.x, start.y}), start.x != end.x || start.y != end.y) {
-		int e2 = err;
-		if (e2 > -dx) {
-			err -= dy;
-			start.x += sx;
-		}
-		if (e2 <  dy) {
-			err += dx;
-			start.y += sy;
+	if (abs(dy) > abs(dx)) {
+		// since there is a greater change in y than x we must
+		// loop in y, calculate x and draw
+		for (y=y1; y != y2; y += sign(dy)) {
+			x = x1 + (y - y1) * dx / dy;
+			draw_pixel(target, color, (v2){x,y});
 		}
 	}
+	 
+	else {
+		// since there is a greater (or equal) change in x than y we must
+		// loop in x, calculate y and draw
+		for (x=x1; x != x2; x += sign(dx)) {
+			y = y1 + (x - x1) * dy / dx;
+			draw_pixel(target, color, (v2){x,y});
+		}
+	}
+ 
+	// draw the last pixel
+	draw_pixel(target, color, (v2){x,y});
 }
 
 void	draw_fill(mlx_image_t* target, unsigned int color) {
@@ -83,7 +94,9 @@ void	draw_hexagon_sides(mlx_image_t* target, unsigned int color, v2* points) {
 
 static const unsigned int color_mapping[] = {
 	[BLUE0] =	0x55c1dbff,
-	[RED0] =	0xb03d2bff
+	[RED0] =	0xb03d2bff,
+	[BLUE1] =	0x0000ffff,
+	[RED1] =	0xff0000ff
 };
 
 void	draw_slot(Board* board, v2 pos, mlx_image_t* target) {
@@ -93,33 +106,18 @@ void	draw_slot(Board* board, v2 pos, mlx_image_t* target) {
 	v2	points[6];
 	memcpy(points, slot->points, sizeof(v2) * 6);
 
-	//Apply rotation to the points
-	double rotation_angle = 60 * board->side;
-	double radians = deg2rad(rotation_angle);
+	double rotation = lerp(board->tween.from, board->tween.to, board->tween.progress);
 
-	// for (size_t i = 0; i < 6; i++) {
-	// 	// //Offset the point based on the pivot
-	// 	// v2 position = {
-	// 	// 	.x = points[i].x - board->center.x,
-	// 	// 	.y = points[i].y - board->center.y
-	// 	// };
-
-	// 	// //Rotate the position by x degrees
-	// 	// position = v2rotate(position, radians);
-
-	// 	// //Re-add the pivot back to the point
-	// 	// points[i].x = position.x + board->center.x;
-	// 	// points[i].y = position.y + board->center.y;
-	// 	points[i] = rotate_point(board->center.x, board->center.y, radians, points[i]);
-	// }
+	for (size_t i = 0; i < 6; i++) {
+		points[i] = rotate_point(board->center.x, board->center.y, -rotation, points[i]);
+	}
 
 	draw_hexagon_sides(target, CLR_RED, points);
-	(void)radians;
 
 	//Draw pellet/token if present
 	if (slot->color == EMPTY)
 		return;
 	v2 middle = (v2){slot->points[0].x + ((slot->points[3].x - slot->points[0].x) / 2), slot->points[0].y};
-	// middle = rotate_point(board->center.x, board->center.y, -radians, middle);
+	middle = rotate_point(board->center.x, board->center.y, -rotation, middle);
 	draw_circle(target, middle.x, middle.y, 30, color_mapping[slot->color]);
 }

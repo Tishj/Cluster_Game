@@ -6,7 +6,7 @@
 /*   By: tbruinem <tbruinem@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2022/03/05 10:27:13 by tbruinem      #+#    #+#                 */
-/*   Updated: 2022/03/07 22:45:01 by tbruinem      ########   odam.nl         */
+/*   Updated: 2022/03/08 00:09:52 by tbruinem      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -81,6 +81,16 @@ int	min(int a, int b) {
 
 int abs(int a) {
 	return a > 0 ? a : a * -1;
+}
+
+int		sign(int a) {
+	if (a < 0)
+		return -1;
+	return 1;
+}
+
+float	lerp(float a, float b, float t) {
+	return a + (t * (b-a));
 }
 
 double		deg2rad(double angle)
