@@ -6,7 +6,7 @@
 /*   By: tbruinem <tbruinem@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2022/03/05 08:55:31 by tbruinem      #+#    #+#                 */
-/*   Updated: 2022/03/07 19:37:12 by tbruinem      ########   odam.nl         */
+/*   Updated: 2022/03/07 23:08:45 by tbruinem      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -190,10 +190,12 @@ void	get_hex_points(v2* points, float height, float row, float col)
 }
 
 void	slot_init(Slot* slot, int row, int col) {
+	static size_t	index = 0;
 	bool round = (col % 2 != 0);
 
 	slot->position = (v2){col, row};
 	slot->color = EMPTY;
+	slot->index = index++;
 	get_hex_points(slot->points, HEXAGON_HEIGHT, slot->position.y, slot->position.x);
 	for (size_t i = SIDE_SOUTH; i < SIDE_SIZE; i++) {
 		v2 pos = neighbour_offset[round][i];
