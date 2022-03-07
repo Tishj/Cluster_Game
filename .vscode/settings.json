@@ -2,6 +2,7 @@
 	"files.associations": {
 		"error.h": "c",
 		"mlx42.h": "c",
-		"mlx42_int.h": "c"
+		"mlx42_int.h": "c",
+		"util.h": "c"
 	}
 }

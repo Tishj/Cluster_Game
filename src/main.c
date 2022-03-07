@@ -6,7 +6,7 @@
 /*   By: tbruinem <tbruinem@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2022/03/04 22:54:27 by tbruinem      #+#    #+#                 */
-/*   Updated: 2022/03/06 09:26:07 by tbruinem      ########   odam.nl         */
+/*   Updated: 2022/03/07 11:51:53 by tbruinem      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,6 +18,7 @@ int main() {
 
 	game_init(&game);
 	board_update_slot(&game.board, 3, 4, BLUE0);
+	slot_fall(&game.board, (v2){4,3}, game.board.side);
 
 	mlx_loop(mlx());
 	game_destroy(&game);

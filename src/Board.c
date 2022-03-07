@@ -6,7 +6,7 @@
 /*   By: tbruinem <tbruinem@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2022/03/05 08:55:31 by tbruinem      #+#    #+#                 */
-/*   Updated: 2022/03/07 11:42:03 by tbruinem      ########   odam.nl         */
+/*   Updated: 2022/03/07 11:46:07 by tbruinem      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -101,14 +101,14 @@ bool	pellet_has_reached_bottom(Board* board, v2 neighbour_pos) {
 		return true;
 	}
 	//Neighbour is occupied by a color
-	if (board->map[neighbour_pos.y][neighbour_pos.x].color != EMPTY) {
+	if (board->map[(int)neighbour_pos.y][(int)neighbour_pos.x].color != EMPTY) {
 		return true;
 	}
 	return false;
 }
 
 void	slot_fall(Board* board, v2 position, BoardSide side) {
-	Slot* slot = &board->map[position.y][position.x];
+	Slot* slot = &board->map[(int)position.y][(int)position.x];
 	v2	neighbour = slot->neighbours[side];
 
 	//fall should never be called for an empty slot
@@ -117,7 +117,7 @@ void	slot_fall(Board* board, v2 position, BoardSide side) {
 	const PelletType color = slot->color;
 	while (!pellet_has_reached_bottom(board, neighbour)) {
 		slot->color = EMPTY;
-		slot = &board->map[neighbour.y][neighbour.x];
+		slot = &board->map[(int)neighbour.y][(int)neighbour.x];
 		slot->color = color;
 		neighbour = slot->neighbours[side];
 	}
