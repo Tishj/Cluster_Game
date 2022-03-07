@@ -6,14 +6,14 @@
 /*   By: tbruinem <tbruinem@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2022/03/05 08:55:45 by tbruinem      #+#    #+#                 */
-/*   Updated: 2022/03/07 11:46:43 by tbruinem      ########   odam.nl         */
+/*   Updated: 2022/03/07 11:57:25 by tbruinem      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef BOARD_H
 # define BOARD_H
 
-#include "Util.h"
+#include "util.h"
 #include <stdbool.h>
 
 //(SIDE_SIZE + Rotation) % SIDE_SIZE == BoardSide

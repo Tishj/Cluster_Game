@@ -6,7 +6,7 @@
 /*   By: tbruinem <tbruinem@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2022/03/06 09:43:48 by tbruinem      #+#    #+#                 */
-/*   Updated: 2022/03/06 10:16:45 by tbruinem      ########   odam.nl         */
+/*   Updated: 2022/03/07 11:57:25 by tbruinem      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,7 +16,7 @@
 #include <strings.h>
 #include <assert.h>
 #include <string.h>
-#include "Util.h"
+#include "util.h"
 
 static void	swap(void* a, void *b, size_t typesize) {
 	char	tmp[typesize];

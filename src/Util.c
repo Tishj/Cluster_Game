@@ -6,11 +6,11 @@
 /*   By: tbruinem <tbruinem@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2022/03/05 10:27:13 by tbruinem      #+#    #+#                 */
-/*   Updated: 2022/03/05 12:04:57 by tbruinem      ########   odam.nl         */
+/*   Updated: 2022/03/07 11:57:25 by tbruinem      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "Util.h"
+#include "util.h"
 
 v2	v2add(v2 a, v2 b) {
 	return (v2){a.x + b.x, a.y + b.y};

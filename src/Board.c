@@ -6,14 +6,14 @@
 /*   By: tbruinem <tbruinem@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2022/03/05 08:55:31 by tbruinem      #+#    #+#                 */
-/*   Updated: 2022/03/07 11:46:07 by tbruinem      ########   odam.nl         */
+/*   Updated: 2022/03/07 11:57:25 by tbruinem      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "MLX42/MLX42.h"
 #include "Board.h"
 #include <stddef.h>
-#include "Util.h"
+#include "util.h"
 #include "Draw.h"
 #include "MLX.h"
 #include "Error.h"

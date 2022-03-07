@@ -6,7 +6,7 @@
 /*   By: tbruinem <tbruinem@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2022/03/05 12:10:31 by tbruinem      #+#    #+#                 */
-/*   Updated: 2022/03/05 15:57:21 by tbruinem      ########   odam.nl         */
+/*   Updated: 2022/03/07 11:57:25 by tbruinem      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,7 @@
 # define DRAW_H
 
 #include "MLX42/MLX42.h"
-#include "Util.h"
+#include "util.h"
 
 #define CLR_TRANSPARENT 0x00000000
 #define CLR_WHITE		0xffffffff
