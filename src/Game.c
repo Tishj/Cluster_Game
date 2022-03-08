@@ -6,7 +6,7 @@
 /*   By: tbruinem <tbruinem@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2022/03/05 11:34:12 by tbruinem      #+#    #+#                 */
-/*   Updated: 2022/03/08 00:30:28 by tbruinem      ########   odam.nl         */
+/*   Updated: 2022/03/08 18:48:50 by tbruinem      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,7 +39,8 @@ void	state_init(GameState* state) {
 
 void	game_init(Game* game, int argc, char **argv) {
 	bzero(game, sizeof(Game));
-	
+	game->animating = true;
+
 	state_init(&game->state);
 
 	init_players(game->player, argc-1, argv+1);
@@ -67,11 +68,13 @@ void	game_execute_command(Game* game, Player* player, Command command) {
 		};
 		case CMD_PLACE: {
 			board_place(&game->board, command.value, (int)player->color);
+			game->animating = true;
 			break;
 		};
 		case CMD_ROTATE: {
 			board_update_direction(&game->board, command.value);
 			board_rotate(&game->board, game->board.side);
+			game->animating = true;
 			break;
 		};
 	}
@@ -89,22 +92,45 @@ void	game_loop(void* param) {
 		mlx_close_window(mlx());
 	}
 
-	Player*	current_player = &game->player[state->current_player];
+	if (game->animating) {
+		if (game->board.tween.progress >= 0.99) {
+			if (game->board.moving_pellets == NULL)
+				game->animating = false;
+			else {
+				List* iter = game->board.moving_pellets;
+				size_t len = list_size(iter);
+				dprintf(2, "FALLING\n");
+				if (len) {
+					for (size_t i = 0; i < len; i++) {
+						slot_staggered_fall(&game->board, ((Slot*)iter->content)->position, game->board.side);
+						List* delete = iter;
+						iter = iter->next;
+						list_delete(&game->board.moving_pellets, delete);
+					}
+					// list_delete(&game->board.moving_pellets, iter);
+				}
+			}
+		}
+	}
+	else {
+		Player*	current_player = &game->player[state->current_player];
 
-	const Command command = player_get_command(current_player, game);
-	command_print(command);
-	game_execute_command(game, current_player, command);
-	board_direction_print(&game->board);
+		const Command command = player_get_command(current_player, game);
+		command_print(command);
+		game_execute_command(game, current_player, command);
+		board_direction_print(&game->board);
+
+		//Switch to other player
+		// Blue -> Red
+		// Red  -> Blue
+		state->current_player = !state->current_player;
+		if (state->current_player == game->starting_player)
+			state->turn_count += 1;
+
+	}
 	//Reset image, refactor this for the love of god....
 	draw_fill(game->image, CLR_TRANSPARENT);
 	render(game);
-
-	//Switch to other player
-	// Blue -> Red
-	// Red  -> Blue
-	state->current_player = !state->current_player;
-	if (state->current_player == game->starting_player)
-		state->turn_count += 1;
 }
 
 void	game_destroy(Game* game) {

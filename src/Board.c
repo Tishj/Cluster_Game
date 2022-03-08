@@ -6,7 +6,7 @@
 /*   By: tbruinem <tbruinem@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2022/03/05 08:55:31 by tbruinem      #+#    #+#                 */
-/*   Updated: 2022/03/08 00:42:24 by tbruinem      ########   odam.nl         */
+/*   Updated: 2022/03/08 18:46:25 by tbruinem      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -188,14 +188,16 @@ void	board_place(Board* board, size_t index, PelletType color) {
 	board->pellets_placed++;
 	const v2 pos = insert_slot[board->side][index];
 	board->map[(int)pos.y][(int)pos.x].color = color;
-	slot_fall(board, pos, board->side);
+	Slot* slot = &board->map[(int)pos.y][(int)pos.x];
+	list_pushfront(&board->moving_pellets, list_new(slot));
+	// slot_fall(board, pos, board->side);
 }
 
 bool	pellet_has_reached_bottom(Board* board, v2 neighbour_pos) {
 	// printf("NEIGHBOUR: X:%d|Y:%d\n", (int)neighbour_pos.x, (int)neighbour_pos.y);
 
 	//No neighbour on this side
-	if (neighbour_pos.x == no_neighbour.x && neighbour_pos.y == no_neighbour.y) {
+	if (neighbour_pos.x == -1 && neighbour_pos.y == -1) {
 		// printf("NO NEIGHBOUR\n");
 		return true;
 	}
@@ -221,6 +223,26 @@ void	slot_fall(Board* board, v2 position, BoardSide side) {
 		slot->color = color;
 		neighbour = slot->neighbours[side];
 	}
+}
+
+void	slot_staggered_fall(Board* board, v2 position, BoardSide side) {
+	Slot* slot = &board->map[(int)position.y][(int)position.x];
+	dprintf(2, "STAGGERED FALLING X:%d|Y:%d\n", (int)position.x, (int)position.y);
+	// assert(slot->color != EMPTY);
+	if (slot->color == EMPTY)
+		return;
+
+	v2	neighbour = slot->neighbours[side];
+	if (pellet_has_reached_bottom(board, neighbour))
+		return;
+
+	const PelletType color = slot->color;
+	slot->color = EMPTY;
+	slot = &board->map[(int)neighbour.y][(int)neighbour.x];
+	slot->color = color;
+	neighbour = slot->neighbours[side];
+	if (!pellet_has_reached_bottom(board, neighbour))
+		list_pushfront(&board->moving_pellets, list_new(slot));
 }
 
 float hex_width(float height)
@@ -324,9 +346,10 @@ void	board_rotate(Board* board, BoardSide new_side) {
 		.func = board_closer_to_bottom,
 		.extra = &board->side
 	});
-	//Let them all fall
 	for (size_t i = 0; i < board->pellets_placed; i++) {
-		slot_fall(board, pellets[i]->position, board->side);
+		dprintf(2, "PELLET[%ld] = X:%d|Y:%d\n", i, (int)pellets[i]->position.x, (int)pellets[i]->position.y);
+		list_pushback(&board->moving_pellets, list_new(pellets[i]));
+		// slot_fall(board, pellets[i]->position, board->side);
 	}
 }
 

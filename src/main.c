@@ -6,7 +6,7 @@
 /*   By: tbruinem <tbruinem@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2022/03/04 22:54:27 by tbruinem      #+#    #+#                 */
-/*   Updated: 2022/03/07 19:37:25 by tbruinem      ########   odam.nl         */
+/*   Updated: 2022/03/08 18:45:00 by tbruinem      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,7 +20,7 @@ void	simulate_game(Board* board) {
 	board_update_slot(board, 3, 3, RED0);
 	board_update_slot(board, 3, 4, BLUE0);
 
-	board_rotate(board, SIDE_SOUTH);
+	// board_rotate(board, SIDE_SOUTH);
 	// slot_neighbour_print(&board->map[2][2]);
 	slot_neighbour_print(&board->map[3][3]);
 	slot_neighbour_print(&board->map[2][2]);
@@ -32,7 +32,7 @@ int main(int argc, char **argv) {
 	Game	game;
 
 	game_init(&game, argc, argv);
-	simulate_game(&game.board);
+	// simulate_game(&game.board);
 
 	mlx_loop(mlx());
 	game_destroy(&game);
