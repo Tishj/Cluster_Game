@@ -6,7 +6,7 @@
 /*   By: tbruinem <tbruinem@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2022/03/05 11:34:12 by tbruinem      #+#    #+#                 */
-/*   Updated: 2022/03/07 22:52:20 by tbruinem      ########   odam.nl         */
+/*   Updated: 2022/03/08 14:46:59 by tbruinem      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -59,21 +59,25 @@ void	render(Game* game) {
 	// draw_circle(game->image, game->board.center.x, game->board.center.y, 15, CLR_RED);
 }
 
-void	game_execute_command(Game* game, Player* player, Command command) {
-	switch (command.type) {
+void	game_execute_command(Game* game, Player* player, Command* command) {
+	switch (command->type) {
 		case CMD_INVALID: {
 			game->state.result = !player->color;
 			break;
 		};
 		case CMD_PLACE: {
+			CommandPlace* cmd = (void*)command;
+			(void)cmd;
 			break;
 		};
 		case CMD_ROTATE: {
-			board_update_direction(&game->board, command.value);
+			CommandRotate* cmd = (void*)command;
+			board_update_direction(&game->board, cmd->cycles);
 			board_rotate(&game->board, game->board.side);
 			break;
 		};
 	}
+	free(command);
 }
 
 void	game_loop(void* param) {
@@ -90,7 +94,7 @@ void	game_loop(void* param) {
 
 	Player*	current_player = &game->player[state->current_player];
 
-	const Command command = player_get_command(current_player, game);
+	Command* command = player_get_command(current_player, game);
 	command_print(command);
 	game_execute_command(game, current_player, command);
 	board_direction_print(&game->board);
