@@ -6,7 +6,7 @@
 /*   By: tbruinem <tbruinem@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2022/03/05 11:59:23 by tbruinem      #+#    #+#                 */
-/*   Updated: 2022/03/07 19:27:09 by tbruinem      ########   odam.nl         */
+/*   Updated: 2022/03/08 14:10:26 by tbruinem      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -83,7 +83,9 @@ void	draw_hexagon_sides(mlx_image_t* target, unsigned int color, v2* points) {
 
 static const unsigned int color_mapping[] = {
 	[BLUE0] =	0x55c1dbff,
-	[RED0] =	0xb03d2bff
+	[RED0] =	0xb03d2bff,
+	[BLUE1] =	0x0000ffff,
+	[RED1] =	0xff0000ff
 };
 
 void	draw_slot(Board* board, v2 pos, mlx_image_t* target) {
