@@ -6,7 +6,7 @@
 /*   By: tbruinem <tbruinem@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2021/03/29 15:46:17 by tbruinem      #+#    #+#                 */
-/*   Updated: 2022/03/08 18:37:12 by tbruinem      ########   odam.nl         */
+/*   Updated: 2022/03/08 18:52:08 by tbruinem      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,7 +37,7 @@ List	*list_popback(List **list)
 }
 
 void 	list_delete(List** list, List* elem) {
-	dprintf(2, "YEET LIST:%p | ELEM:%p | *LIST:%p\n", list, elem, *list);
+	// dprintf(2, "YEET LIST:%p | ELEM:%p | *LIST:%p\n", list, elem, *list);
 	if (!elem)
 		return;
 	//List is empty
@@ -49,7 +49,7 @@ void 	list_delete(List** list, List* elem) {
 		elem->prev = NULL;
 		return;
 	}
-	dprintf(2, "HOW ARE YOU DYING\n");
+	// dprintf(2, "HOW ARE YOU DYING\n");
 	if (elem->next)
 		elem->next->prev = elem->prev;
 	assert(elem->prev != NULL);

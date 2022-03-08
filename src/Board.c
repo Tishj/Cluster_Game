@@ -6,7 +6,7 @@
 /*   By: tbruinem <tbruinem@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2022/03/05 08:55:31 by tbruinem      #+#    #+#                 */
-/*   Updated: 2022/03/08 18:46:25 by tbruinem      ########   odam.nl         */
+/*   Updated: 2022/03/08 18:57:39 by tbruinem      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -241,8 +241,8 @@ void	slot_staggered_fall(Board* board, v2 position, BoardSide side) {
 	slot = &board->map[(int)neighbour.y][(int)neighbour.x];
 	slot->color = color;
 	neighbour = slot->neighbours[side];
-	if (!pellet_has_reached_bottom(board, neighbour))
-		list_pushfront(&board->moving_pellets, list_new(slot));
+	// if (!pellet_has_reached_bottom(board, neighbour))
+	list_pushback(&board->moving_pellets, list_new(slot));
 }
 
 float hex_width(float height)
