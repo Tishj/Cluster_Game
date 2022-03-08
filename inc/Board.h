@@ -6,7 +6,7 @@
 /*   By: tbruinem <tbruinem@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2022/03/05 08:55:45 by tbruinem      #+#    #+#                 */
-/*   Updated: 2022/03/07 18:46:11 by limartin      ########   odam.nl         */
+/*   Updated: 2022/03/08 17:19:11 by limartin      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,11 +50,17 @@ typedef enum PelletType {
 	RED1,
 }	PelletType;
 
+typedef struct IndexCoord{
+	char	letter;
+	int		number;
+}	IndexCoord;
+
 typedef struct Slot {
 	v2			neighbours[6];
 	PelletType	color;
 	v2			position;
 	v2			points[6];
+	IndexCoord	index[6];
 }	Slot;
 
 typedef struct Board {

@@ -6,7 +6,7 @@
 /*   By: tbruinem <tbruinem@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2022/03/05 08:55:31 by tbruinem      #+#    #+#                 */
-/*   Updated: 2022/03/07 19:20:56 by limartin      ########   odam.nl         */
+/*   Updated: 2022/03/08 20:20:59 by limartin      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -311,19 +311,74 @@ void	calibrate_compass(Board* board, int side_length)
 	board->compass[NORTHWEST].x = 0;
 }
 
+static const v2* traversal_offset[] = {
+	(v2[]){
+		[CENTRE] =		{ 0.0,  0.0},
+		[SOUTH] =		{-1.0, -0.5},
+		[SOUTHWEST] =	{ 0.0, -1.0},
+		[NORTHWEST] =	{ 1.0, -0.5},
+		[NORTH] =		{ 1.0,  0.5},
+		[NORTHEAST] =	{ 0.0,  1.0},
+		[SOUTHEAST] =	{-1.0,  0.5}
+	},
+};
+
+void translate_to_index(Board* board, int side_length)
+{
+	// int		board_length = side_length * 2 - 1;
+	// int 	row;
+	int 	col = 0;
+	Facing	facing;
+	Facing	opposite_facing;
+	float 	fx;
+	float 	fy;
+	int		ix;
+	int		iy;
+	char	letter = 'A';
+	int		number = 0;
+
+	//SOUTH Gravity
+	facing = NORTHWEST;
+	opposite_facing = SOUTHWEST;
+	while (col < side_length)
+	{
+		printf("Lmao\n");
+		// printf("fx = %f, fy = %f\n", traversal_offset[0][1].x, traversal_offset[0][0].y);
+		fx = board->compass[facing].x + (col * (traversal_offset[0][facing].x));
+		fy = board->compass[facing].y + (col * (traversal_offset[0][facing].y));
+		while (fy <= board->compass[opposite_facing].y) //needs expanding
+		{
+			ix = (int)(fx);
+			iy = (int)(fy);
+			board->map[iy][ix].index[DIR_SOUTH].letter = letter;
+			board->map[iy][ix].index[DIR_SOUTH].number = number;
+			fy = fy + 1.0;
+			number++;
+			printf(" %d,%d \n", ix, iy);
+		}
+		col++;
+	}
+}
+
 void temp_fill_top(Board* board, Facing gravity)
 {
 	//this formula looks a little odd because the enum CENTRE needs to be skipped.
 	Facing top_left = (gravity + 1) % (SIZE - 1) + 1;
 	Facing top_mid = (gravity + 2) % (SIZE - 1) + 1;
 	Facing top_right =(gravity + 3) % (SIZE - 1) + 1;
-	
+
+
+	(void) top_left;
+	(void) top_mid;
+	(void) top_right;
+	board_update_slot(board, board->compass[CENTRE].y, board->compass[CENTRE].x, BLUE0);
 }
 
 void	temp_board_place(Board* board, int side_length)
 {
 	calibrate_compass(board, side_length);
 	temp_fill_top(board, SOUTH);
+	translate_to_index(board, side_length);
 	
 	// board_update_slot(board, board->compass[CENTRE].y, board->compass[CENTRE].x, BLUE0);
 	// board_update_slot(board, board->compass[NORTH].y, board->compass[NORTH].x, BLUE0);
