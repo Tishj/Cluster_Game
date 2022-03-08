@@ -6,7 +6,7 @@
 /*   By: tbruinem <tbruinem@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2022/03/05 23:09:04 by tbruinem      #+#    #+#                 */
-/*   Updated: 2022/03/07 22:54:01 by tbruinem      ########   odam.nl         */
+/*   Updated: 2022/03/08 14:42:13 by tbruinem      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,11 +25,6 @@
 //Bots get input sent to them from the game process
 //Bots sent output to the game process
 
-const Command invalid_command = {
-	.type = CMD_INVALID,
-	.value = -1
-};
-
 void*	read_line(void* param) {
 	Connection*	connection = param;
 	char*	line = NULL;
@@ -42,14 +37,15 @@ void*	read_line(void* param) {
 	if (line == NULL) {
 		return line;
 	}
-	for (size_t i = 0; line[i]; i++) {
-		if (line[i] == '\n')
-			line[i] = '\0';
-	}
+	//deprecated
+	// for (size_t i = 0; line[i]; i++) {
+	// 	if (line[i] == '\n')
+	// 		line[i] = '\0';
+	// }
 	return line;
 }
 
-Command	connection_get_command(Connection* connection, size_t timeout) {
+Command*	connection_get_command(Connection* connection, size_t timeout) {
 	pthread_t		thread;
 
 	//Start a thread that is going to try to read a line of input from the bot
@@ -69,9 +65,9 @@ Command	connection_get_command(Connection* connection, size_t timeout) {
 	}
 	//If the thread was canceled before it finished, it was timed out (Untested)
 	if (line == PTHREAD_CANCELED) {
-		return invalid_command;
+		return command_invalid();
 	}
-	Command command = command_parse(line);
+	Command* command = command_parse(line);
 	free(line);
 	return command;
 }
@@ -125,7 +121,7 @@ void	player_send_input(Player* player, Game* game) {
 	(void)game;
 }
 
-Command	player_get_command(Player* player, Game* game) {
+Command*	player_get_command(Player* player, Game* game) {
 	player_send_input(player, game);
 	size_t	timeout_duration = game->state.turn_count ? ROUND_TIMEOUT_DURATION : INITIAL_TIMEOUT_DURATION;
 	return connection_get_command(&player->conn, timeout_duration);

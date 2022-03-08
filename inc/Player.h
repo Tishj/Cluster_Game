@@ -6,7 +6,7 @@
 /*   By: tbruinem <tbruinem@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2022/03/05 23:13:40 by tbruinem      #+#    #+#                 */
-/*   Updated: 2022/03/07 22:52:55 by tbruinem      ########   odam.nl         */
+/*   Updated: 2022/03/08 14:42:54 by tbruinem      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,7 +39,7 @@ typedef struct Player {
 //fwd declare
 typedef struct Game Game;
 
-void	player_init(Player* player, PlayerType color, char* abspath);
-Command	player_get_command(Player* player, Game* game);
+void		player_init(Player* player, PlayerType color, char* abspath);
+Command*	player_get_command(Player* player, Game* game);
 
 #endif

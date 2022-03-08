@@ -6,7 +6,7 @@
 /*   By: tbruinem <tbruinem@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2022/03/05 08:55:31 by tbruinem      #+#    #+#                 */
-/*   Updated: 2022/03/08 18:57:39 by tbruinem      ########   odam.nl         */
+/*   Updated: 2022/03/08 19:36:37 by tbruinem      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -374,7 +374,7 @@ void	board_render(Board* board, mlx_image_t* target) {
 		}
 	}
 	if (board->tween.progress < 1) {
-		board->tween.progress += 0.05;
+		board->tween.progress += 0.01;
 	}
 	else {
 		board->tween.from = board->tween.to;

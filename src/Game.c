@@ -6,7 +6,7 @@
 /*   By: tbruinem <tbruinem@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2022/03/05 11:34:12 by tbruinem      #+#    #+#                 */
-/*   Updated: 2022/03/08 18:48:50 by tbruinem      ########   odam.nl         */
+/*   Updated: 2022/03/08 19:36:10 by tbruinem      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -60,24 +60,28 @@ void	render(Game* game) {
 	// draw_circle(game->image, game->board.center.x, game->board.center.y, 15, CLR_RED);
 }
 
-void	game_execute_command(Game* game, Player* player, Command command) {
-	switch (command.type) {
+void	game_execute_command(Game* game, Player* player, Command* command) {
+	switch (command->type) {
 		case CMD_INVALID: {
 			game->state.result = !player->color;
 			break;
 		};
 		case CMD_PLACE: {
-			board_place(&game->board, command.value, (int)player->color);
 			game->animating = true;
+			CommandPlace* cmd = (void*)command;
+			board_place(&game->board, cmd->slot_index, cmd->color_index);
+			(void)cmd;
 			break;
 		};
 		case CMD_ROTATE: {
-			board_update_direction(&game->board, command.value);
+			CommandRotate* cmd = (void*)command;
+			board_update_direction(&game->board, cmd->cycles);
 			board_rotate(&game->board, game->board.side);
 			game->animating = true;
 			break;
 		};
 	}
+	free(command);
 }
 
 void	game_loop(void* param) {
@@ -115,7 +119,7 @@ void	game_loop(void* param) {
 	else {
 		Player*	current_player = &game->player[state->current_player];
 
-		const Command command = player_get_command(current_player, game);
+		Command* command = player_get_command(current_player, game);
 		command_print(command);
 		game_execute_command(game, current_player, command);
 		board_direction_print(&game->board);
@@ -131,6 +135,7 @@ void	game_loop(void* param) {
 	//Reset image, refactor this for the love of god....
 	draw_fill(game->image, CLR_TRANSPARENT);
 	render(game);
+	// usleep(100000);
 }
 
 void	game_destroy(Game* game) {
