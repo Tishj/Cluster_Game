@@ -6,7 +6,7 @@
 /*   By: tbruinem <tbruinem@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2022/03/04 23:00:53 by tbruinem      #+#    #+#                 */
-/*   Updated: 2022/03/07 11:24:18 by tbruinem      ########   odam.nl         */
+/*   Updated: 2022/03/08 11:37:05 by tbruinem      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,6 +23,9 @@ typedef enum {
 	FILE_OPEN_FAIL,
 	INVALID_MAP_TILE,
     INVALID_SIDE,
+	CLIENT_READ_FAIL,
+	THREAD_FAIL,
+	PIPE_CREATION_FAIL,
 }	Error;
 
 #define FATAL(x) fatal(x, __FILE__, __LINE__)

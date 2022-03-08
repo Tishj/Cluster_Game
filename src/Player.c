@@ -6,7 +6,7 @@
 /*   By: tbruinem <tbruinem@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2022/03/05 23:09:04 by tbruinem      #+#    #+#                 */
-/*   Updated: 2022/03/07 22:54:01 by tbruinem      ########   odam.nl         */
+/*   Updated: 2022/03/08 11:37:53 by tbruinem      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,7 +37,7 @@ void*	read_line(void* param) {
 
 	//Blocking - cant guarantee this will stop
 	if (getline(&line, &capacity, connection->handle) == -1) {
-		FATAL(MEMORY_ALLOCATION_FAIL);
+		FATAL(CLIENT_READ_FAIL);
 	}
 	if (line == NULL) {
 		return line;
@@ -54,18 +54,19 @@ Command	connection_get_command(Connection* connection, size_t timeout) {
 
 	//Start a thread that is going to try to read a line of input from the bot
 	if (pthread_create(&thread, NULL, read_line, connection) == -1) {
-		FATAL(MEMORY_ALLOCATION_FAIL);
+		FATAL(THREAD_FAIL);
 	}
 
 	wait_duration(timeout);
 
 	//Only timeout if the player is a bot
+	//(Not protected because this *should* never be able to fail)
 	if (connection->bot) {
 		pthread_cancel(thread);
 	}
 	char*	line = NULL;
 	if (pthread_join(thread, (void**)&line) == -1) {
-		FATAL(MEMORY_ALLOCATION_FAIL);
+		FATAL(THREAD_FAIL);
 	}
 	//If the thread was canceled before it finished, it was timed out (Untested)
 	if (line == PTHREAD_CANCELED) {
@@ -80,10 +81,10 @@ void	connection_init(Connection* connection, char* abspath, bool bot) {
 	connection->bot = bot;
 	if (bot == true) {
 		if (pipe(connection->input) == -1) {
-			FATAL(MEMORY_ALLOCATION_FAIL);
+			FATAL(PIPE_CREATION_FAIL);
 		}
 		if (pipe(connection->output) == -1) {
-			FATAL(MEMORY_ALLOCATION_FAIL);
+			FATAL(PIPE_CREATION_FAIL);
 		}
 		pid_t pid = fork();
 		if (pid == 0) {
@@ -101,7 +102,7 @@ void	connection_init(Connection* connection, char* abspath, bool bot) {
 	}
 	else {
 		if (pipe(connection->output) == -1) {
-			FATAL(MEMORY_ALLOCATION_FAIL);
+			FATAL(PIPE_CREATION_FAIL);
 		}
 		pid_t pid = fork();
 		if (pid == 0) {
