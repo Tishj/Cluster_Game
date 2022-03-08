@@ -6,7 +6,7 @@
 /*   By: tbruinem <tbruinem@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2022/03/05 09:50:10 by tbruinem      #+#    #+#                 */
-/*   Updated: 2022/03/07 18:56:13 by tbruinem      ########   odam.nl         */
+/*   Updated: 2022/03/08 12:39:03 by tbruinem      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,10 +21,20 @@ typedef enum CommandType {
 
 typedef struct Command {
 	CommandType	type;
-	int			value;
 }	Command;
 
-Command	command_parse(char* commandstring);
-void	command_print(Command command);
+typedef struct	CommandPlace {
+	Command	base;
+	int	slot_index;
+	int	color_index;
+}	CommandPlace;
+
+typedef struct CommandRotate {
+	Command	base;
+	int	cycles;
+}	CommandRotate;
+
+Command*	command_parse(char* commandstring);
+void		command_print(Command* command);
 
 #endif

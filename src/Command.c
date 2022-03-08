@@ -6,7 +6,7 @@
 /*   By: tbruinem <tbruinem@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2022/03/05 09:53:25 by tbruinem      #+#    #+#                 */
-/*   Updated: 2022/03/07 22:18:47 by tbruinem      ########   odam.nl         */
+/*   Updated: 2022/03/08 12:43:12 by tbruinem      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,22 +29,32 @@ int	str2cmp(char** str2, size_t size, char* str) {
 	return -1;
 }
 
-void	command_print(Command command) {
-	if (command.type == CMD_INVALID) {
-		dprintf(2, "Command - INVALID - %d\n", command.value);
-	}
-	else {
-		dprintf(2, "Command - %s - %d\n", valid_commands[command.type], command.value);
+void	command_print(Command* command) {
+	switch (command->type) {
+		case CMD_INVALID: {
+			dprintf(2, "Command - INVALID\n");
+			break;
+		};
+		case CMD_PLACE: {
+			CommandPlace* cmd = (void*)command;
+			dprintf(2, "Command - PLACE - SLOT:%d - COLOR:%d\n", cmd->slot_index, cmd->color_index);
+			break;
+		};
+		case CMD_ROTATE: {
+			CommandRotate* cmd = (void*)command;
+			dprintf(2, "Command - ROTATE - CYCLES:%d\n", cmd->cycles);
+		}
 	}
 }
 
-Command	command_parse(char* commandstring) {
+Command*	command_invalid()
+
+Command*	command_parse(char* commandstring) {
 	// dprintf(2, "RECEIVED COMMAND: '%s'\n", commandstring);
 	char* const	space_pos = strchr(commandstring, ' ');
 	//Initialize to error
 	Command		res = {
 		.type = CMD_INVALID,
-		.value = -1
 	};
 
 	//Commandstring does not contain a space;
