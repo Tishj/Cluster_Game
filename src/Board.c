@@ -6,7 +6,7 @@
 /*   By: tbruinem <tbruinem@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2022/03/05 08:55:31 by tbruinem      #+#    #+#                 */
-/*   Updated: 2022/03/07 19:37:12 by tbruinem      ########   odam.nl         */
+/*   Updated: 2022/03/08 19:36:37 by tbruinem      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -127,11 +127,77 @@ static const v2* neighbour_offset[] = {
 	},
 };
 
+static const v2 insert_slot[6][7] = {
+	[SIDE_SOUTH] = {
+		[0] = {0,2},
+		[1] = {1,1},
+		[2] = {2,1},
+		[3] = {3,0},
+		[4] = {4,1},
+		[5] = {5,1},
+		[6] = {6,2}
+	},
+	[SIDE_SOUTHWEST] = {
+		[0] = {3,0},
+		[1] = {4,1},
+		[2] = {5,1},
+		[3] = {6,2},
+		[4] = {6,3},
+		[5] = {6,4},
+		[6] = {6,5}
+	},
+	[SIDE_NORTHWEST] = {
+		[0] = {6,2},
+		[1] = {6,3},
+		[2] = {6,4},
+		[3] = {6,5},
+		[4] = {5,5},
+		[5] = {4,6},
+		[6] = {3,6}
+	},
+	[SIDE_NORTH] = {
+		[0] = {6,5},
+		[1] = {5,5},
+		[2] = {4,6},
+		[3] = {3,6},
+		[4] = {2,6},
+		[5] = {1,5},
+		[6] = {0,5}
+	},
+	[SIDE_NORTHEAST] = {
+		[0] = {3,6},
+		[1] = {2,6},
+		[2] = {1,5},
+		[3] = {0,5},
+		[4] = {0,4},
+		[5] = {0,3},
+		[6] = {0,2}
+	},
+	[SIDE_SOUTHEAST] = {
+		[0] = {0,5},
+		[1] = {0,4},
+		[2] = {0,3},
+		[3] = {0,2},
+		[4] = {1,1},
+		[5] = {2,1},
+		[6] = {3,0}
+	},
+};
+
+void	board_place(Board* board, size_t index, PelletType color) {
+	board->pellets_placed++;
+	const v2 pos = insert_slot[board->side][index];
+	board->map[(int)pos.y][(int)pos.x].color = color;
+	Slot* slot = &board->map[(int)pos.y][(int)pos.x];
+	list_pushfront(&board->moving_pellets, list_new(slot));
+	// slot_fall(board, pos, board->side);
+}
+
 bool	pellet_has_reached_bottom(Board* board, v2 neighbour_pos) {
 	// printf("NEIGHBOUR: X:%d|Y:%d\n", (int)neighbour_pos.x, (int)neighbour_pos.y);
 
 	//No neighbour on this side
-	if (neighbour_pos.x == no_neighbour.x && neighbour_pos.y == no_neighbour.y) {
+	if (neighbour_pos.x == -1 && neighbour_pos.y == -1) {
 		// printf("NO NEIGHBOUR\n");
 		return true;
 	}
@@ -157,6 +223,26 @@ void	slot_fall(Board* board, v2 position, BoardSide side) {
 		slot->color = color;
 		neighbour = slot->neighbours[side];
 	}
+}
+
+void	slot_staggered_fall(Board* board, v2 position, BoardSide side) {
+	Slot* slot = &board->map[(int)position.y][(int)position.x];
+	dprintf(2, "STAGGERED FALLING X:%d|Y:%d\n", (int)position.x, (int)position.y);
+	// assert(slot->color != EMPTY);
+	if (slot->color == EMPTY)
+		return;
+
+	v2	neighbour = slot->neighbours[side];
+	if (pellet_has_reached_bottom(board, neighbour))
+		return;
+
+	const PelletType color = slot->color;
+	slot->color = EMPTY;
+	slot = &board->map[(int)neighbour.y][(int)neighbour.x];
+	slot->color = color;
+	neighbour = slot->neighbours[side];
+	// if (!pellet_has_reached_bottom(board, neighbour))
+	list_pushback(&board->moving_pellets, list_new(slot));
 }
 
 float hex_width(float height)
@@ -260,14 +346,25 @@ void	board_rotate(Board* board, BoardSide new_side) {
 		.func = board_closer_to_bottom,
 		.extra = &board->side
 	});
-	//Let them all fall
 	for (size_t i = 0; i < board->pellets_placed; i++) {
-		slot_fall(board, pellets[i]->position, board->side);
+		dprintf(2, "PELLET[%ld] = X:%d|Y:%d\n", i, (int)pellets[i]->position.x, (int)pellets[i]->position.y);
+		list_pushback(&board->moving_pellets, list_new(pellets[i]));
+		// slot_fall(board, pellets[i]->position, board->side);
 	}
 }
 
+double	board_get_rotation(Board* board) {
+	double rotation_angle = 60 * board->side;
+	double radians = deg2rad(rotation_angle);
+
+	return radians;
+}
+
 void	board_update_direction(Board* board, int cycles) {
+	board->tween.from = board_get_rotation(board);
 	board->side = (board->side + cycles) % 6;
+	board->tween.progress = 0;
+	board->tween.to = board_get_rotation(board);
 }
 
 void	board_render(Board* board, mlx_image_t* target) {
@@ -275,6 +372,13 @@ void	board_render(Board* board, mlx_image_t* target) {
 		for (size_t col = ranges[row].start; col < ranges[row].end; col++) {
 			draw_slot(board, (v2){col, row}, target);
 		}
+	}
+	if (board->tween.progress < 1) {
+		board->tween.progress += 0.01;
+	}
+	else {
+		board->tween.from = board->tween.to;
+		board->tween.progress = 1;
 	}
 }
 
@@ -289,6 +393,8 @@ void	board_init(Board* board) {
 	bzero(board, sizeof(Board));
 	board->side = SIDE_SOUTH;
 	board->pellets_placed = 0;
+	board->tween.progress = 1;
+	board->tween.from = 0;
 
 	for (size_t row = 0; row < 7; row++) {
 		for (size_t col = ranges[row].start; col < ranges[row].end; col++) {

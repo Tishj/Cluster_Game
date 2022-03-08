@@ -6,7 +6,7 @@
 /*   By: tbruinem <tbruinem@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2022/03/05 10:26:07 by tbruinem      #+#    #+#                 */
-/*   Updated: 2022/03/07 22:34:59 by tbruinem      ########   odam.nl         */
+/*   Updated: 2022/03/08 00:10:07 by tbruinem      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,5 +39,7 @@ double		deg2rad(double angle);
 v2 rotate_point(float cx,float cy,float angle, v2 p);
 unsigned long	time_msec(void);
 void	wait_duration(size_t duration);
+int		sign(int a);
+float	lerp(float a, float b, float t);
 
 #endif

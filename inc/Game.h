@@ -6,7 +6,7 @@
 /*   By: tbruinem <tbruinem@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2022/03/04 23:13:04 by tbruinem      #+#    #+#                 */
-/*   Updated: 2022/03/07 22:51:16 by tbruinem      ########   odam.nl         */
+/*   Updated: 2022/03/08 16:46:57 by tbruinem      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,6 +45,7 @@ typedef struct Game {
 	Player			player[2];
 	GameState		state;
 	PlayerType		starting_player;
+	bool			animating;
 }	Game;
 
 void	game_loop(void* param);

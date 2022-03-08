@@ -6,7 +6,7 @@
 /*   By: tbruinem <tbruinem@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2022/03/05 09:53:25 by tbruinem      #+#    #+#                 */
-/*   Updated: 2022/03/08 14:49:43 by tbruinem      ########   odam.nl         */
+/*   Updated: 2022/03/08 19:26:57 by tbruinem      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -97,17 +97,20 @@ Command*	command_parse(char* commandstring) {
 
 	//Commandstring does not contain a space;
 	if (!space_pos) {
+		dprintf(2, "INVALID 1\n");
 		return command_invalid();
 	}
 	*space_pos = '\0';
 	CommandType	type = str2cmp((char**)valid_commands, sizeof(valid_commands) / sizeof(valid_commands[0]), commandstring);
 	switch (type) {
 		case CMD_INVALID: {
+			dprintf(2, "INVALID 2\n");
 			return command_invalid();
 		};
 		case CMD_ROTATE: {
 			int cycles;
 			if (sscanf(space_pos + 1, "%d\n", &cycles) == -1 || !cycles_check(cycles)) {
+				dprintf(2, "INVALID 3\n");
 				return command_invalid();
 			}
 			return command_rotate(cycles);
@@ -116,6 +119,7 @@ Command*	command_parse(char* commandstring) {
 			int slot_index, color_index;
 			char space;
 			if (sscanf(space_pos + 1, "%d%c%d\n", &slot_index, &space, &color_index) == -1 || !slot_index_check(slot_index) || space != ' ' || !color_index_check(color_index)) {
+				dprintf(2, "INVALID 4 %s\n", space_pos + 1);
 				return command_invalid();
 			}
 			return command_place(slot_index, color_index);
