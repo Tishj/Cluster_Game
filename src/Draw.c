@@ -6,7 +6,7 @@
 /*   By: tbruinem <tbruinem@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2022/03/05 11:59:23 by tbruinem      #+#    #+#                 */
-/*   Updated: 2022/03/08 19:22:24 by tbruinem      ########   odam.nl         */
+/*   Updated: 2022/03/09 12:50:36 by tbruinem      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -99,8 +99,18 @@ static const unsigned int color_mapping[] = {
 	[RED1] =	0xff0000ff
 };
 
-void	draw_slot(Board* board, v2 pos, mlx_image_t* target) {
-	Slot* slot = &board->map[(int)pos.y][(int)pos.x];
+void	draw_pellet(Board* board, Pellet* pellet, mlx_image_t* target) {
+	Slot*	slot = pellet->slot;
+	assert(slot != NULL);
+
+	double rotation = lerp(board->tween.from, board->tween.to, board->tween.progress);
+
+	v2 middle = (v2){slot->points[0].x + ((slot->points[3].x - slot->points[0].x) / 2), slot->points[0].y};
+	middle = rotate_point(board->center.x, board->center.y, -rotation, middle);
+	draw_circle(target, middle.x, middle.y, 30, color_mapping[pellet->color]);
+}
+
+void	draw_slot(Board* board, Slot* slot, mlx_image_t* target) {
 
 	//Create temporary copy of the points
 	v2	points[6];
@@ -111,13 +121,5 @@ void	draw_slot(Board* board, v2 pos, mlx_image_t* target) {
 	for (size_t i = 0; i < 6; i++) {
 		points[i] = rotate_point(board->center.x, board->center.y, -rotation, points[i]);
 	}
-
 	draw_hexagon_sides(target, CLR_RED, points);
-
-	//Draw pellet/token if present
-	if (slot->color == EMPTY)
-		return;
-	v2 middle = (v2){slot->points[0].x + ((slot->points[3].x - slot->points[0].x) / 2), slot->points[0].y};
-	middle = rotate_point(board->center.x, board->center.y, -rotation, middle);
-	draw_circle(target, middle.x, middle.y, 30, color_mapping[slot->color]);
 }

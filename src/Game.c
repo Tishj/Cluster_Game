@@ -6,7 +6,7 @@
 /*   By: tbruinem <tbruinem@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2022/03/05 11:34:12 by tbruinem      #+#    #+#                 */
-/*   Updated: 2022/03/08 19:36:10 by tbruinem      ########   odam.nl         */
+/*   Updated: 2022/03/09 15:23:00 by tbruinem      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -101,17 +101,14 @@ void	game_loop(void* param) {
 			if (game->board.moving_pellets == NULL)
 				game->animating = false;
 			else {
-				List* iter = game->board.moving_pellets;
-				size_t len = list_size(iter);
-				dprintf(2, "FALLING\n");
-				if (len) {
-					for (size_t i = 0; i < len; i++) {
-						slot_staggered_fall(&game->board, ((Slot*)iter->content)->position, game->board.side);
-						List* delete = iter;
-						iter = iter->next;
+				for (List* iter = game->board.moving_pellets; iter;) {
+					Pellet* pellet = iter->content;
+					bool reached_bottom = pellet_staggered_fall(pellet, game->board.side);
+					List* delete = iter;
+					iter = iter->next;
+					if (reached_bottom) {
 						list_delete(&game->board.moving_pellets, delete);
 					}
-					// list_delete(&game->board.moving_pellets, iter);
 				}
 			}
 		}

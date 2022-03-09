@@ -6,7 +6,7 @@
 /*   By: tbruinem <tbruinem@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2021/03/29 15:46:17 by tbruinem      #+#    #+#                 */
-/*   Updated: 2022/03/08 18:52:08 by tbruinem      ########   odam.nl         */
+/*   Updated: 2022/03/09 11:40:04 by tbruinem      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -84,6 +84,9 @@ List	*list_popfront(List **list)
 void	list_pushback(List **list, List *elem)
 {
 	List	*iter;
+	if (!elem) {
+		return;
+	}
 
 	if (*list == NULL)
 	{
