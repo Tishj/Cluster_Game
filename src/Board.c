@@ -6,7 +6,7 @@
 /*   By: tbruinem <tbruinem@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2022/03/05 08:55:31 by tbruinem      #+#    #+#                 */
-/*   Updated: 2022/03/09 22:47:14 by tbruinem      ########   odam.nl         */
+/*   Updated: 2022/03/10 00:40:46 by tbruinem      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -438,25 +438,37 @@ Slot*	slot_new(v2 position) {
 	return slot;
 }
 
-static void	assign_corners(Board* board, Slot* tmp[(SIDE_LENGTH * 2)][(SIDE_LENGTH * 2)]) {
-	int mid = SIDE_LENGTH - 1;
-	v2	positions[SIDE_SIZE] = {};
-	
-	positions[SIDE_NORTH].y = 0;
-	positions[SIDE_NORTH].x = mid;
-	positions[SIDE_NORTHEAST].y = (int)((mid + 1) / 2);
-	positions[SIDE_NORTHEAST].x = (int)(2 * mid);
-	positions[SIDE_SOUTHEAST].y = (int)(mid * 1.5 + 0.5);
-	positions[SIDE_SOUTHEAST].x = (int)(2 * mid);
-	positions[SIDE_SOUTH].y = (int)(mid * 2);
-	positions[SIDE_SOUTH].x = (int)(mid);
-	positions[SIDE_SOUTHWEST].y = (int)(mid * 1.5 + 0.5);
-	positions[SIDE_SOUTHWEST].x = 0;
-	positions[SIDE_NORTHWEST].y = (int)((mid + 1) / 2);
-	positions[SIDE_NORTHWEST].x = 0;
+static Slot* get_corner(Slot* slot, BoardSide side) {
+	while (slot->neighbours[side]) {
+		slot = slot->neighbours[side];
+	}
+	return slot;
+}
 
+static void	assign_corners(Board* board, Slot* center) {
+	// int mid = SIDE_LENGTH;
+	// v2	positions[SIDE_SIZE] = {};
+	
+	// positions[SIDE_NORTH].y = 0;
+	// positions[SIDE_NORTH].x = mid;
+	// positions[SIDE_NORTHEAST].y = (int)((mid + 1) / 2);
+	// positions[SIDE_NORTHEAST].x = (int)((2 * mid) - 1);
+	// positions[SIDE_SOUTHEAST].y = (int)(mid * 1.5 + 0.5);
+	// positions[SIDE_SOUTHEAST].x = (int)((2 * mid) - 1);
+	// positions[SIDE_SOUTH].y = (int)((mid * 2) - 1);
+	// positions[SIDE_SOUTH].x = (int)(mid);
+	// positions[SIDE_SOUTHWEST].y = (int)(mid * 1.5 + 0.5);
+	// positions[SIDE_SOUTHWEST].x = 0;
+	// positions[SIDE_NORTHWEST].y = (int)((mid + 1) / 2);
+	// positions[SIDE_NORTHWEST].x = 0;
+
+	// for (size_t side = SIDE_SOUTH; side < SIDE_SIZE; side++) {
+	// 	board->corners[side] = tmp[(int)positions[side].y][(int)positions[side].x];
+	// 	dprintf(2, "CORNER[%s] | X:%d|Y:%d\n", side_string_mapping[side], (int)positions[side].x, (int)positions[side].y);
+	// 	slot_neighbour_print(board->corners[side]);
+	// }
 	for (size_t side = SIDE_SOUTH; side < SIDE_SIZE; side++) {
-		board->corners[side] = tmp[(int)positions[side].y][(int)positions[side].x];
+		board->corners[side] = get_corner(center, side);
 	}
 }
 
@@ -464,7 +476,7 @@ static void	assign_corners(Board* board, Slot* tmp[(SIDE_LENGTH * 2)][(SIDE_LENG
 static void	create_slots(Board* board) {
 	const int	board_height = (SIDE_LENGTH * 2);
 	//Could do this more optimally by creating it as needed for every "ring"
-	Slot* temp[board_height][board_height];
+	Slot* temp[board_height + 1][board_height + 1];
 	List*	new_slots = NULL;
 
 	for (int i = 0; i < board_height; i++) {
@@ -490,9 +502,14 @@ static void	create_slots(Board* board) {
 			for (size_t side = SIDE_SOUTH; side < SIDE_SIZE; side++) {
 				v2 position = slot->position;
 				v2 neighbour_position = get_neighbour_pos(position, side);
-				// dprintf(2, "NEIGHBOUR POS: %d|%d\n", (int)neighbour_position.x, (int)neighbour_position.y);
+				dprintf(2, "NEIGHBOUR POS: %d|%d\n", (int)neighbour_position.x, (int)neighbour_position.y);
 				//Retrieve the neighbour
-				Slot* neighbour = temp[(int)neighbour_position.y][(int)neighbour_position.x];
+				Slot* neighbour;
+				if (neighbour_position.x < 0 || neighbour_position.y < 0)
+					neighbour = NULL;
+				else {
+					neighbour = temp[(int)neighbour_position.y][(int)neighbour_position.x];
+				}
 				//If the neighbour doesnt exist yet, and we're not at the final ring, add it
 				if (!neighbour && depth + 1 != SIDE_LENGTH) {
 					neighbour = slot_new(neighbour_position);
@@ -506,10 +523,21 @@ static void	create_slots(Board* board) {
 		new_slots = new_neighbours;
 	}
 
-	assign_corners(board, temp);
 
 	Slot* center_slot = temp[SIDE_LENGTH - 1][SIDE_LENGTH - 1];
+	assign_corners(board, center_slot);
 	board->center = (v2){center_slot->points[0].x + ((center_slot->points[3].x - center_slot->points[0].x) / 2), center_slot->points[0].y};
+}
+
+void	board_destroy(Board* board) {
+	for (List* iter = board->pellets; iter; iter = iter->next) {
+		free(iter->content);
+	}
+	for (List* iter = board->slots; iter; iter = iter->next) {
+		free(iter->content);
+	}
+	list_clear(board->pellets);
+	list_clear(board->slots);
 }
 
 void	board_init(Board* board) {

@@ -6,7 +6,7 @@
 /*   By: tbruinem <tbruinem@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2022/03/05 08:55:45 by tbruinem      #+#    #+#                 */
-/*   Updated: 2022/03/09 21:12:38 by tbruinem      ########   odam.nl         */
+/*   Updated: 2022/03/10 00:39:44 by tbruinem      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,7 +19,7 @@
 #include "Draw.h"
 #include "List.h"
 
-#define SIDE_LENGTH 5
+#define SIDE_LENGTH 6
 
 //(SIDE_SIZE + Rotation) % SIDE_SIZE == BoardSide
 typedef enum BoardCycle {
@@ -84,6 +84,7 @@ void	slot_neighbour_print(Slot* slot);
 void	board_update_direction(Board* board, int cycles);
 void	board_direction_print(BoardSide side);
 void	draw_pellet(Board* board, Pellet* pellet, mlx_image_t* target);
+void	board_destroy(Board* board);
 
 void	board_place(Board* board, size_t index, PelletType color);
 

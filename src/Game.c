@@ -6,7 +6,7 @@
 /*   By: tbruinem <tbruinem@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2022/03/05 11:34:12 by tbruinem      #+#    #+#                 */
-/*   Updated: 2022/03/09 17:31:12 by tbruinem      ########   odam.nl         */
+/*   Updated: 2022/03/09 23:55:59 by tbruinem      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -93,11 +93,13 @@ void	game_loop(void* param) {
 		state->result = TIE;
 	}
 	if (state->result != IN_PROGRESS) {
+		dprintf(2, "BOT TIMED OUT\n");
 		mlx_close_window(mlx());
+		return;
 	}
 
 	if (game->animating) {
-		if (game->board.tween.progress >= 0.99) {
+		if (game->board.tween.progress >= 1.0) {
 			if (!game->board.moving_pellets) {
 				game->animating = false;
 			}
@@ -138,4 +140,5 @@ void	game_loop(void* param) {
 
 void	game_destroy(Game* game) {
 	mlx_delete_image(mlx(), game->image);
+	board_destroy(&game->board);
 }

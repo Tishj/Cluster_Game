@@ -6,7 +6,7 @@
 /*   By: tbruinem <tbruinem@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2022/03/09 22:08:45 by tbruinem      #+#    #+#                 */
-/*   Updated: 2022/03/09 22:09:54 by tbruinem      ########   odam.nl         */
+/*   Updated: 2022/03/09 23:51:48 by tbruinem      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -98,7 +98,7 @@ char			**split(const char *s, char c)
 
 	if (s == NULL)
 		return (NULL);
-	str = malloc(sizeof(char *) * get_size(s, c) + 1);
+	str = malloc(sizeof(char *) * (get_size(s, c) + 1));
 	if (str == NULL)
 		return (NULL);
 	str = assign_words(str, (char *)s, c, 0);
