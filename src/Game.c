@@ -6,7 +6,7 @@
 /*   By: tbruinem <tbruinem@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2022/03/05 11:34:12 by tbruinem      #+#    #+#                 */
-/*   Updated: 2022/03/09 15:23:00 by tbruinem      ########   odam.nl         */
+/*   Updated: 2022/03/09 17:31:12 by tbruinem      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -98,17 +98,18 @@ void	game_loop(void* param) {
 
 	if (game->animating) {
 		if (game->board.tween.progress >= 0.99) {
-			if (game->board.moving_pellets == NULL)
+			if (!game->board.moving_pellets) {
 				game->animating = false;
+			}
 			else {
 				for (List* iter = game->board.moving_pellets; iter;) {
 					Pellet* pellet = iter->content;
+					List*	delete = NULL;
 					bool reached_bottom = pellet_staggered_fall(pellet, game->board.side);
-					List* delete = iter;
+					if (reached_bottom)
+						delete = iter;
 					iter = iter->next;
-					if (reached_bottom) {
-						list_delete(&game->board.moving_pellets, delete);
-					}
+					list_delete(&game->board.moving_pellets, delete, free);
 				}
 			}
 		}
@@ -119,7 +120,7 @@ void	game_loop(void* param) {
 		Command* command = player_get_command(current_player, game);
 		command_print(command);
 		game_execute_command(game, current_player, command);
-		board_direction_print(&game->board);
+		board_direction_print(game->board.side);
 
 		//Switch to other player
 		// Blue -> Red

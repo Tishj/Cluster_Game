@@ -6,7 +6,7 @@
 /*   By: tbruinem <tbruinem@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2022/03/05 08:55:31 by tbruinem      #+#    #+#                 */
-/*   Updated: 2022/03/09 15:54:01 by tbruinem      ########   odam.nl         */
+/*   Updated: 2022/03/09 17:27:24 by tbruinem      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,14 +37,15 @@ static const char* side_string_mapping[] = {
 	[SIDE_NORTHEAST] = "North East"
 };
 
-void	board_direction_print(Board* board) {
-	dprintf(2, "Direction: (%d) - %s\n", board->side, side_string_mapping[board->side]);
+void	board_direction_print(BoardSide side) {
+	dprintf(2, "Direction: (%d) - %s\n", side, side_string_mapping[side]);
 }
 
 void	slot_neighbour_print(Slot* slot) {
 	dprintf(2, "SLOT X:%d|Y:%d\n", (int)slot->position.x, (int)slot->position.y);
 	for (size_t i = 0; i < 6; i++) {
-		dprintf(2, "Neighbour[%s] = X:%d,Y:%d\n", side_string_mapping[i], (int)slot->neighbours[i]->position.x, (int)slot->neighbours[i]->position.y);
+		if (slot->neighbours[i])
+			dprintf(2, "Neighbour[%s] = X:%d,Y:%d\n", side_string_mapping[i], (int)slot->neighbours[i]->position.x, (int)slot->neighbours[i]->position.y);
 	}
 }
 
@@ -91,7 +92,7 @@ BoardSide	side_offset(BoardSide side, int offset) {
 		return (side + offset) % SIDE_SIZE;
 	}
 	else {
-		return (SIDE_SIZE + offset) % SIDE_SIZE;
+		return (SIDE_SIZE + side + offset) % SIDE_SIZE;
 	}
 }
 
@@ -211,6 +212,7 @@ v2	get_neighbour_pos(v2 position, BoardSide side) {
 // };
 
 Slot*	get_insert_slot(Board* board, BoardSide side, size_t index) {
+	printf("CURRENT DIRECTION: %s\n", side_string_mapping[side]);
 	if (index == (SIDE_LENGTH - 1)) {
 		return board->corners[side_invert(side)];
 	}
@@ -219,21 +221,31 @@ Slot*	get_insert_slot(Board* board, BoardSide side, size_t index) {
 	int			corner_index;
 	if (index < (SIDE_LENGTH - 1)) {
 		BoardSide	corner_side = side_offset(side_invert(side), -1);
+		printf("CORNER SIDE: %s\n", side_string_mapping[corner_side]);
 		slot = board->corners[corner_side];
-		travel_direction = side_invert(side_offset(side, -1));
+		travel_direction = side_invert(side_offset(side, 1));
 		corner_index = 0;
 	}
 	else {
 		BoardSide	corner_side = side_offset(side_invert(side), 1);
+		printf("CORNER SIDE: %s\n", side_string_mapping[corner_side]);
 		slot = board->corners[corner_side];
-		travel_direction = side_invert(side_offset(side, 1));
-		corner_index = (SIDE_LENGTH * 2) - 1;
+		travel_direction = side_invert(side_offset(side, -1));
+		corner_index = (SIDE_LENGTH * 2) - 2;
 	}
-	if (index == 0 || index == (SIDE_LENGTH * 2) - 1)
+	if (index == 0 || index == (SIDE_LENGTH * 2) - 2)
 		return slot;
 
-	for (size_t i = 0; i < abs(corner_index) - index; i++) {
+	slot_neighbour_print(slot);
+	board_direction_print(travel_direction);
+
+	int steps = abs(corner_index - (int)index);
+	printf("steps: %d\n", steps);
+
+	for (int i = 0; i < steps; i++) {
+		printf("%d\n", i);
 		slot = slot->neighbours[travel_direction];
+		assert(slot != NULL);
 	}
 	return slot;
 }
@@ -254,7 +266,8 @@ void	board_place(Board* board, size_t index, PelletType color) {
 	Slot* slot = get_insert_slot(board, board->side, index);
 	Pellet*	pellet = pellet_new(color, slot);
 	slot->pellet = pellet;
-	list_pushfront(&board->moving_pellets, list_new(pellet));
+	list_pushfront(&board->pellets, list_new(pellet));
+	list_pushback(&board->moving_pellets, list_new(pellet));
 	// slot_fall(board, pos, board->side);
 }
 
@@ -402,7 +415,7 @@ void	get_hex_points(v2* points, float height, float row, float col)
 // };
 
 void	board_rotate(Board* board, BoardSide new_side) {
-	List*	pellets[board->pellets_placed];
+	List*	pellets[board->pellets_placed + 1];
 	size_t	pellet_index = 0;
 
 	//Set the new side
@@ -410,7 +423,11 @@ void	board_rotate(Board* board, BoardSide new_side) {
 
 	//Gather pellets
 	for (List* iter = board->pellets; iter; iter = iter->next) {
+		dprintf(2, "ADDED PELLET\n");
 		pellets[pellet_index++] = iter;
+	}
+	if (!board->pellets_placed) {
+		return;
 	}
 
 	quicksort(pellets, (Range){0,board->pellets_placed-1}, sizeof(List*), (Lower) {
@@ -419,7 +436,7 @@ void	board_rotate(Board* board, BoardSide new_side) {
 	});
 	for (size_t i = 0; i < board->pellets_placed; i++) {
 		// dprintf(2, "PELLET[%ld] = X:%d|Y:%d\n", i, (int)pellets[i]->position.x, (int)pellets[i]->position.y);
-		list_pushback(&board->moving_pellets, pellets[i]);
+		list_pushback(&board->moving_pellets, list_new(pellets[i]->content));
 		// slot_fall(board, pellets[i]->position, board->side);
 	}
 }
@@ -442,6 +459,11 @@ void	board_render(Board* board, mlx_image_t* target) {
 	for (List* iter = board->slots; iter; iter = iter->next) {
 		Slot* slot = iter->content;
 		draw_slot(board, slot, target);
+	}
+	for (List* iter = board->pellets; iter; iter = iter->next) {
+		dprintf(2, "IM RENDERING A PELLET\n");
+		Pellet* pellet = iter->content;
+		draw_pellet(board, pellet, target);
 	}
 	if (board->tween.progress < 1) {
 		board->tween.progress += 0.01;
@@ -507,6 +529,7 @@ static void	create_slots(Board* board) {
 		.y = SIDE_LENGTH - 1
 	};
 	Slot*	middle = slot_new(middle_pos);
+	slot_neighbour_print(middle);
 	temp[(int)middle_pos.y][(int)middle_pos.x] = middle;
 
 	list_pushback(&new_slots, list_new(middle));
@@ -537,7 +560,7 @@ static void	create_slots(Board* board) {
 
 	assign_corners(board, temp);
 
-	Slot* center_slot = temp[SIDE_LENGTH-1][SIDE_LENGTH-1];
+	Slot* center_slot = temp[SIDE_LENGTH - 1][SIDE_LENGTH - 1];
 	board->center = (v2){center_slot->points[0].x + ((center_slot->points[3].x - center_slot->points[0].x) / 2), center_slot->points[0].y};
 }
 

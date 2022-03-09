@@ -6,7 +6,7 @@
 /*   By: tbruinem <tbruinem@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2022/03/05 08:55:45 by tbruinem      #+#    #+#                 */
-/*   Updated: 2022/03/09 15:23:45 by tbruinem      ########   odam.nl         */
+/*   Updated: 2022/03/09 17:17:50 by tbruinem      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,6 +50,7 @@ typedef enum PelletType {
 typedef struct Pellet {
 	PelletType	color;
 	Slot*		slot;
+	bool		moving; //for falling purposes
 }	Pellet;
 
 typedef struct Slot {
@@ -68,8 +69,8 @@ typedef struct Board {
 	size_t		pellets_placed;
 	v2			center;
 	Tween		tween;
-	List*		moving_pellets;
 	Slot*		corners[6];
+	List*		moving_pellets;
 }	Board;
 
 void	board_init(Board* board);
@@ -81,7 +82,8 @@ bool	pellet_staggered_fall(Pellet* pellet, BoardSide side);
 void	board_rotate(Board* board, BoardSide new_side);
 void	slot_neighbour_print(Slot* slot);
 void	board_update_direction(Board* board, int cycles);
-void	board_direction_print(Board* board);
+void	board_direction_print(BoardSide side);
+void	draw_pellet(Board* board, Pellet* pellet, mlx_image_t* target);
 
 void	board_place(Board* board, size_t index, PelletType color);
 
