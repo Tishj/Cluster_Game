@@ -6,7 +6,7 @@
 /*   By: tbruinem <tbruinem@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2022/03/05 09:53:25 by tbruinem      #+#    #+#                 */
-/*   Updated: 2022/03/08 21:57:27 by tbruinem      ########   odam.nl         */
+/*   Updated: 2022/03/09 21:56:50 by tbruinem      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,6 +17,7 @@
 #include <ctype.h>
 #include "Error.h"
 #include <stdbool.h>
+#include "Board.h"
 
 const char* valid_commands[] = {
 	[CMD_PLACE] = "PLACE",
@@ -80,9 +81,12 @@ Command*	command_rotate(int cycles) {
 }
 
 static bool	slot_index_check(int slot_index) {
-	return (slot_index >= 0 && slot_index <= 6);
+	const int max_index = (SIDE_LENGTH * 2) - 2;
+	dprintf(2, "MAX_INDEX: %d\n", max_index);
+	return (slot_index >= 0 && slot_index <= max_index);
 }
 
+//Take player to verify that the color is one chosen for them
 static bool	color_index_check(int color_index) {
 	return (color_index >= 0 && color_index <= 3);
 }
