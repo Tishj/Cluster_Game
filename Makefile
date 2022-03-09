@@ -6,7 +6,7 @@
 #    By: tbruinem <tbruinem@student.codam.nl>         +#+                      #
 #                                                    +#+                       #
 #    Created: 2022/02/07 16:04:49 by tbruinem      #+#    #+#                  #
-#    Updated: 2022/03/08 17:14:58 by tbruinem      ########   odam.nl          #
+#    Updated: 2022/03/09 22:43:44 by tbruinem      ########   odam.nl          #
 #                                                                              #
 # **************************************************************************** #
 
@@ -35,19 +35,29 @@ SRC =	main.c \
 		Sort.c \
 		Player.c \
 		List.c \
+		split.c \
+		abspath.c \
 		Util.c
 
 OBJ := $(addprefix $(OBJDIR)/, $(SRC:%.c=%.o))
 SRC := $(addprefix $(SRCDIR)/, $(SRC))
 
 FLAGS = -Wall -Wextra -Werror
-ifdef DEBUG
-	FLAGS += -g -fsanitize=address
+ifeq ($(DEBUG),1)
+	FLAGS += -g
+endif
+ifeq ($(DEBUG),2)
+	FLAGS += -g3 -fsanitize=address
 endif
 
-# all:
-# 	echo $(LINKER)
-all: $(NAME)
+
+all: $(NAME) bot client
+
+bot: basic_bot.c
+	gcc $(FLAGS) basic_bot.c -o $@
+
+client: client.c
+	gcc $(FLAGS) client.c -o $@
 
 $(NAME): $(OBJ) $(LIBS)
 	@echo "Compiling Cluster..."

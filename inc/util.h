@@ -6,7 +6,7 @@
 /*   By: tbruinem <tbruinem@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2022/03/05 10:26:07 by tbruinem      #+#    #+#                 */
-/*   Updated: 2022/03/08 00:10:07 by tbruinem      ########   odam.nl         */
+/*   Updated: 2022/03/09 22:46:14 by tbruinem      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,5 +41,8 @@ unsigned long	time_msec(void);
 void	wait_duration(size_t duration);
 int		sign(int a);
 float	lerp(float a, float b, float t);
+char	**split(const char *s, char c);
+char*	expand_path(char *program);
+void	print_str2(char** str);
 
 #endif

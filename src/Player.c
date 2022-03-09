@@ -6,7 +6,7 @@
 /*   By: tbruinem <tbruinem@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2022/03/05 23:09:04 by tbruinem      #+#    #+#                 */
-/*   Updated: 2022/03/08 14:42:13 by tbruinem      ########   odam.nl         */
+/*   Updated: 2022/03/09 22:54:18 by tbruinem      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,6 +19,7 @@
 #include "Command.h"
 #include <sys/time.h>
 #include <pthread.h>
+#include <string.h>
 
 #define GAME_CLIENT "./client"
 
@@ -65,6 +66,7 @@ Command*	connection_get_command(Connection* connection, size_t timeout) {
 	}
 	//If the thread was canceled before it finished, it was timed out (Untested)
 	if (line == PTHREAD_CANCELED) {
+		dprintf(2, "BOT TIMED OUT\n");
 		return command_invalid();
 	}
 	Command* command = command_parse(line);
@@ -72,7 +74,7 @@ Command*	connection_get_command(Connection* connection, size_t timeout) {
 	return command;
 }
 
-void	connection_init(Connection* connection, char* abspath, bool bot) {
+void	connection_init(Connection* connection, char** abspath, bool bot) {
 	connection->bot = bot;
 	if (bot == true) {
 		if (pipe(connection->input) == -1) {
@@ -89,7 +91,7 @@ void	connection_init(Connection* connection, char* abspath, bool bot) {
 
 			dup2(connection->output[WRITE], STDOUT_FILENO);
 			close(connection->output[WRITE]);
-			execv(abspath, (char*[]){abspath, NULL});
+			execv(abspath[0], abspath);
 			exit(1);
 		}
 		close(connection->input[READ]);
@@ -103,7 +105,7 @@ void	connection_init(Connection* connection, char* abspath, bool bot) {
 		if (pid == 0) {
 			dup2(connection->output[WRITE], STDOUT_FILENO);
 			close(connection->output[WRITE]);
-			execv(abspath, (char*[]){abspath, NULL});
+			execv(abspath[0], abspath);
 			exit(1);
 		}
 		close(connection->output[WRITE]);
@@ -127,9 +129,35 @@ Command*	player_get_command(Player* player, Game* game) {
 	return connection_get_command(&player->conn, timeout_duration);
 }
 
-void	player_init(Player* player, PlayerType color, char* abspath) {
-	bool	bot = abspath != NULL;
-	connection_init(&player->conn, bot ? abspath : GAME_CLIENT, bot);
+char**	get_abspath(char* program) {
+	if (!program) {
+		char**	arguments = malloc(sizeof(char*) * 2);
+		if (!arguments) {
+			FATAL(MEMORY_ALLOCATION_FAIL);
+		}
+		arguments[0] = strdup(GAME_CLIENT);
+		if (!arguments[0]) {
+			FATAL(MEMORY_ALLOCATION_FAIL);
+		}
+		arguments[1] = NULL;
+		return arguments;
+	}
+	char**	arguments = split(program, ' ');
+	if (!arguments) {
+		FATAL(MEMORY_ALLOCATION_FAIL);
+	}
+	arguments[0] = expand_path(arguments[0]);
+	return arguments;
+}
 
+void	player_init(Player* player, PlayerType color, char* program) {
+	bool	bot = program != NULL;
+	char**	abspath = get_abspath(program);
+	connection_init(&player->conn, abspath, bot);
+	print_str2(abspath);
+	for (size_t i = 0; abspath[i]; i++) {
+		free(abspath[i]);
+	}
+	free(abspath);
 	player->color = color;
 }
