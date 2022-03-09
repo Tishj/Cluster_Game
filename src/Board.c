@@ -6,7 +6,7 @@
 /*   By: tbruinem <tbruinem@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2022/03/05 08:55:31 by tbruinem      #+#    #+#                 */
-/*   Updated: 2022/03/08 20:20:59 by limartin      ########   odam.nl         */
+/*   Updated: 2022/03/09 13:27:56 by limartin      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -330,6 +330,7 @@ void translate_to_index(Board* board, int side_length)
 	int 	col = 0;
 	Facing	facing;
 	Facing	opposite_facing;
+	float	opposite_offset;
 	float 	fx;
 	float 	fy;
 	int		ix;
@@ -346,15 +347,40 @@ void translate_to_index(Board* board, int side_length)
 		// printf("fx = %f, fy = %f\n", traversal_offset[0][1].x, traversal_offset[0][0].y);
 		fx = board->compass[facing].x + (col * (traversal_offset[0][facing].x));
 		fy = board->compass[facing].y + (col * (traversal_offset[0][facing].y));
-		while (fy <= board->compass[opposite_facing].y) //needs expanding
+		opposite_offset = -1.0 * traversal_offset[0][facing].y;
+		while (fy <= (board->compass[opposite_facing].y + (opposite_offset * col))) //needs expanding
 		{
 			ix = (int)(fx);
 			iy = (int)(fy);
 			board->map[iy][ix].index[DIR_SOUTH].letter = letter;
 			board->map[iy][ix].index[DIR_SOUTH].number = number;
+			printf(" %d,%d \n", iy, ix);
+			// printf("as floats: %f, %f\n", fy, fx);
 			fy = fy + 1.0;
 			number++;
-			printf(" %d,%d \n", ix, iy);
+		}
+		col++;
+	}
+	facing = NORTH;
+	opposite_facing = SOUTH;
+	col = 1;
+	while (col < side_length)
+	{
+		printf("Lmao2\n");
+		// printf("fx = %f, fy = %f\n", traversal_offset[0][1].x, traversal_offset[0][0].y);
+		fx = board->compass[facing].x + (col * (traversal_offset[0][facing].x));
+		fy = board->compass[facing].y + (col * (traversal_offset[0][facing].y));
+		opposite_offset = -1.0 * traversal_offset[0][facing].y;
+		while (fy <= (board->compass[opposite_facing].y + (opposite_offset * col))) //needs expanding
+		{
+			ix = (int)(fx + 0.5);
+			iy = (int)(fy + 0.5);
+			board->map[iy][ix].index[DIR_SOUTH].letter = letter;
+			board->map[iy][ix].index[DIR_SOUTH].number = number;
+			printf(" %d,%d \n", iy, ix);
+			// printf("as floats: %f, %f\n", fy, fx);
+			fy = fy + 1.0;
+			number++;
 		}
 		col++;
 	}
