@@ -6,7 +6,7 @@
 /*   By: tbruinem <tbruinem@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2022/03/05 08:55:45 by tbruinem      #+#    #+#                 */
-/*   Updated: 2022/03/09 17:17:50 by tbruinem      ########   odam.nl         */
+/*   Updated: 2022/03/09 21:12:38 by tbruinem      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,7 +19,7 @@
 #include "Draw.h"
 #include "List.h"
 
-#define SIDE_LENGTH 4
+#define SIDE_LENGTH 5
 
 //(SIDE_SIZE + Rotation) % SIDE_SIZE == BoardSide
 typedef enum BoardCycle {

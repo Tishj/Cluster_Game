@@ -6,7 +6,7 @@
 /*   By: tbruinem <tbruinem@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2022/03/05 09:53:25 by tbruinem      #+#    #+#                 */
-/*   Updated: 2022/03/08 19:26:57 by tbruinem      ########   odam.nl         */
+/*   Updated: 2022/03/08 21:57:27 by tbruinem      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -125,4 +125,5 @@ Command*	command_parse(char* commandstring) {
 			return command_place(slot_index, color_index);
 		}
 	}
+	return command_invalid();
 }

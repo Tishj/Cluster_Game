@@ -6,7 +6,7 @@
 #    By: tbruinem <tbruinem@student.codam.nl>         +#+                      #
 #                                                    +#+                       #
 #    Created: 2022/02/07 16:04:49 by tbruinem      #+#    #+#                  #
-#    Updated: 2022/03/09 15:47:11 by tbruinem      ########   odam.nl          #
+#    Updated: 2022/03/09 21:33:49 by tbruinem      ########   odam.nl          #
 #                                                                              #
 # **************************************************************************** #
 
@@ -48,9 +48,14 @@ ifeq ($(DEBUG),2)
 	FLAGS += -g3 -fsanitize=address
 endif
 
-# all:
-# 	echo $(LINKER)
-all: $(NAME)
+
+all: $(NAME) bot client
+
+bot: basic_bot.c
+	gcc $(FLAGS) basic_bot.c -o $@
+
+client: client.c
+	gcc $(FLAGS) client.c -o $@
 
 $(NAME): $(OBJ) $(LIBS)
 	@echo "Compiling Cluster..."

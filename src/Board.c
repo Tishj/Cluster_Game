@@ -6,7 +6,7 @@
 /*   By: tbruinem <tbruinem@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2022/03/05 08:55:31 by tbruinem      #+#    #+#                 */
-/*   Updated: 2022/03/09 17:27:24 by tbruinem      ########   odam.nl         */
+/*   Updated: 2022/03/09 21:31:10 by tbruinem      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,6 +42,7 @@ void	board_direction_print(BoardSide side) {
 }
 
 void	slot_neighbour_print(Slot* slot) {
+	// assert(slot != NULL);
 	dprintf(2, "SLOT X:%d|Y:%d\n", (int)slot->position.x, (int)slot->position.y);
 	for (size_t i = 0; i < 6; i++) {
 		if (slot->neighbours[i])
@@ -364,56 +365,6 @@ void	get_hex_points(v2* points, float height, float row, float col)
 	points[5] = (v2){(int)(x + width * 0.25),(int)(y + height / 2)};
 }
 
-// void	slot_init(Slot* slot, int row, int col) {
-// 	bool round = (col % 2 != 0);
-
-// 	slot->position = (v2){col, row};
-// 	slot->pellet = NULL;
-// 	get_hex_points(slot->points, HEXAGON_HEIGHT, slot->position.y, slot->position.x);
-// 	for (size_t i = SIDE_SOUTH; i < SIDE_SIZE; i++) {
-// 		v2 pos = neighbour_offset[round][i];
-// 		pos.x += col;
-// 		pos.y += row;
-// 		if (board_inside(pos)) {
-// 			slot->neighbours[i] = pos;
-// 		}
-// 		else {
-// 			slot->neighbours[i] = no_neighbour;
-// 		}
-// 	}
-// }
-
-// static const Range ranges[] = {
-// 	[0] = {
-// 		.start = 3,
-// 		.end = 4
-// 	},
-// 	[1] = {
-// 		.start = 1,
-// 		.end = 6
-// 	},
-// 	[2] = {
-// 		.start = 0,
-// 		.end = 7
-// 	},
-// 	[3] = {
-// 		.start = 0,
-// 		.end = 7
-// 	},
-// 	[4] = {
-// 		.start = 0,
-// 		.end = 7
-// 	},
-// 	[5] = {
-// 		.start = 0,
-// 		.end = 7
-// 	},
-// 	[6] = {
-// 		.start = 2,
-// 		.end = 5
-// 	}
-// };
-
 void	board_rotate(Board* board, BoardSide new_side) {
 	List*	pellets[board->pellets_placed + 1];
 	size_t	pellet_index = 0;
@@ -474,14 +425,6 @@ void	board_render(Board* board, mlx_image_t* target) {
 	}
 }
 
-//deprecated
-// void	board_update_slot(Board* board, int row, int col, PelletType color) {
-// 	if (board->map[row][col].color == EMPTY) {
-// 		board->pellets_placed++;
-// 	}
-// 	board->map[row][col].color = color;
-// }
-
 Slot*	slot_new(v2 position) {
 	Slot*	slot = malloc(sizeof(Slot));
 	if (!slot) {
@@ -521,9 +464,14 @@ static void	assign_corners(Board* board, Slot* tmp[(SIDE_LENGTH * 2)][(SIDE_LENG
 static void	create_slots(Board* board) {
 	const int	board_height = (SIDE_LENGTH * 2);
 	//Could do this more optimally by creating it as needed for every "ring"
-	Slot* temp[board_height][board_height] = {};
+	Slot* temp[board_height][board_height];
 	List*	new_slots = NULL;
 
+	for (int i = 0; i < board_height; i++) {
+		for (int j = 0; j < board_height; j++) {
+			temp[i][j] = NULL;
+		}
+	}
 	v2		middle_pos = {
 		.x = SIDE_LENGTH - 1,
 		.y = SIDE_LENGTH - 1
