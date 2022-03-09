@@ -6,7 +6,7 @@
 /*   By: tbruinem <tbruinem@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2022/03/05 08:55:31 by tbruinem      #+#    #+#                 */
-/*   Updated: 2022/03/09 21:31:10 by tbruinem      ########   odam.nl         */
+/*   Updated: 2022/03/09 22:47:14 by tbruinem      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -490,7 +490,7 @@ static void	create_slots(Board* board) {
 			for (size_t side = SIDE_SOUTH; side < SIDE_SIZE; side++) {
 				v2 position = slot->position;
 				v2 neighbour_position = get_neighbour_pos(position, side);
-				dprintf(2, "NEIGHBOUR POS: %d|%d\n", (int)neighbour_position.x, (int)neighbour_position.y);
+				// dprintf(2, "NEIGHBOUR POS: %d|%d\n", (int)neighbour_position.x, (int)neighbour_position.y);
 				//Retrieve the neighbour
 				Slot* neighbour = temp[(int)neighbour_position.y][(int)neighbour_position.x];
 				//If the neighbour doesnt exist yet, and we're not at the final ring, add it

@@ -6,7 +6,7 @@
 /*   By: tbruinem <tbruinem@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2022/03/05 10:27:13 by tbruinem      #+#    #+#                 */
-/*   Updated: 2022/03/08 00:09:52 by tbruinem      ########   odam.nl         */
+/*   Updated: 2022/03/09 22:46:01 by tbruinem      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,6 +14,7 @@
 #include <math.h>
 #include <sys/time.h>
 #include <unistd.h>
+#include <stdio.h>
 
 void	wait_duration(size_t duration) {
 	const unsigned long start_msec = time_msec();
@@ -96,4 +97,10 @@ float	lerp(float a, float b, float t) {
 double		deg2rad(double angle)
 {
 	return (angle * (M_PI / 180));
+}
+
+void	print_str2(char** str) {
+	for (size_t i = 0; str[i]; i++) {
+		printf("%s\n", str[i]);
+	}
 }
