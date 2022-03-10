@@ -6,7 +6,7 @@
 /*   By: tbruinem <tbruinem@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2022/03/07 19:20:13 by tbruinem      #+#    #+#                 */
-/*   Updated: 2022/03/10 22:16:21 by tbruinem      ########   odam.nl         */
+/*   Updated: 2022/03/10 22:37:42 by tbruinem      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,6 +14,9 @@
 #include <stdbool.h>
 #include <unistd.h>
 #include <stdlib.h>
+#include <sys/types.h>
+#include <fcntl.h>
+#include <unistd.h>
 
 // ### Initialization Input
 
@@ -59,62 +62,64 @@
 // - `colorIndex`: index of the pellet's color.
 
 int main() {
+	int fd = open("bot.log", O_CREAT | O_WRONLY | O_TRUNC, 0644);
+
 	int numberOfCells;
-	scanf("%d\n", &numberOfCells);
+	scanf("%d\n", &numberOfCells);dprintf(fd, "numberOfCells %d\n", numberOfCells);
 	for (int i = 0; i < numberOfCells; i++) {
 		int index;
-		scanf("%d", &index);
+		scanf("%d", &index);dprintf(fd, "index %d\n", index);
 		for (int neigh = 0; neigh < 6; neigh++) {
 			int neighIndex;
-			scanf("%d", &neighIndex);
+			scanf("%d", &neighIndex);dprintf(fd, "neighIndex %d\n", neighIndex);
 		}
 		scanf("\n");
 	}
 
 	int yourColors;
-	scanf("%d\n", &yourColors);
+	scanf("%d\n", &yourColors);dprintf(fd, "yourColors %d\n", yourColors);
 	for (int i = 0; i < yourColors; i++) {
 		int colorIndex;
 		int colorAmount;
-		scanf("%d %d\n", &colorIndex, &colorAmount);
+		scanf("%d %d\n", &colorIndex, &colorAmount); dprintf(fd, "colorIndex %d colorAmount %d\n", colorIndex, colorAmount);
 	}
 	int opponentColors;
-	scanf("%d\n", &opponentColors);
+	scanf("%d\n", &opponentColors);dprintf(fd, "opponentColors %d\n", opponentColors);
 	for (int i = 0; i < opponentColors; i++) {
 		int colorIndex;
 		int colorAmount;
-		scanf("%d %d\n", &colorIndex, &colorAmount);
+		scanf("%d %d\n", &colorIndex, &colorAmount);dprintf(fd, "colorIndex %d colorAmount %d\n", colorIndex, colorAmount);
 	}
 	while (true) {
 		int direction;
-		scanf("%d\n", &direction);
+		scanf("%d\n", &direction);dprintf(fd, "direction %d\n", direction);
 
 		int numberOfValidInsertSlots;
-		scanf("%d\n", &numberOfValidInsertSlots);
+		scanf("%d\n", &numberOfValidInsertSlots);dprintf(fd, "numberOfValidInsertSlots %d\n", numberOfValidInsertSlots);
 		for (int i = 0; i < numberOfValidInsertSlots; i++) {
 			int column, cellIndex;
-			scanf("%d %d\n", &column, &cellIndex);
+			scanf("%d %d\n", &column, &cellIndex);dprintf(fd, "column %d cellIndex %d\n", column, cellIndex);
 		}
 
 		int numberOfNewPellets;
-		scanf("%d\n", &numberOfNewPellets);
+		scanf("%d\n", &numberOfNewPellets);dprintf(fd, "numberOfNewPellets %d\n", numberOfNewPellets);
 		for (int i = 0; i < numberOfNewPellets; i++) {
 			int index, cellIndex, colorIndex, isMine;
-			scanf("%d %d %d %d\n", &index, &cellIndex, &colorIndex, &isMine);
+			scanf("%d %d %d %d\n", &index, &cellIndex, &colorIndex, &isMine);dprintf(fd, "index %d cellIndex %d colorIndex %d isMine %d\n", index, cellIndex, colorIndex, isMine);
 		}
 
 		int numberOfChangedPellets;
-		scanf("%d\n", &numberOfChangedPellets);
+		scanf("%d\n", &numberOfChangedPellets);dprintf(fd, "numberOfChangedPellets %d\n", numberOfChangedPellets);
 		for (int i = 0; i < numberOfChangedPellets; i++) {
 			int index, cellIndex;
-			scanf("%d %d\n", &index, &cellIndex);
+			scanf("%d %d\n", &index, &cellIndex);dprintf(fd, "index %d cellIndex %d\n", index, cellIndex);
 		}
 
 		int numberOfPelletsInHand;
-		scanf("%d\n", &numberOfPelletsInHand);
+		scanf("%d\n", &numberOfPelletsInHand);dprintf(fd, "numberOfPelletsInHand %d\n", numberOfPelletsInHand);
 		for (int i = 0; i < numberOfPelletsInHand; i++) {
 			int colorIndex;
-			scanf("%d\n", &colorIndex);
+			scanf("%d\n", &colorIndex);dprintf(fd, "colorIndex %d\n", colorIndex);
 		}
 		printf("ROTATE 1\n");
 	}
