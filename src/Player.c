@@ -6,7 +6,7 @@
 /*   By: tbruinem <tbruinem@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2022/03/05 23:09:04 by tbruinem      #+#    #+#                 */
-/*   Updated: 2022/03/10 20:56:26 by tbruinem      ########   odam.nl         */
+/*   Updated: 2022/03/10 21:10:53 by tbruinem      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,6 +23,7 @@
 #include <signal.h>
 #include <sys/types.h>
 #include <sys/wait.h>
+#include "Sack.h"
 
 #define GAME_CLIENT "./client"
 
@@ -128,7 +129,6 @@ void	player_send_input(Player* player, Game* game) {
 		int fd = player->conn.input[WRITE];
 		//Initial input
 		if (!game->state.turn_count) {
-			dprintf(fd, "%d\n", game->board.side);
 			int board_size = get_board_size();
 			dprintf(fd, "%d\n", board_size);
 			for (List* iter = game->board.slots; iter; iter = iter->next) {
@@ -145,34 +145,35 @@ void	player_send_input(Player* player, Game* game) {
 			}
 		}
 		//Normal round input
+		dprintf(fd, "%d\n", game->board.side);
+		//Rotation happened
+		if (game->board.side != side) {
+			dprintf(fd, "0\n"); //numberOfNewPellets
+			dprintf(fd, "%ld\n", game->board.pellets_placed);
+			for (List* iter = game->board.pellets; iter; iter = iter->next) {
+				Pellet* pellet = iter->content;
+				dprintf(fd, "%ld %ld\n", pellet->index, pellet->slot->index);
+			}
+		}
 		else {
-			dprintf(fd, "%d\n", game->board.side);
-			//Rotation happened
-			if (game->board.side != side) {
-				dprintf(fd, "0\n"); //numberOfNewPellets
-				dprintf(fd, "%ld\n", game->board.pellets_placed);
-				for (List* iter = game->board.pellets; iter; iter = iter->next) {
-					Pellet* pellet = iter->content;
-					dprintf(fd, "%ld %ld\n", pellet->index, pellet->slot->index);
-				}
+			List* iter = game->board.pellets;
+			while (iter && iter->next) {
+				iter = iter->next;
 			}
-			else {
-				List* iter = game->board.pellets;
-				while (iter->next) {
-					iter = iter->next;
-				}
-				dprintf(fd, "1\n");
-				//Dit is kut..
-				//Need to keep track per player which data they're missing, this includes their own pellet placements
-				for (size_t i = 0; i < player->missing_pellets; i++) {
-					Pellet* pellet = iter->content;
-					bool is_mine = (pellet->color % 2) == player->color;
-					dprintf(fd, "%ld %ld %d %d\n", pellet->index, pellet->slot->index, pellet->color, (int)is_mine);
-					iter = iter->prev;
-				}
-				dprintf(fd, "0\n"); //numberOfChangedPellets
+			dprintf(fd, "%ld\n", player->missing_pellets);
+			for (size_t i = 0; i < player->missing_pellets; i++) {
+				Pellet* pellet = iter->content;
+				bool is_mine = (pellet->color % 2) == player->color;
+				dprintf(fd, "%ld %ld %d %d\n", pellet->index, pellet->slot->index, pellet->color, (int)is_mine);
+				iter = iter->prev;
 			}
-
+			dprintf(fd, "0\n"); //numberOfChangedPellets
+		}
+		dprintf(fd, "%d\n", COLORS_P_PLAYER);
+		for (size_t i = 0; i < COLORS_P_PLAYER; i++) {
+			for (int j = 0; j < player->hand[i]; j++) {
+				dprintf(fd, "%d\n", player->color + ((int)i * 2));
+			}
 		}
 	}
 	player->missing_pellets = 0;
