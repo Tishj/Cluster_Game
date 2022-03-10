@@ -47,7 +47,7 @@ void*	read_line(void* param) {
 	return line;
 }
 
-Command*	connection_get_command(Connection* connection, size_t timeout) {
+char*	connection_get_command(Connection* connection, size_t timeout) {
 	pthread_t		thread;
 
 	//Start a thread that is going to try to read a line of input from the bot
@@ -67,12 +67,10 @@ Command*	connection_get_command(Connection* connection, size_t timeout) {
 	}
 	//If the thread was canceled before it finished, it was timed out (Untested)
 	if (line == PTHREAD_CANCELED) {
-		dprintf(2, "BOT TIMED OUT\n");
-		return command_invalid();
+		// dprintf(2, "BOT TIMED OUT\n");
+		return NULL;
 	}
-	Command* command = command_parse(line);
-	free(line);
-	return command;
+	return line;
 }
 
 void	connection_init(Connection* connection, char** abspath, bool bot) {
@@ -127,7 +125,10 @@ void	player_send_input(Player* player, Game* game) {
 Command*	player_get_command(Player* player, Game* game) {
 	player_send_input(player, game);
 	size_t	timeout_duration = game->state.turn_count ? ROUND_TIMEOUT_DURATION : INITIAL_TIMEOUT_DURATION;
-	return connection_get_command(&player->conn, timeout_duration);
+	char* line = connection_get_command(&player->conn, timeout_duration);
+	Command* command = command_parse(line, player);
+	free(line);
+	return command;
 }
 
 char**	get_abspath(char* program) {

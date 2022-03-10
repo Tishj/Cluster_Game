@@ -20,7 +20,8 @@
 
 typedef enum PlayerType {
 	PLAYER_BLUE,
-	PLAYER_RED
+	PLAYER_RED,
+	PLAYER_SIZE
 }	PlayerType;
 
 typedef struct Connection {

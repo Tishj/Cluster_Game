@@ -19,6 +19,7 @@
 #include "Player.h"
 #include <sys/time.h>
 #include "Command.h"
+#include "Sack.h"
 
 void	init_players(Player* player, int argc, char **argv) {
 	for (int i = 0; i < 2; i++) {
@@ -44,6 +45,7 @@ void	game_init(Game* game, int argc, char **argv) {
 	state_init(&game->state);
 
 	init_players(game->player, argc-1, argv+1);
+	sack_init(game);
 
 	board_init(&game->board);
 	game->image = mlx_new_image(mlx(), WINDOW_WIDTH, WINDOW_HEIGHT);
@@ -69,6 +71,16 @@ void	game_execute_command(Game* game, Player* player, Command* command) {
 			game->animating = true;
 			CommandPlace* cmd = (void*)command;
 			board_place(&game->board, cmd->slot_index, cmd->color_index);
+			//Remove the index from the hand
+			player->hand[cmd->color_index / PLAYER_SIZE]--;
+			//Place all the other pellet(s) back into the bag
+			for (size_t i = 0; i < 2; i++) {
+				int amount = player->hand[i];
+				player->hand[i] = 0;
+				player->bag[i] += amount;
+			}
+			//Add the counter for the board
+			game->onboard[cmd->color_index]++;
 			(void)cmd;
 			break;
 		};
@@ -77,6 +89,7 @@ void	game_execute_command(Game* game, Player* player, Command* command) {
 			board_update_direction(&game->board, cmd->cycles);
 			board_rotate(&game->board, game->board.side);
 			game->animating = true;
+			bzero(player->hand, sizeof(int) * 2);
 			break;
 		};
 	}
@@ -125,6 +138,8 @@ void	game_loop(void* param) {
 	else {
 		Player*	current_player = &game->player[state->current_player];
 
+		sack_drawhand(current_player);
+		sack_debug(current_player);
 		Command* command = player_get_command(current_player, game);
 		command_print(command);
 		game_execute_command(game, current_player, command);

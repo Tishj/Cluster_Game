@@ -6,15 +6,11 @@
 #include "Game.h"
 #include <stdlib.h>
 
-//structs
-/*
-typedef struct Pellet {
-	PelletType		color
-}	Pellet;
-*/
-typedef struct p_list{
-	enum PelletType	color;
-	struct p_list	*next;
-}	P_list;
+//Defines
+#define COLORS_P_PLAYER 2
+
+void	sack_init(Game* game);
+void	sack_debug(Player* player);
+void	sack_drawhand(Player *player);
 
 #endif
