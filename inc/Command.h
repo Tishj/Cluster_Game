@@ -6,7 +6,7 @@
 /*   By: tbruinem <tbruinem@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2022/03/05 09:50:10 by tbruinem      #+#    #+#                 */
-/*   Updated: 2022/03/08 14:30:31 by tbruinem      ########   odam.nl         */
+/*   Updated: 2022/03/10 20:51:47 by tbruinem      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,8 +43,9 @@ Command*	command_place(int slot_index, int color_index);
 Command*	command_rotate(int cycles);
 
 typedef struct Player Player;
+typedef struct Board Board;
 
-Command*	command_parse(char* commandstring, Player* player);
+Command*	command_parse(char* commandstring, Player* player, Board* board);
 void		command_print(Command* command);
 
 
