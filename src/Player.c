@@ -6,7 +6,7 @@
 /*   By: tbruinem <tbruinem@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2022/03/05 23:09:04 by tbruinem      #+#    #+#                 */
-/*   Updated: 2022/03/10 23:25:41 by tbruinem      ########   odam.nl         */
+/*   Updated: 2022/03/10 23:50:29 by tbruinem      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,6 +34,8 @@ void*	read_line(void* param) {
 	Connection*	connection = param;
 	char*	line = NULL;
 	size_t	capacity = 0;
+
+	fflush(connection->handle);
 
 	//Blocking - cant guarantee this will stop
 	dprintf(2, "READING INPUT FROM BOT\n");
@@ -88,6 +90,9 @@ void	connection_init(Connection* connection, char** abspath, bool bot) {
 			FATAL(MEMORY_ALLOCATION_FAIL);
 		}
 		pid_t pid = fork();
+		if (pid == -1) {
+			FATAL(MEMORY_ALLOCATION_FAIL);
+		}
 		if (pid == 0) {
 			//Read end of input pipe is connected to STDIN
 			dup2(connection->input[READ], STDIN_FILENO);
@@ -95,27 +100,35 @@ void	connection_init(Connection* connection, char** abspath, bool bot) {
 
 			dup2(connection->output[WRITE], STDOUT_FILENO);
 			close(connection->output[WRITE]);
+
+			close(connection->output[READ]);
+			close(connection->input[WRITE]);
+
 			execv(abspath[0], abspath);
 			exit(1);
 		}
+		connection->pid = pid;
 		close(connection->input[READ]);
 		close(connection->output[WRITE]);
-		// connection->in = fdopen(connection->input[WRITE], "w");
-		// if (!connection->in) {
-		// 	FATAL(MEMORY_ALLOCATION_FAIL);
-		// }
 	}
 	else {
 		if (pipe(connection->output) == -1) {
 			FATAL(MEMORY_ALLOCATION_FAIL);
 		}
 		pid_t pid = fork();
+		if (pid == -1) {
+			FATAL(MEMORY_ALLOCATION_FAIL);
+		}
 		if (pid == 0) {
 			dup2(connection->output[WRITE], STDOUT_FILENO);
 			close(connection->output[WRITE]);
+
+			close(connection->output[READ]);
+
 			execv(abspath[0], abspath);
 			exit(1);
 		}
+		connection->pid = pid;
 		close(connection->output[WRITE]);
 	}
 	connection->handle = fdopen(connection->output[READ], "r");
@@ -216,7 +229,7 @@ void	player_send_input(Player* player, Game* game) {
 }
 
 Command*	player_get_command(Player* player, Game* game) {
-	player_send_input(player, game);
+	// player_send_input(player, game);
 	size_t	timeout_duration = game->state.turn_count ? ROUND_TIMEOUT_DURATION : INITIAL_TIMEOUT_DURATION;
 	char* line = connection_get_command(&player->conn, timeout_duration);
 	Command* command = command_parse(line, player, &game->board);
@@ -248,6 +261,7 @@ char**	get_abspath(char* program) {
 void	connection_destroy(Connection* connection) {
 	kill(connection->pid, SIGKILL);
 	waitpid(connection->pid, NULL, 0);
+	fclose(connection->handle);
 }
 
 void	player_destroy(Player* player) {

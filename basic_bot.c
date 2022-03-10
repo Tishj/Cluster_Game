@@ -6,7 +6,7 @@
 /*   By: tbruinem <tbruinem@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2022/03/07 19:20:13 by tbruinem      #+#    #+#                 */
-/*   Updated: 2022/03/10 23:28:08 by tbruinem      ########   odam.nl         */
+/*   Updated: 2022/03/10 23:45:09 by tbruinem      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -62,66 +62,70 @@
 // - `colorIndex`: index of the pellet's color.
 
 int main() {
-	int fd = open("bot.log", O_CREAT | O_WRONLY | O_TRUNC, 0644);
+	// char	buf[50 + 1];
+	// int fd = open("bot.log", O_CREAT | O_WRONLY | O_TRUNC, 0644);
 
-	int numberOfCells;
-	scanf("%d\n", &numberOfCells);dprintf(fd, "numberOfCells %d\n", numberOfCells);
-	for (int i = 0; i < numberOfCells; i++) {
-		int index;
-		int n0,n1,n2,n3,n4,n5;
-		scanf("%d %d %d %d %d %d %d\n", &index, &n0, &n1, &n2, &n3, &n4, &n5);dprintf(fd, "index %d n0 %d n1 %d n2 %d n3 %d n4 %d n5 %d\n", index, n0, n1, n2, n3, n4, n5);
-	}
+	// int numberOfCells;
+	// scanf("%d\n", &numberOfCells);dprintf(fd, "numberOfCells %d\n", numberOfCells);
+	// for (int i = 0; i < numberOfCells; i++) {
+	// 	int index;
+	// 	int n0,n1,n2,n3,n4,n5;
+	// 	scanf("%d %d %d %d %d %d %d\n", &index, &n0, &n1, &n2, &n3, &n4, &n5);dprintf(fd, "index %d n0 %d n1 %d n2 %d n3 %d n4 %d n5 %d\n", index, n0, n1, n2, n3, n4, n5);
+	// }
 
-	int yourColors;
-	scanf("%d\n", &yourColors);dprintf(fd, "yourColors %d\n", yourColors);
-	for (int i = 0; i < yourColors; i++) {
-		int colorIndex;
-		int colorAmount;
-		scanf("%d %d\n", &colorIndex, &colorAmount); dprintf(fd, "colorIndex %d colorAmount %d\n", colorIndex, colorAmount);
-	}
-	int opponentColors;
-	scanf("%d\n", &opponentColors);dprintf(fd, "opponentColors %d\n", opponentColors);
-	for (int i = 0; i < opponentColors; i++) {
-		int colorIndex;
-		int colorAmount;
-		scanf("%d %d\n", &colorIndex, &colorAmount);dprintf(fd, "colorIndex %d colorAmount %d\n", colorIndex, colorAmount);
-	}
+	// int yourColors;
+	// scanf("%d\n", &yourColors);dprintf(fd, "yourColors %d\n", yourColors);
+	// for (int i = 0; i < yourColors; i++) {
+	// 	int colorIndex;
+	// 	int colorAmount;
+	// 	scanf("%d %d\n", &colorIndex, &colorAmount); dprintf(fd, "colorIndex %d colorAmount %d\n", colorIndex, colorAmount);
+	// }
+	// int opponentColors;
+	// scanf("%d\n", &opponentColors);dprintf(fd, "opponentColors %d\n", opponentColors);
+	// for (int i = 0; i < opponentColors; i++) {
+	// 	int colorIndex;
+	// 	int colorAmount;
+	// 	scanf("%d %d\n", &colorIndex, &colorAmount);dprintf(fd, "colorIndex %d colorAmount %d\n", colorIndex, colorAmount);
+	// }
 	while (true) {
-		dprintf(2, "NEXT ITERATION\n");
-		int direction;
-		scanf("%d\n", &direction);dprintf(fd, "direction %d\n", direction);
+	// 	dprintf(2, "NEXT ITERATION\n");
+	// 	int direction;
+	// 	scanf("%d\n", &direction);dprintf(fd, "direction %d\n", direction);
 
-		int numberOfValidInsertSlots;
-		scanf("%d\n", &numberOfValidInsertSlots);dprintf(fd, "numberOfValidInsertSlots %d\n", numberOfValidInsertSlots);
-		for (int i = 0; i < numberOfValidInsertSlots; i++) {
-			int column, cellIndex;
-			scanf("%d %d\n", &column, &cellIndex);dprintf(fd, "column %d cellIndex %d\n", column, cellIndex);
-		}
+	// 	int numberOfValidInsertSlots;
+	// 	scanf("%d\n", &numberOfValidInsertSlots);dprintf(fd, "numberOfValidInsertSlots %d\n", numberOfValidInsertSlots);
+	// 	for (int i = 0; i < numberOfValidInsertSlots; i++) {
+	// 		int column, cellIndex;
+	// 		scanf("%d %d\n", &column, &cellIndex);dprintf(fd, "column %d cellIndex %d\n", column, cellIndex);
+	// 	}
 
-		int numberOfNewPellets;
-		scanf("%d\n", &numberOfNewPellets);dprintf(fd, "numberOfNewPellets %d\n", numberOfNewPellets);
-		for (int i = 0; i < numberOfNewPellets; i++) {
-			int index, cellIndex, colorIndex, isMine;
-			scanf("%d %d %d %d\n", &index, &cellIndex, &colorIndex, &isMine);dprintf(fd, "index %d cellIndex %d colorIndex %d isMine %d\n", index, cellIndex, colorIndex, isMine);
-		}
+	// 	int numberOfNewPellets;
+	// 	scanf("%d\n", &numberOfNewPellets);dprintf(fd, "numberOfNewPellets %d\n", numberOfNewPellets);
+	// 	for (int i = 0; i < numberOfNewPellets; i++) {
+	// 		int index, cellIndex, colorIndex, isMine;
+	// 		scanf("%d %d %d %d\n", &index, &cellIndex, &colorIndex, &isMine);dprintf(fd, "index %d cellIndex %d colorIndex %d isMine %d\n", index, cellIndex, colorIndex, isMine);
+	// 	}
 
-		int numberOfChangedPellets;
-		scanf("%d\n", &numberOfChangedPellets);dprintf(fd, "numberOfChangedPellets %d\n", numberOfChangedPellets);
-		for (int i = 0; i < numberOfChangedPellets; i++) {
-			int index, cellIndex;
-			scanf("%d %d\n", &index, &cellIndex);dprintf(fd, "index %d cellIndex %d\n", index, cellIndex);
-		}
+	// 	int numberOfChangedPellets;
+	// 	scanf("%d\n", &numberOfChangedPellets);dprintf(fd, "numberOfChangedPellets %d\n", numberOfChangedPellets);
+	// 	for (int i = 0; i < numberOfChangedPellets; i++) {
+	// 		int index, cellIndex;
+	// 		scanf("%d %d\n", &index, &cellIndex);dprintf(fd, "index %d cellIndex %d\n", index, cellIndex);
+	// 	}
 
-		int numberOfPelletsInHand;
-		scanf("%d\n", &numberOfPelletsInHand);dprintf(fd, "numberOfPelletsInHand %d\n", numberOfPelletsInHand);
-		for (int k = 0; k < numberOfPelletsInHand; k++) {
-			int colorIndex;
-			// dprintf(fd, "INDEX OF PELLETS IN HAND ITERATION: %d\n", k);
-			scanf("%d\n", &colorIndex);
-			dprintf(fd, "colorIndex %d | %d\n", colorIndex, k);
-			// dprintf(fd, "\n");
-		}
-		// close(fd);
+	// 	int numberOfPelletsInHand;
+	// 	scanf("%d\n", &numberOfPelletsInHand);dprintf(fd, "numberOfPelletsInHand %d\n", numberOfPelletsInHand);
+	// 	for (int k = 0; k < numberOfPelletsInHand; k++) {
+	// 		int colorIndex;
+	// 		// dprintf(fd, "INDEX OF PELLETS IN HAND ITERATION: %d\n", k);
+	// 		scanf("%d\n", &colorIndex);
+	// 		dprintf(fd, "colorIndex %d | %d\n", colorIndex, k);
+	// 		// dprintf(fd, "\n");
+	// 	}
+	// 	// close(fd);
+	// 	// read(STDIN_FILENO, buf, 50);
+	// 	fflush(stdout);
+	// 	fflush(stdin);
 		printf("PLACE 2 2\n");
 	}
 }
