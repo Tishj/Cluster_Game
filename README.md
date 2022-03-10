@@ -43,8 +43,13 @@ Next `numberOfCells` lines: 7 space-separated integers:
 - `index` for the cell's index.  
 - 6 `neigh` variables, one for each direction, containing the index of a neighboring cell or -1 if is there is no neighbor.  
 
-Next line: An integer `numberOfColors`  
-Next `numberOfColors` lines: 2 space-separated integers:
+Next line: An integer `yourColors`  
+Next `yourColors` lines: 2 space-separated integers:
+- `index` for the color's index.  
+- `maxAmount` for the max amount of pellets of that color.  
+
+Next line: An integer `opponentColors`  
+Next `opponentColors` lines: 2 space-separated integers:
 - `index` for the color's index.  
 - `maxAmount` for the max amount of pellets of that color.  
 
