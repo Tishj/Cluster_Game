@@ -6,7 +6,7 @@
 /*   By: tbruinem <tbruinem@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2022/03/05 08:55:45 by tbruinem      #+#    #+#                 */
-/*   Updated: 2022/03/10 13:49:59 by tbruinem      ########   odam.nl         */
+/*   Updated: 2022/03/10 14:28:43 by tbruinem      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -88,5 +88,7 @@ void	board_destroy(Board* board);
 int		board_check_match(Board* board);
 
 void	board_place(Board* board, size_t index, PelletType color);
+
+v2		get_hex_center(float height, v2 hex_pos);
 
 #endif
