@@ -18,6 +18,7 @@
 #include <stddef.h>
 #include "Board.h"
 #include "Player.h"
+#include <time.h>
 
 #define INITIAL_TIMEOUT_DURATION 1000
 #define ROUND_TIMEOUT_DURATION 100
@@ -48,6 +49,7 @@ typedef struct Game {
 	GameState		state;
 	PlayerType		starting_player;
 	bool			animating;
+	size_t			onboard[4]; //Each color Pellet currently on board
 }	Game;
 
 void	game_loop(void* param);
