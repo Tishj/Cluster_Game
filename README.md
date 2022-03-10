@@ -38,8 +38,7 @@ If an invalid move is made, or a bot times out, the opposing player wins and the
 
 ### Initialization Input
 
-First line: An integer `direction` (between 0 and 5): the direction of gravity.  
-Next line: `numberOfCells`  
+First line: `numberOfCells`  
 Next `numberOfCells` lines: 7 space-separated integers:  
 - `index` for the cell's index.  
 - 6 `neigh` variables, one for each direction, containing the index of a neighboring cell or -1 if is there is no neighbor.  
@@ -50,7 +49,7 @@ Next `numberOfColors` lines: 4 space-separated integers:
 - `maxAmount` for the max amount of pellets of that color.  
 
 ### Input for One Game Turn
-First line: An integer `direction`: the current direction (0-5)  
+First line: An integer `direction` (between 0 and 5): the direction of gravity.  
 Next line: `numberOfNewPellets`  
 next `numberOfNewPellets` lines: 4 space-separated integers:  
 - `index`: index of the new pellet.  
