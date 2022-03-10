@@ -6,7 +6,7 @@
 /*   By: tbruinem <tbruinem@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2022/03/05 08:55:45 by tbruinem      #+#    #+#                 */
-/*   Updated: 2022/03/10 13:38:43 by tbruinem      ########   odam.nl         */
+/*   Updated: 2022/03/10 14:27:02 by tbruinem      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,7 +20,7 @@
 #include "List.h"
 
 #define MATCH_MINIMUM 4
-#define SIDE_LENGTH 6
+#define SIDE_LENGTH 3
 
 //(SIDE_SIZE + Rotation) % SIDE_SIZE == BoardSide
 typedef enum BoardCycle {
@@ -94,5 +94,7 @@ void	board_destroy(Board* board);
 int		board_check_match(Board* board);
 
 void	board_place(Board* board, size_t index, PelletType color);
+
+v2		get_hex_center(float height, v2 hex_pos);
 
 #endif

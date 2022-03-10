@@ -6,7 +6,7 @@
 /*   By: tbruinem <tbruinem@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2022/03/05 08:55:31 by tbruinem      #+#    #+#                 */
-/*   Updated: 2022/03/10 13:28:47 by tbruinem      ########   odam.nl         */
+/*   Updated: 2022/03/10 14:26:14 by tbruinem      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -417,13 +417,36 @@ bool	pellet_staggered_fall(Pellet* pellet, BoardSide side) {
 	return false;
 }
 
+
 float hex_width(float height)
 {
 	return (float)(4 * (height / 2 / sqrt(3)));
 }
 
+v2	hex_point_offset(v2 point, v2 center) {
+	v2 offset = {
+		.x = (WINDOW_WIDTH / 2) - center.x,
+		.y = (WINDOW_HEIGHT / 2) - center.y,
+	};
+	return (v2) {
+		.x = point.x + offset.x,
+		.y = point.y + offset.y
+	};
+}
+
+v2		get_hex_center(float height, v2 hex_pos) {
+	float width = hex_width(height);
+
+	return (v2) {
+		.x = (hex_pos.x * (width * 0.75)) + (width * 0.5),
+		.y = (hex_pos.y * height) + ((int)hex_pos.x % 2 == 1 ? height : height / 2)
+	};
+}
+
 void	get_hex_points(v2* points, float height, float row, float col)
 {
+	v2 center = get_hex_center(height, (v2){SIDE_LENGTH-1,SIDE_LENGTH-1});
+
 	// Start with the leftmost corner of the upper left hexagon.
 	float width = hex_width(height);
 	float y = height / 2;
@@ -437,14 +460,21 @@ void	get_hex_points(v2* points, float height, float row, float col)
 
 	// Move over for the column number.
 	x += col * (width * 0.75f);
+	if ((int)row == (SIDE_LENGTH-1) && (int)col == (SIDE_LENGTH-1)) {
+		dprintf(2, "MIDDLE: X:%f|Y:%f\n", x + width * 0.5, y);
+	}
 
 	// Generate the points.
-	points[0] = (v2){(int)x,(int)y};
-	points[1] = (v2){(int)(x + width * 0.25),(int)(y - height / 2)};
-	points[2] = (v2){(int)(x + width * 0.75),(int)(y - height / 2)};
-	points[3] = (v2){(int)(x + width),(int)y};
-	points[4] = (v2){(int)(x + width * 0.75),(int)(y + height / 2)};
-	points[5] = (v2){(int)(x + width * 0.25),(int)(y + height / 2)};
+	points[0] = (v2){x,y};
+	points[1] = (v2){(x + width * 0.25),(y - height / 2)};
+	points[2] = (v2){(x + width * 0.75),(y - height / 2)};
+	points[3] = (v2){(x + width),y};
+	points[4] = (v2){(x + width * 0.75),(y + height / 2)};
+	points[5] = (v2){(x + width * 0.25),(y + height / 2)};
+	//Offset points to center the grid
+	for (size_t i = 0; i < 6; i++) {
+		points[i] = hex_point_offset(points[i], center);
+	}
 }
 
 void	board_rotate(Board* board, BoardSide new_side) {
@@ -571,6 +601,7 @@ static void	create_slots(Board* board) {
 		.x = SIDE_LENGTH - 1,
 		.y = SIDE_LENGTH - 1
 	};
+	// v2	center_hex_middle = get_hex_center(HEXAGON_HEIGHT, middle_pos);
 	Slot*	middle = slot_new(middle_pos);
 	slot_neighbour_print(middle);
 	temp[(int)middle_pos.y][(int)middle_pos.x] = middle;
