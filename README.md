@@ -50,6 +50,12 @@ Next `numberOfColors` lines: 4 space-separated integers:
 
 ### Input for One Game Turn
 First line: An integer `direction` (between 0 and 5): the direction of gravity.  
+
+Next line: `numberOfValidInsertSlots`  
+next `numberOfValidInsertSlots` lines: 2 space-separated integers  
+- `column`: the column to use for a PLACE command  
+- `cellIndex`: the cell that correspond to the top of the column, according to the current gravity  
+
 Next line: `numberOfNewPellets`  
 next `numberOfNewPellets` lines: 4 space-separated integers:  
 - `index`: index of the new pellet.  
