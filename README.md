@@ -61,3 +61,7 @@ Next line: `numberOfChangedPellets`
 next `numberOfChangedPellets` lines: 2 space-separated integers:  
 - `index`: index of the pellet.   
 - `cellIndex`: index of the cell the pellet is currently on.  
+
+Next line: `numberOfPelletsInHand`
+next `numberOfPelletsInHand` lines: 1 space-separated integer:
+- `colorIndex`: index of the pellet's color.
