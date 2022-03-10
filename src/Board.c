@@ -6,7 +6,7 @@
 /*   By: tbruinem <tbruinem@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2022/03/05 08:55:31 by tbruinem      #+#    #+#                 */
-/*   Updated: 2022/03/10 18:40:55 by tbruinem      ########   odam.nl         */
+/*   Updated: 2022/03/10 20:54:25 by tbruinem      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -185,6 +185,16 @@ int	board_check_match(Board* board) {
 		else {
 			//Check which color has the least pellets of that color on the board -> winner
 			//If those are equal -> then it's a tie
+			int pellets_blue = board->onboard[biggest_match[PLAYER_BLUE].color];
+			int pellets_red = board->onboard[biggest_match[PLAYER_RED].color];
+
+			if (pellets_blue == pellets_red) {
+				return TIE;
+			}
+			if (pellets_blue > pellets_red) {
+				return WIN_BLUE;
+			}
+			return WIN_RED;
 		}
 	}
 	//Blue wins
@@ -196,28 +206,6 @@ int	board_check_match(Board* board) {
 		return WIN_RED;
 	}
 	return IN_PROGRESS;
-}
-
-bool	board_inside(v2 pos) {
-	const int col = pos.x;
-	const int row = pos.y;
-
-	//Out of bounds
-	if (row < 0 || row > 6)
-		return false;
-	if (col < 0 || col > 6)
-		return false;
-
-	if (row >= 2 && row <= 5)
-		return true;
-
-	if (row == 0 && col != 3)
-		return false;
-	if (row == 1 && (col < 1 || col > 5))
-		return false;
-	if (row == 6 && (col < 2 || col > 4))
-		return false;
-	return true;
 }
 
 //Y offset of neighbours is based on the column being round or not
@@ -588,6 +576,10 @@ void	board_init(Board* board) {
 	board->pellets_placed = 0;
 	board->tween.progress = 1;
 	board->tween.from = 0;
+	//Initialize pellet count of colors to 0
+	for (size_t i = 0; i < 4; i++) {
+		board->onboard[i] = 0;
+	}
 
 	create_slots(board);
 }

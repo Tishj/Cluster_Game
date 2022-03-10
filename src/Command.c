@@ -6,7 +6,7 @@
 /*   By: tbruinem <tbruinem@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2022/03/05 09:53:25 by tbruinem      #+#    #+#                 */
-/*   Updated: 2022/03/10 15:45:26 by tbruinem      ########   odam.nl         */
+/*   Updated: 2022/03/10 20:51:28 by tbruinem      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -81,10 +81,17 @@ Command*	command_rotate(int cycles) {
 	return (void*)cmd;
 }
 
-static bool	slot_index_check(int slot_index) {
+static bool	slot_index_check(int slot_index, Board* board) {
 	const int max_index = (SIDE_LENGTH * 2) - 2;
 	dprintf(2, "MAX_INDEX: %d\n", max_index);
-	return (slot_index >= 0 && slot_index <= max_index);
+	if (slot_index < 0 || slot_index > max_index)
+		return false;
+	Slot*	slot = get_insert_slot(board, board->side, slot_index);
+	if (!slot)
+		return false;
+	if (slot->pellet != NULL)
+		return false;
+	return true;
 }
 
 //Take player to verify that the color is one chosen for them
@@ -96,7 +103,7 @@ static bool	color_index_check(int color_index, Player* player) {
 	// if (player->color == PLAYER_RED) {
 	// 	color_index--;
 	// }
-	if (color_index % 2 != player->color) {
+	if (color_index % 2 != (int)player->color) {
 		dprintf(2, "NOT YOUR COLOR!!\n");
 		return false;
 	}
@@ -107,7 +114,8 @@ static bool cycles_check(int cycles) {
 	return (cycles >= 1 && cycles <= 5);
 }
 
-Command*	command_parse(char* commandstring, Player* player) {
+//Needs board to check for invalid placement
+Command*	command_parse(char* commandstring, Player* player, Board* board) {
 	if (!commandstring) {
 		return command_invalid();
 	}
@@ -138,7 +146,7 @@ Command*	command_parse(char* commandstring, Player* player) {
 			int slot_index, color_index;
 			char space;
 			if (sscanf(space_pos + 1, "%d%c%d\n", &slot_index, &space, &color_index) == -1 || 
-				!slot_index_check(slot_index) ||
+				!slot_index_check(slot_index, board) ||
 				space != ' ' ||
 				!color_index_check(color_index, player)) {
 				return command_invalid();

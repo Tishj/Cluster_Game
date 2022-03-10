@@ -6,7 +6,7 @@
 /*   By: tbruinem <tbruinem@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2022/03/05 08:55:45 by tbruinem      #+#    #+#                 */
-/*   Updated: 2022/03/10 18:41:07 by tbruinem      ########   odam.nl         */
+/*   Updated: 2022/03/10 20:54:14 by tbruinem      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -69,12 +69,12 @@ typedef struct Board {
 	Tween		tween;
 	Slot*		corners[6];
 	List*		moving_pellets;
+	size_t		onboard[4]; //Each color Pellet currently on board
 }	Board;
 
 int		get_board_size();
 
 void	board_init(Board* board);
-bool	board_inside(v2 pos);
 void	board_render(Board* board, mlx_image_t* target);
 void	pellet_fall(Pellet* pellet, BoardSide side);
 bool	pellet_staggered_fall(Pellet* pellet, BoardSide side);
@@ -85,6 +85,7 @@ void	board_direction_print(BoardSide side);
 void	draw_pellet(Board* board, Pellet* pellet, mlx_image_t* target);
 void	board_destroy(Board* board);
 int		board_check_match(Board* board);
+Slot*	get_insert_slot(Board* board, BoardSide side, size_t index);
 
 void	board_place(Board* board, size_t index, PelletType color);
 

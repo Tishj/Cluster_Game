@@ -6,7 +6,7 @@
 /*   By: tbruinem <tbruinem@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2022/03/04 23:13:04 by tbruinem      #+#    #+#                 */
-/*   Updated: 2022/03/10 15:34:51 by tbruinem      ########   odam.nl         */
+/*   Updated: 2022/03/10 20:41:09 by tbruinem      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,7 +49,6 @@ typedef struct Game {
 	GameState		state;
 	PlayerType		starting_player;
 	bool			animating;
-	size_t			onboard[4]; //Each color Pellet currently on board
 }	Game;
 
 void	game_loop(void* param);

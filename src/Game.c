@@ -6,7 +6,7 @@
 /*   By: tbruinem <tbruinem@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2022/03/05 11:34:12 by tbruinem      #+#    #+#                 */
-/*   Updated: 2022/03/10 18:56:57 by tbruinem      ########   odam.nl         */
+/*   Updated: 2022/03/10 20:55:52 by tbruinem      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -80,7 +80,7 @@ void	game_execute_command(Game* game, Player* player, Command* command) {
 				player->bag[i] += amount;
 			}
 			//Add the counter for the board
-			game->onboard[cmd->color_index]++;
+			game->board.onboard[cmd->color_index]++;
 
 			//Update the amount of pellets they are unaware of yet
 			player->missing_pellets++;
