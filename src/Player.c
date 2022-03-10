@@ -6,7 +6,7 @@
 /*   By: tbruinem <tbruinem@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2022/03/05 23:09:04 by tbruinem      #+#    #+#                 */
-/*   Updated: 2022/03/09 22:54:18 by tbruinem      ########   odam.nl         */
+/*   Updated: 2022/03/10 12:56:41 by tbruinem      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,6 +20,7 @@
 #include <sys/time.h>
 #include <pthread.h>
 #include <string.h>
+#include <signal.h>
 
 #define GAME_CLIENT "./client"
 
@@ -148,6 +149,15 @@ char**	get_abspath(char* program) {
 	}
 	arguments[0] = expand_path(arguments[0]);
 	return arguments;
+}
+
+void	connection_destroy(Connection* connection) {
+	kill(connection->pid, SIGKILL);
+	waitpid(connection->pid, NULL, 0);
+}
+
+void	player_destroy(Player* player) {
+	connection_destroy(&player->conn);
 }
 
 void	player_init(Player* player, PlayerType color, char* program) {
