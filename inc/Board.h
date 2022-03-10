@@ -6,7 +6,7 @@
 /*   By: tbruinem <tbruinem@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2022/03/05 08:55:45 by tbruinem      #+#    #+#                 */
-/*   Updated: 2022/03/10 12:40:19 by tbruinem      ########   odam.nl         */
+/*   Updated: 2022/03/10 13:38:43 by tbruinem      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -91,7 +91,7 @@ void	board_update_direction(Board* board, int cycles);
 void	board_direction_print(BoardSide side);
 void	draw_pellet(Board* board, Pellet* pellet, mlx_image_t* target);
 void	board_destroy(Board* board);
-int	board_check_match(Board* board);
+int		board_check_match(Board* board);
 
 void	board_place(Board* board, size_t index, PelletType color);
 

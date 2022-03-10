@@ -6,7 +6,7 @@
 /*   By: tbruinem <tbruinem@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2022/03/05 08:55:31 by tbruinem      #+#    #+#                 */
-/*   Updated: 2022/03/10 12:45:06 by tbruinem      ########   odam.nl         */
+/*   Updated: 2022/03/10 13:28:47 by tbruinem      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -508,13 +508,14 @@ void	board_render(Board* board, mlx_image_t* target) {
 }
 
 Slot*	slot_new(v2 position) {
+	static int index = 0;
 	Slot*	slot = malloc(sizeof(Slot));
 	if (!slot) {
 		FATAL(MEMORY_ALLOCATION_FAIL);
 	}
 	slot->position = position;
 	slot->pellet = NULL;
-	slot->index = 0;
+	slot->index = index++;
 	get_hex_points(slot->points, HEXAGON_HEIGHT, position.y, position.x);
 	bzero(slot->neighbours, sizeof(Slot*) * 6);
 	return slot;
