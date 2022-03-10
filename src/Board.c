@@ -6,7 +6,7 @@
 /*   By: tbruinem <tbruinem@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2022/03/05 08:55:31 by tbruinem      #+#    #+#                 */
-/*   Updated: 2022/03/10 00:40:46 by tbruinem      ########   odam.nl         */
+/*   Updated: 2022/03/10 14:57:03 by tbruinem      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,8 +25,7 @@
 #include <math.h>
 #include <stdlib.h>
 #include <alloca.h>
-
-#define HEXAGON_HEIGHT 75
+#include "Game.h"
 
 static const char* side_string_mapping[] = {
 	[SIDE_SOUTH] = "South",
@@ -101,6 +100,88 @@ BoardSide	side_invert(BoardSide side) {
 	return ((side + 3) % SIDE_SIZE);
 }
 
+MatchInfo		match_size(Pellet* pellet, MatchInfo info, BoardSide direction) {
+	Slot* neighbour = pellet->slot->neighbours[direction];
+
+	if (!neighbour || !neighbour->pellet || neighbour->pellet->color != pellet->color)
+		return info;
+	info.size += 1;
+	return match_size(neighbour->pellet, info, direction);
+}
+
+void	debug_matchinfo(MatchInfo info) {
+	static const char* player_colors[] = {
+		[PLAYER_BLUE] = "BLUE",
+		[PLAYER_RED] = "RED"
+	};
+
+	dprintf(2, "MATCH_INFO FOR PLAYER[%s] - Size: %d\n", player_colors[info.color % 2], info.size);
+}
+
+//TODO: add the logic for tie-breaking
+int	board_check_match(Board* board) {
+	MatchInfo	biggest_match[2] = {};
+	//Initialize biggest_match to -1
+	for (size_t i = 0; i < 2; i++) {
+		biggest_match[i].size = -1;
+	}
+	if (board->pellets == NULL) {
+		return IN_PROGRESS;
+	}
+	dprintf(2, "CHECKING FOR A MATCH\n");
+
+	//For every pellet, check if it can come up with a match
+	for (List* iter = board->pellets; iter; iter = iter->next) {
+		Pellet* pellet = iter->content;
+		for (size_t side = SIDE_SOUTH; side < SIDE_NORTH; side++) {
+			MatchInfo current = {.color = pellet->color, .size = 1};
+			current = match_size(pellet, current, side);
+
+			//Get the player color according to the pellet color
+			PlayerType	player = current.color % 2;
+			if (current.size > biggest_match[player].size) {
+				biggest_match[player] = current;
+			}
+			else if (current.size == biggest_match[player].size && current.color != biggest_match[player].color) {
+				//Check which of the two colors has less pellets on the board
+			}
+		}
+	}
+	for (size_t i = 0; i < 2; i++) {
+		debug_matchinfo(biggest_match[i]);
+	}
+	int blue_size = biggest_match[PLAYER_BLUE].size;
+	int red_size = biggest_match[PLAYER_RED].size;
+	//No winner
+	if (blue_size < MATCH_MINIMUM && red_size < MATCH_MINIMUM) {
+		return IN_PROGRESS;
+	}
+	//Potential tie
+	if (blue_size >= MATCH_MINIMUM && red_size >= MATCH_MINIMUM) {
+		//Blue wins
+		if (blue_size > red_size) {
+			return WIN_BLUE;
+		}
+		else if (red_size < blue_size) {
+			return WIN_RED;
+		}
+		//Even further potential tie
+		else {
+			//Check which color has the least pellets of that color on the board -> winner
+			//If those are equal -> then it's a tie
+		}
+	}
+	//Blue wins
+	if (blue_size >= MATCH_MINIMUM) {
+		return WIN_BLUE;
+	}
+	//Red wins
+	if (red_size >= MATCH_MINIMUM) {
+		return WIN_RED;
+	}
+	return IN_PROGRESS;
+}
+
 bool	board_inside(v2 pos) {
 	const int col = pos.x;
 	const int row = pos.y;
@@ -154,63 +235,6 @@ v2	get_neighbour_pos(v2 position, BoardSide side) {
 		.y = position.y + offset.y
 	};
 }
-
-// static const v2 insert_slot[6][7] = {
-// 	[SIDE_SOUTH] = {
-// 		[0] = {0,2},
-// 		[1] = {1,1},
-// 		[2] = {2,1},
-// 		[3] = {3,0},
-// 		[4] = {4,1},
-// 		[5] = {5,1},
-// 		[6] = {6,2}
-// 	},
-// 	[SIDE_SOUTHWEST] = {
-// 		[0] = {3,0},
-// 		[1] = {4,1},
-// 		[2] = {5,1},
-// 		[3] = {6,2},
-// 		[4] = {6,3},
-// 		[5] = {6,4},
-// 		[6] = {6,5}
-// 	},
-// 	[SIDE_NORTHWEST] = {
-// 		[0] = {6,2},
-// 		[1] = {6,3},
-// 		[2] = {6,4},
-// 		[3] = {6,5},
-// 		[4] = {5,5},
-// 		[5] = {4,6},
-// 		[6] = {3,6}
-// 	},
-// 	[SIDE_NORTH] = {
-// 		[0] = {6,5},
-// 		[1] = {5,5},
-// 		[2] = {4,6},
-// 		[3] = {3,6},
-// 		[4] = {2,6},
-// 		[5] = {1,5},
-// 		[6] = {0,5}
-// 	},
-// 	[SIDE_NORTHEAST] = {
-// 		[0] = {3,6},
-// 		[1] = {2,6},
-// 		[2] = {1,5},
-// 		[3] = {0,5},
-// 		[4] = {0,4},
-// 		[5] = {0,3},
-// 		[6] = {0,2}
-// 	},
-// 	[SIDE_SOUTHEAST] = {
-// 		[0] = {0,5},
-// 		[1] = {0,4},
-// 		[2] = {0,3},
-// 		[3] = {0,2},
-// 		[4] = {1,1},
-// 		[5] = {2,1},
-// 		[6] = {3,0}
-// 	},
-// };
 
 Slot*	get_insert_slot(Board* board, BoardSide side, size_t index) {
 	printf("CURRENT DIRECTION: %s\n", side_string_mapping[side]);
@@ -301,22 +325,6 @@ void	pellet_fall(Pellet* pellet, BoardSide side) {
 	}
 }
 
-//deprecated
-// void	slot_fall(Board* board, Slot* slot, BoardSide side) {
-
-// 	assert(slot->color != EMPTY);
-
-// 	v2	neighbour = slot->neighbours[side];
-
-// 	const PelletType color = slot->color;
-// 	while (!pellet_has_reached_bottom(board, neighbour)) {
-// 		slot->color = EMPTY;
-// 		slot = &board->map[(int)neighbour.y][(int)neighbour.x];
-// 		slot->color = color;
-// 		neighbour = slot->neighbours[side];
-// 	}
-// }
-
 bool	pellet_staggered_fall(Pellet* pellet, BoardSide side) {
 	Slot* slot = pellet->slot;
 	assert(slot != NULL);
@@ -335,13 +343,36 @@ bool	pellet_staggered_fall(Pellet* pellet, BoardSide side) {
 	return false;
 }
 
+
 float hex_width(float height)
 {
 	return (float)(4 * (height / 2 / sqrt(3)));
 }
 
+v2	hex_point_offset(v2 point, v2 center) {
+	v2 offset = {
+		.x = (WINDOW_WIDTH / 2) - center.x,
+		.y = (WINDOW_HEIGHT / 2) - center.y,
+	};
+	return (v2) {
+		.x = point.x + offset.x,
+		.y = point.y + offset.y
+	};
+}
+
+v2		get_hex_center(float height, v2 hex_pos) {
+	float width = hex_width(height);
+
+	return (v2) {
+		.x = (hex_pos.x * (width * 0.75)) + (width * 0.5),
+		.y = (hex_pos.y * height) + ((int)hex_pos.x % 2 == 1 ? height : height / 2)
+	};
+}
+
 void	get_hex_points(v2* points, float height, float row, float col)
 {
+	v2 center = get_hex_center(height, (v2){SIDE_LENGTH-1,SIDE_LENGTH-1});
+
 	// Start with the leftmost corner of the upper left hexagon.
 	float width = hex_width(height);
 	float y = height / 2;
@@ -355,14 +386,21 @@ void	get_hex_points(v2* points, float height, float row, float col)
 
 	// Move over for the column number.
 	x += col * (width * 0.75f);
+	if ((int)row == (SIDE_LENGTH-1) && (int)col == (SIDE_LENGTH-1)) {
+		dprintf(2, "MIDDLE: X:%f|Y:%f\n", x + width * 0.5, y);
+	}
 
 	// Generate the points.
-	points[0] = (v2){(int)x,(int)y};
-	points[1] = (v2){(int)(x + width * 0.25),(int)(y - height / 2)};
-	points[2] = (v2){(int)(x + width * 0.75),(int)(y - height / 2)};
-	points[3] = (v2){(int)(x + width),(int)y};
-	points[4] = (v2){(int)(x + width * 0.75),(int)(y + height / 2)};
-	points[5] = (v2){(int)(x + width * 0.25),(int)(y + height / 2)};
+	points[0] = (v2){x,y};
+	points[1] = (v2){(x + width * 0.25),(y - height / 2)};
+	points[2] = (v2){(x + width * 0.75),(y - height / 2)};
+	points[3] = (v2){(x + width),y};
+	points[4] = (v2){(x + width * 0.75),(y + height / 2)};
+	points[5] = (v2){(x + width * 0.25),(y + height / 2)};
+	//Offset points to center the grid
+	for (size_t i = 0; i < 6; i++) {
+		points[i] = hex_point_offset(points[i], center);
+	}
 }
 
 void	board_rotate(Board* board, BoardSide new_side) {
@@ -412,7 +450,7 @@ void	board_render(Board* board, mlx_image_t* target) {
 		draw_slot(board, slot, target);
 	}
 	for (List* iter = board->pellets; iter; iter = iter->next) {
-		dprintf(2, "IM RENDERING A PELLET\n");
+		// dprintf(2, "IM RENDERING A PELLET\n");
 		Pellet* pellet = iter->content;
 		draw_pellet(board, pellet, target);
 	}
@@ -426,13 +464,14 @@ void	board_render(Board* board, mlx_image_t* target) {
 }
 
 Slot*	slot_new(v2 position) {
+	static int index = 0;
 	Slot*	slot = malloc(sizeof(Slot));
 	if (!slot) {
 		FATAL(MEMORY_ALLOCATION_FAIL);
 	}
 	slot->position = position;
 	slot->pellet = NULL;
-	slot->index = 0;
+	slot->index = index++;
 	get_hex_points(slot->points, HEXAGON_HEIGHT, position.y, position.x);
 	bzero(slot->neighbours, sizeof(Slot*) * 6);
 	return slot;
@@ -446,33 +485,19 @@ static Slot* get_corner(Slot* slot, BoardSide side) {
 }
 
 static void	assign_corners(Board* board, Slot* center) {
-	// int mid = SIDE_LENGTH;
-	// v2	positions[SIDE_SIZE] = {};
-	
-	// positions[SIDE_NORTH].y = 0;
-	// positions[SIDE_NORTH].x = mid;
-	// positions[SIDE_NORTHEAST].y = (int)((mid + 1) / 2);
-	// positions[SIDE_NORTHEAST].x = (int)((2 * mid) - 1);
-	// positions[SIDE_SOUTHEAST].y = (int)(mid * 1.5 + 0.5);
-	// positions[SIDE_SOUTHEAST].x = (int)((2 * mid) - 1);
-	// positions[SIDE_SOUTH].y = (int)((mid * 2) - 1);
-	// positions[SIDE_SOUTH].x = (int)(mid);
-	// positions[SIDE_SOUTHWEST].y = (int)(mid * 1.5 + 0.5);
-	// positions[SIDE_SOUTHWEST].x = 0;
-	// positions[SIDE_NORTHWEST].y = (int)((mid + 1) / 2);
-	// positions[SIDE_NORTHWEST].x = 0;
-
-	// for (size_t side = SIDE_SOUTH; side < SIDE_SIZE; side++) {
-	// 	board->corners[side] = tmp[(int)positions[side].y][(int)positions[side].x];
-	// 	dprintf(2, "CORNER[%s] | X:%d|Y:%d\n", side_string_mapping[side], (int)positions[side].x, (int)positions[side].y);
-	// 	slot_neighbour_print(board->corners[side]);
-	// }
 	for (size_t side = SIDE_SOUTH; side < SIDE_SIZE; side++) {
 		board->corners[side] = get_corner(center, side);
 	}
 }
 
-//TODO: save corners, for placement
+static bool	is_inside_board_array(v2 pos) {
+	if (pos.y < 0 || pos.y >= (SIDE_LENGTH * 2))
+		return false;
+	if (pos.x < 0 || pos.x >= (SIDE_LENGTH * 2))
+		return false;
+	return true;
+}
+
 static void	create_slots(Board* board) {
 	const int	board_height = (SIDE_LENGTH * 2);
 	//Could do this more optimally by creating it as needed for every "ring"
@@ -488,6 +513,7 @@ static void	create_slots(Board* board) {
 		.x = SIDE_LENGTH - 1,
 		.y = SIDE_LENGTH - 1
 	};
+	// v2	center_hex_middle = get_hex_center(HEXAGON_HEIGHT, middle_pos);
 	Slot*	middle = slot_new(middle_pos);
 	slot_neighbour_print(middle);
 	temp[(int)middle_pos.y][(int)middle_pos.x] = middle;
@@ -505,7 +531,7 @@ static void	create_slots(Board* board) {
 				dprintf(2, "NEIGHBOUR POS: %d|%d\n", (int)neighbour_position.x, (int)neighbour_position.y);
 				//Retrieve the neighbour
 				Slot* neighbour;
-				if (neighbour_position.x < 0 || neighbour_position.y < 0)
+				if (!is_inside_board_array(neighbour_position))
 					neighbour = NULL;
 				else {
 					neighbour = temp[(int)neighbour_position.y][(int)neighbour_position.x];
@@ -522,7 +548,6 @@ static void	create_slots(Board* board) {
 		list_pushback(&board->slots, new_slots);
 		new_slots = new_neighbours;
 	}
-
 
 	Slot* center_slot = temp[SIDE_LENGTH - 1][SIDE_LENGTH - 1];
 	assign_corners(board, center_slot);

@@ -6,7 +6,7 @@
 /*   By: tbruinem <tbruinem@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2022/03/05 11:34:12 by tbruinem      #+#    #+#                 */
-/*   Updated: 2022/03/09 23:55:59 by tbruinem      ########   odam.nl         */
+/*   Updated: 2022/03/10 14:26:26 by tbruinem      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,7 +57,6 @@ void	game_init(Game* game, int argc, char **argv) {
 
 void	render(Game* game) {
 	board_render(&game->board, game->image);
-	// draw_circle(game->image, game->board.center.x, game->board.center.y, 15, CLR_RED);
 }
 
 void	game_execute_command(Game* game, Player* player, Command* command) {
@@ -84,6 +83,12 @@ void	game_execute_command(Game* game, Player* player, Command* command) {
 	free(command);
 }
 
+static const char*	match_results[] = {
+	[WIN_BLUE] = "Player blue has won!",
+	[WIN_RED] = "Player red has won!",
+	[TIE] = "The game ended in a tie :/"
+};
+
 void	game_loop(void* param) {
 	Game*		game = param;
 	GameState*	state = &game->state;
@@ -93,7 +98,7 @@ void	game_loop(void* param) {
 		state->result = TIE;
 	}
 	if (state->result != IN_PROGRESS) {
-		dprintf(2, "BOT TIMED OUT\n");
+		dprintf(2, "%s\n", match_results[state->result]);
 		mlx_close_window(mlx());
 		return;
 	}
@@ -101,6 +106,7 @@ void	game_loop(void* param) {
 	if (game->animating) {
 		if (game->board.tween.progress >= 1.0) {
 			if (!game->board.moving_pellets) {
+				game->state.result = board_check_match(&game->board);
 				game->animating = false;
 			}
 			else {
@@ -141,4 +147,7 @@ void	game_loop(void* param) {
 void	game_destroy(Game* game) {
 	mlx_delete_image(mlx(), game->image);
 	board_destroy(&game->board);
+	for (size_t i = 0; i < 2; i++) {
+		player_destroy(&game->player[i]);
+	}
 }
