@@ -6,7 +6,7 @@
 /*   By: tbruinem <tbruinem@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2022/03/08 15:48:05 by tbruinem      #+#    #+#                 */
-/*   Updated: 2022/03/08 17:21:02 by tbruinem      ########   odam.nl         */
+/*   Updated: 2022/03/09 16:08:05 by tbruinem      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,7 +22,7 @@ typedef struct List
 	void		*content;
 }	List;
 
-void 	list_delete(List** list, List* elem);
+void 	list_delete(List** list, List* elem, void (*del_f)(void*));
 List	*list_popback(List **list);
 List	*list_popfront(List **list);
 void	list_pushback(List **list, List *elem);
