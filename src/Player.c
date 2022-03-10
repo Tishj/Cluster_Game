@@ -6,7 +6,7 @@
 /*   By: tbruinem <tbruinem@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2022/03/05 23:09:04 by tbruinem      #+#    #+#                 */
-/*   Updated: 2022/03/10 21:10:53 by tbruinem      ########   odam.nl         */
+/*   Updated: 2022/03/10 21:35:43 by tbruinem      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -146,6 +146,26 @@ void	player_send_input(Player* player, Game* game) {
 		}
 		//Normal round input
 		dprintf(fd, "%d\n", game->board.side);
+
+		//numberOfValidInsertSlots;
+		Slot*	indices[(SIDE_LENGTH*2)-1] = {};
+		size_t	valid_slots = 0;
+		for (size_t i = 0; i < (SIDE_LENGTH*2)-1; i++) {
+			indices[i] = get_insert_slot(&game->board, game->board.side, i);
+			if (indices[i]->pellet) {
+				indices[i] = NULL;
+			}
+			else {
+				valid_slots++;
+			}
+		}
+		dprintf(fd, "%ld\n", valid_slots);
+		for (size_t i = 0; i < (SIDE_LENGTH*2)-1; i++) {
+			if (!indices[i])
+				continue;
+			dprintf(fd, "%ld %ld\n", i, indices[i]->index);
+		}
+
 		//Rotation happened
 		if (game->board.side != side) {
 			dprintf(fd, "0\n"); //numberOfNewPellets
@@ -169,6 +189,7 @@ void	player_send_input(Player* player, Game* game) {
 			}
 			dprintf(fd, "0\n"); //numberOfChangedPellets
 		}
+		//Send pellets in hand
 		dprintf(fd, "%d\n", COLORS_P_PLAYER);
 		for (size_t i = 0; i < COLORS_P_PLAYER; i++) {
 			for (int j = 0; j < player->hand[i]; j++) {
