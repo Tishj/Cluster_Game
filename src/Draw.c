@@ -6,7 +6,7 @@
 /*   By: tbruinem <tbruinem@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2022/03/05 11:59:23 by tbruinem      #+#    #+#                 */
-/*   Updated: 2022/03/09 12:50:36 by tbruinem      ########   odam.nl         */
+/*   Updated: 2022/03/10 14:56:54 by tbruinem      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,6 +20,7 @@
 #include <stdio.h>
 #include <strings.h>
 #include <string.h>
+#include "Game.h"
 
 void	draw_pixel(mlx_image_t* target, unsigned int color, v2 pos) {
 	if ((pos.x >= 0 && pos.x < target->width) && (pos.y >= 0 && pos.y < target->height))
@@ -107,7 +108,7 @@ void	draw_pellet(Board* board, Pellet* pellet, mlx_image_t* target) {
 
 	v2 middle = (v2){slot->points[0].x + ((slot->points[3].x - slot->points[0].x) / 2), slot->points[0].y};
 	middle = rotate_point(board->center.x, board->center.y, -rotation, middle);
-	draw_circle(target, middle.x, middle.y, 30, color_mapping[pellet->color]);
+	draw_circle(target, middle.x, middle.y, PELLET_RADIUS, color_mapping[pellet->color]);
 }
 
 void	draw_slot(Board* board, Slot* slot, mlx_image_t* target) {

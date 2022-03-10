@@ -6,7 +6,7 @@
 /*   By: tbruinem <tbruinem@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2022/03/05 09:53:25 by tbruinem      #+#    #+#                 */
-/*   Updated: 2022/03/09 22:52:32 by tbruinem      ########   odam.nl         */
+/*   Updated: 2022/03/10 14:57:54 by tbruinem      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,6 +18,7 @@
 #include "Error.h"
 #include <stdbool.h>
 #include "Board.h"
+#include "Game.h"
 
 const char* valid_commands[] = {
 	[CMD_PLACE] = "PLACE",
