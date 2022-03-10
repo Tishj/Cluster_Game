@@ -6,7 +6,7 @@
 /*   By: tbruinem <tbruinem@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2022/03/05 09:53:25 by tbruinem      #+#    #+#                 */
-/*   Updated: 2022/03/10 14:57:54 by tbruinem      ########   odam.nl         */
+/*   Updated: 2022/03/10 15:45:26 by tbruinem      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -97,6 +97,9 @@ static bool cycles_check(int cycles) {
 }
 
 Command*	command_parse(char* commandstring) {
+	if (!commandstring) {
+		return command_invalid();
+	}
 	dprintf(2, "RECEIVED COMMAND: '%s'\n", commandstring);
 	char* const	space_pos = strchr(commandstring, ' ');
 
