@@ -6,7 +6,7 @@
 /*   By: tbruinem <tbruinem@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2022/03/05 08:55:45 by tbruinem      #+#    #+#                 */
-/*   Updated: 2022/03/10 00:39:44 by tbruinem      ########   odam.nl         */
+/*   Updated: 2022/03/10 12:40:19 by tbruinem      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,6 +19,7 @@
 #include "Draw.h"
 #include "List.h"
 
+#define MATCH_MINIMUM 4
 #define SIDE_LENGTH 6
 
 //(SIDE_SIZE + Rotation) % SIDE_SIZE == BoardSide
@@ -46,6 +47,11 @@ typedef enum PelletType {
 // typedef struct Hexagon {
 
 // }	Hexagon;
+
+typedef struct MatchInfo {
+	int			size;
+	PelletType	color;
+}	MatchInfo;
 
 typedef struct Pellet {
 	PelletType	color;
@@ -85,6 +91,7 @@ void	board_update_direction(Board* board, int cycles);
 void	board_direction_print(BoardSide side);
 void	draw_pellet(Board* board, Pellet* pellet, mlx_image_t* target);
 void	board_destroy(Board* board);
+int	board_check_match(Board* board);
 
 void	board_place(Board* board, size_t index, PelletType color);
 

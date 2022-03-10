@@ -6,7 +6,7 @@
 /*   By: tbruinem <tbruinem@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2022/03/05 08:55:31 by tbruinem      #+#    #+#                 */
-/*   Updated: 2022/03/10 00:40:46 by tbruinem      ########   odam.nl         */
+/*   Updated: 2022/03/10 12:45:06 by tbruinem      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,6 +25,7 @@
 #include <math.h>
 #include <stdlib.h>
 #include <alloca.h>
+#include "Game.h"
 
 #define HEXAGON_HEIGHT 75
 
@@ -99,6 +100,87 @@ BoardSide	side_offset(BoardSide side, int offset) {
 
 BoardSide	side_invert(BoardSide side) {
 	return ((side + 3) % SIDE_SIZE);
+}
+
+MatchInfo		match_size(Pellet* pellet, MatchInfo info, BoardSide direction) {
+	Slot* neighbour = pellet->slot->neighbours[direction];
+
+	if (!neighbour || !neighbour->pellet || neighbour->pellet->color != pellet->color)
+		return info;
+	info.size += 1;
+	return match_size(neighbour->pellet, info, direction);
+}
+
+void	debug_matchinfo(MatchInfo info) {
+	static const char* player_colors[] = {
+		[PLAYER_BLUE] = "BLUE",
+		[PLAYER_RED] = "RED"
+	};
+
+	dprintf(2, "MATCH_INFO FOR PLAYER[%s] - Size: %d\n", player_colors[info.color % 2], info.size);
+}
+
+int	board_check_match(Board* board) {
+	MatchInfo	biggest_match[2] = {};
+	//Initialize biggest_match to -1
+	for (size_t i = 0; i < 2; i++) {
+		biggest_match[i].size = -1;
+	}
+	if (board->pellets == NULL) {
+		return IN_PROGRESS;
+	}
+	dprintf(2, "CHECKING FOR A MATCH\n");
+
+	//For every pellet, check if it can come up with a match
+	for (List* iter = board->pellets; iter; iter = iter->next) {
+		Pellet* pellet = iter->content;
+		for (size_t side = SIDE_SOUTH; side < SIDE_NORTH; side++) {
+			MatchInfo current = {.color = pellet->color, .size = 1};
+			current = match_size(pellet, current, side);
+
+			//Get the player color according to the pellet color
+			PlayerType	player = current.color % 2;
+			if (current.size > biggest_match[player].size) {
+				biggest_match[player] = current;
+			}
+			else if (current.size == biggest_match[player].size && current.color != biggest_match[player].color) {
+				//Check which of the two colors has less pellets on the board
+			}
+		}
+	}
+	for (size_t i = 0; i < 2; i++) {
+		debug_matchinfo(biggest_match[i]);
+	}
+	int blue_size = biggest_match[PLAYER_BLUE].size;
+	int red_size = biggest_match[PLAYER_RED].size;
+	//No winner
+	if (blue_size < MATCH_MINIMUM && red_size < MATCH_MINIMUM) {
+		return IN_PROGRESS;
+	}
+	//Potential tie
+	if (blue_size >= MATCH_MINIMUM && red_size >= MATCH_MINIMUM) {
+		//Blue wins
+		if (blue_size > red_size) {
+			return WIN_BLUE;
+		}
+		else if (red_size < blue_size) {
+			return WIN_RED;
+		}
+		//Even further potential tie
+		else {
+			//Check which color has the least pellets of that color on the board -> winner
+			//If those are equal -> then it's a tie
+		}
+	}
+	//Blue wins
+	if (blue_size >= MATCH_MINIMUM) {
+		return WIN_BLUE;
+	}
+	//Red wins
+	if (red_size >= MATCH_MINIMUM) {
+		return WIN_RED;
+	}
+	return IN_PROGRESS;
 }
 
 bool	board_inside(v2 pos) {
@@ -412,7 +494,7 @@ void	board_render(Board* board, mlx_image_t* target) {
 		draw_slot(board, slot, target);
 	}
 	for (List* iter = board->pellets; iter; iter = iter->next) {
-		dprintf(2, "IM RENDERING A PELLET\n");
+		// dprintf(2, "IM RENDERING A PELLET\n");
 		Pellet* pellet = iter->content;
 		draw_pellet(board, pellet, target);
 	}
