@@ -6,7 +6,7 @@
 /*   By: tbruinem <tbruinem@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2022/03/05 11:59:23 by tbruinem      #+#    #+#                 */
-/*   Updated: 2022/03/10 14:56:54 by tbruinem      ########   odam.nl         */
+/*   Updated: 2022/03/10 15:11:22 by tbruinem      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -122,5 +122,5 @@ void	draw_slot(Board* board, Slot* slot, mlx_image_t* target) {
 	for (size_t i = 0; i < 6; i++) {
 		points[i] = rotate_point(board->center.x, board->center.y, -rotation, points[i]);
 	}
-	draw_hexagon_sides(target, CLR_RED, points);
+	draw_hexagon_sides(target, 0xffffffaa, points);
 }

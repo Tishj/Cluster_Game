@@ -6,7 +6,7 @@
 /*   By: tbruinem <tbruinem@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2022/03/05 23:09:04 by tbruinem      #+#    #+#                 */
-/*   Updated: 2022/03/10 12:56:41 by tbruinem      ########   odam.nl         */
+/*   Updated: 2022/03/10 15:44:39 by tbruinem      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,7 +34,7 @@ void*	read_line(void* param) {
 
 	//Blocking - cant guarantee this will stop
 	if (getline(&line, &capacity, connection->handle) == -1) {
-		FATAL(MEMORY_ALLOCATION_FAIL);
+		return NULL;
 	}
 	if (line == NULL) {
 		return line;
