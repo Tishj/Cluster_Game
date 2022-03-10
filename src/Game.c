@@ -6,7 +6,7 @@
 /*   By: tbruinem <tbruinem@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2022/03/05 11:34:12 by tbruinem      #+#    #+#                 */
-/*   Updated: 2022/03/10 14:26:26 by tbruinem      ########   odam.nl         */
+/*   Updated: 2022/03/10 20:41:50 by tbruinem      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -80,7 +80,7 @@ void	game_execute_command(Game* game, Player* player, Command* command) {
 				player->bag[i] += amount;
 			}
 			//Add the counter for the board
-			game->onboard[cmd->color_index]++;
+			game->board.onboard[cmd->color_index]++;
 			(void)cmd;
 			break;
 		};

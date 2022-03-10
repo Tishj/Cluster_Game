@@ -6,7 +6,7 @@
 /*   By: tbruinem <tbruinem@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2022/03/05 09:53:25 by tbruinem      #+#    #+#                 */
-/*   Updated: 2022/03/10 15:45:26 by tbruinem      ########   odam.nl         */
+/*   Updated: 2022/03/10 20:45:21 by tbruinem      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -96,7 +96,7 @@ static bool	color_index_check(int color_index, Player* player) {
 	// if (player->color == PLAYER_RED) {
 	// 	color_index--;
 	// }
-	if (color_index % 2 != player->color) {
+	if (color_index % 2 != (int)player->color) {
 		dprintf(2, "NOT YOUR COLOR!!\n");
 		return false;
 	}

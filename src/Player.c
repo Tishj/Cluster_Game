@@ -6,7 +6,7 @@
 /*   By: tbruinem <tbruinem@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2022/03/05 23:09:04 by tbruinem      #+#    #+#                 */
-/*   Updated: 2022/03/10 15:44:39 by tbruinem      ########   odam.nl         */
+/*   Updated: 2022/03/10 20:46:32 by tbruinem      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,6 +21,8 @@
 #include <pthread.h>
 #include <string.h>
 #include <signal.h>
+#include <sys/types.h>
+#include <sys/wait.h>
 
 #define GAME_CLIENT "./client"
 
