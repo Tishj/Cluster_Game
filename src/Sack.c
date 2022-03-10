@@ -1,19 +1,20 @@
 #include "Sack.h"
 
-void	sack_generate(Game* game){
-	struct p_list*	B_sack;
-	struct p_list*	R_sack;
+void	sack_generate(Game game){
+	int RED_0;
+	int RED_1;
+	int BLUE_0;
+	int BLUE_1;
 
-	B_sack = sack_stack(0);
-	R_sack = sack_stack(1)
-	for (int i = 0; i < 20;  i++){
+	RED_0 = 
 		
-	}
-	for (int j = 0; j < 20: j ++){
-
-	}
 }
 
-p_list	*sack_stack(int i){
-	
+size_t	board_tiles(size_t n){
+	size_t tot = 1;
+
+	for (size_t i = 1; i < n;  i++){
+		tot += 6 * i;
+	}
+	return (tot);
 }
