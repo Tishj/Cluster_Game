@@ -6,7 +6,7 @@
 /*   By: tbruinem <tbruinem@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2022/03/05 08:55:31 by tbruinem      #+#    #+#                 */
-/*   Updated: 2022/03/10 18:02:26 by limartin      ########   odam.nl         */
+/*   Updated: 2022/03/10 18:23:26 by tbruinem      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -317,29 +317,12 @@ void	pellet_fall(Pellet* pellet, BoardSide side) {
 	}
 }
 
-//deprecated
-// void	slot_fall(Board* board, Slot* slot, BoardSide side) {
-
-// 	assert(slot->color != EMPTY);
-
-// 	v2	neighbour = slot->neighbours[side];
-
-// 	const PelletType color = slot->color;
-// 	while (!pellet_has_reached_bottom(board, neighbour)) {
-// 		slot->color = EMPTY;
-// 		slot = &board->map[(int)neighbour.y][(int)neighbour.x];
-// 		slot->color = color;
-// 		neighbour = slot->neighbours[side];
-// 	}
-// }
-
 bool	pellet_staggered_fall(Pellet* pellet, BoardSide side) {
 	Slot* slot = pellet->slot;
 	assert(slot != NULL);
 	v2 position = slot->position;
 
 	dprintf(2, "STAGGERED FALLING X:%d|Y:%d\n", (int)position.x, (int)position.y);
-	assert(pellet->color != EMPTY);
 
 	Slot* neighbour = slot->neighbours[side];
 	if (pellet_has_reached_bottom(neighbour))
