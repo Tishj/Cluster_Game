@@ -6,7 +6,7 @@
 /*   By: tbruinem <tbruinem@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2022/03/05 23:13:40 by tbruinem      #+#    #+#                 */
-/*   Updated: 2022/03/08 14:42:54 by tbruinem      ########   odam.nl         */
+/*   Updated: 2022/03/10 16:24:00 by limartin      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,6 +29,7 @@ typedef struct Connection {
 	int			output[2];
 	bool		bot;
 	FILE*		handle;
+	FILE*		in;
 }	Connection;
 
 typedef struct Player {

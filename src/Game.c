@@ -6,7 +6,7 @@
 /*   By: tbruinem <tbruinem@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2022/03/05 11:34:12 by tbruinem      #+#    #+#                 */
-/*   Updated: 2022/03/09 23:55:59 by tbruinem      ########   odam.nl         */
+/*   Updated: 2022/03/10 13:38:31 by limartin      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,7 +49,7 @@ void	game_init(Game* game, int argc, char **argv) {
 	game->image = mlx_new_image(mlx(), WINDOW_WIDTH, WINDOW_HEIGHT);
 
 	draw_fill(game->image, CLR_TRANSPARENT);
-	mlx_image_to_window(mlx(), game->image, 0,0,0);
+	mlx_image_to_window(mlx(), game->image, 0,0);
 	mlx_loop_hook(mlx(), game_loop, game);
 
 	game->starting_player = PLAYER_BLUE;

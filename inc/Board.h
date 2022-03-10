@@ -6,7 +6,7 @@
 /*   By: tbruinem <tbruinem@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2022/03/05 08:55:45 by tbruinem      #+#    #+#                 */
-/*   Updated: 2022/03/10 00:39:44 by tbruinem      ########   odam.nl         */
+/*   Updated: 2022/03/10 17:08:05 by limartin      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -73,6 +73,8 @@ typedef struct Board {
 	List*		moving_pellets;
 }	Board;
 
+int		get_board_size();
+
 void	board_init(Board* board);
 bool	board_inside(v2 pos);
 void	board_render(Board* board, mlx_image_t* target);
@@ -87,5 +89,7 @@ void	draw_pellet(Board* board, Pellet* pellet, mlx_image_t* target);
 void	board_destroy(Board* board);
 
 void	board_place(Board* board, size_t index, PelletType color);
+
+void	player_board_direction_print(BoardSide side, FILE *player);
 
 #endif

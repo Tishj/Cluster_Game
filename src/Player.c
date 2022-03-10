@@ -6,7 +6,7 @@
 /*   By: tbruinem <tbruinem@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2022/03/05 23:09:04 by tbruinem      #+#    #+#                 */
-/*   Updated: 2022/03/09 22:54:18 by tbruinem      ########   odam.nl         */
+/*   Updated: 2022/03/10 18:09:58 by limartin      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -96,6 +96,10 @@ void	connection_init(Connection* connection, char** abspath, bool bot) {
 		}
 		close(connection->input[READ]);
 		close(connection->output[WRITE]);
+		// connection->in = fdopen(connection->input[WRITE], "w");
+		// if (!connection->in) {
+		// 	FATAL(MEMORY_ALLOCATION_FAIL);
+		// }
 	}
 	else {
 		if (pipe(connection->output) == -1) {
@@ -120,6 +124,33 @@ void	player_send_input(Player* player, Game* game) {
 	if (player->conn.bot != true) {
 		return;
 	}
+	int fd = player->conn.input[WRITE];
+	//Initial input
+	if (!game->state.turn_count) {
+		dprintf(fd, "INITIAL STATE: \n");
+		dprintf(fd, "Gravity direction: ");
+		player_board_direction_print(game->board.side, player->conn.in);
+		dprintf(fd, "Player colour: %d\n", player->color);
+		dprintf(fd, "Board size: %d\n", get_board_size());
+		dprintf(fd, "All slots: \n");
+		for(List* iter = game->board.slots; iter; iter = iter->next)
+		{
+			Slot* slot = iter->content;
+			dprintf(fd, "Slot ID: %zu\n", slot->index);
+			dprintf(fd, "Slot %zu's neighbours: ", slot->index);
+			for (int i = 0; i < 6; i++)
+			{
+				dprintf(fd, "%zu ", slot->neighbours[i]->index);
+			}
+			dprintf(fd, "\n");
+		}
+	}
+	//Normal round input
+	else {
+		dprintf(fd, "normal STATE: \n");
+
+	}
+	// fprintf(player->conn.in, "fsdfsd", ...);
 	(void)game;
 }
 

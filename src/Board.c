@@ -6,7 +6,7 @@
 /*   By: tbruinem <tbruinem@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2022/03/05 08:55:31 by tbruinem      #+#    #+#                 */
-/*   Updated: 2022/03/10 00:40:46 by tbruinem      ########   odam.nl         */
+/*   Updated: 2022/03/10 18:02:26 by limartin      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,6 +28,18 @@
 
 #define HEXAGON_HEIGHT 75
 
+int get_board_size()
+{
+	int i = 1;
+	int size = 1;
+	while (i < SIDE_LENGTH)
+	{
+		size = size + (i * 6);
+		i++;
+	}
+	return (size);
+}
+
 static const char* side_string_mapping[] = {
 	[SIDE_SOUTH] = "South",
 	[SIDE_SOUTHEAST] = "South East",
@@ -39,6 +51,10 @@ static const char* side_string_mapping[] = {
 
 void	board_direction_print(BoardSide side) {
 	dprintf(2, "Direction: (%d) - %s\n", side, side_string_mapping[side]);
+}
+
+void	player_board_direction_print(BoardSide side, FILE *player) {
+	fprintf(player, "(%d) - %s\n", side, side_string_mapping[side]);
 }
 
 void	slot_neighbour_print(Slot* slot) {
@@ -426,13 +442,14 @@ void	board_render(Board* board, mlx_image_t* target) {
 }
 
 Slot*	slot_new(v2 position) {
+	static size_t index = 0;
 	Slot*	slot = malloc(sizeof(Slot));
 	if (!slot) {
 		FATAL(MEMORY_ALLOCATION_FAIL);
 	}
 	slot->position = position;
 	slot->pellet = NULL;
-	slot->index = 0;
+	slot->index = index++;
 	get_hex_points(slot->points, HEXAGON_HEIGHT, position.y, position.x);
 	bzero(slot->neighbours, sizeof(Slot*) * 6);
 	return slot;
