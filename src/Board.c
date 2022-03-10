@@ -6,7 +6,7 @@
 /*   By: tbruinem <tbruinem@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2022/03/05 08:55:31 by tbruinem      #+#    #+#                 */
-/*   Updated: 2022/03/10 20:54:25 by tbruinem      ########   odam.nl         */
+/*   Updated: 2022/03/10 21:58:34 by tbruinem      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -241,7 +241,7 @@ v2	get_neighbour_pos(v2 position, BoardSide side) {
 }
 
 Slot*	get_insert_slot(Board* board, BoardSide side, size_t index) {
-	printf("CURRENT DIRECTION: %s\n", side_string_mapping[side]);
+	// printf("CURRENT DIRECTION: %s\n", side_string_mapping[side]);
 	if (index == (SIDE_LENGTH - 1)) {
 		return board->corners[side_invert(side)];
 	}
@@ -265,14 +265,14 @@ Slot*	get_insert_slot(Board* board, BoardSide side, size_t index) {
 	if (index == 0 || index == (SIDE_LENGTH * 2) - 2)
 		return slot;
 
-	slot_neighbour_print(slot);
+	// slot_neighbour_print(slot);
 	board_direction_print(travel_direction);
 
 	int steps = abs(corner_index - (int)index);
-	printf("steps: %d\n", steps);
+	// printf("steps: %d\n", steps);
 
 	for (int i = 0; i < steps; i++) {
-		printf("%d\n", i);
+		// printf("%d\n", i);
 		slot = slot->neighbours[travel_direction];
 		assert(slot != NULL);
 	}
@@ -520,7 +520,7 @@ static void	create_slots(Board* board) {
 	};
 	// v2	center_hex_middle = get_hex_center(HEXAGON_HEIGHT, middle_pos);
 	Slot*	middle = slot_new(middle_pos);
-	slot_neighbour_print(middle);
+	// slot_neighbour_print(middle);
 	temp[(int)middle_pos.y][(int)middle_pos.x] = middle;
 
 	list_pushback(&new_slots, list_new(middle));
@@ -533,7 +533,7 @@ static void	create_slots(Board* board) {
 			for (size_t side = SIDE_SOUTH; side < SIDE_SIZE; side++) {
 				v2 position = slot->position;
 				v2 neighbour_position = get_neighbour_pos(position, side);
-				dprintf(2, "NEIGHBOUR POS: %d|%d\n", (int)neighbour_position.x, (int)neighbour_position.y);
+				// dprintf(2, "NEIGHBOUR POS: %d|%d\n", (int)neighbour_position.x, (int)neighbour_position.y);
 				//Retrieve the neighbour
 				Slot* neighbour;
 				if (!is_inside_board_array(neighbour_position))

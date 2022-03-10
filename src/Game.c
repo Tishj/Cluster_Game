@@ -6,7 +6,7 @@
 /*   By: tbruinem <tbruinem@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2022/03/05 11:34:12 by tbruinem      #+#    #+#                 */
-/*   Updated: 2022/03/10 20:55:52 by tbruinem      ########   odam.nl         */
+/*   Updated: 2022/03/10 21:59:14 by tbruinem      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -144,7 +144,7 @@ void	game_loop(void* param) {
 		Player*	current_player = &game->player[state->current_player];
 
 		sack_drawhand(current_player);
-		sack_debug(current_player);
+		// sack_debug(current_player);
 		Command* command = player_get_command(current_player, game);
 		command_print(command);
 		game_execute_command(game, current_player, command);

@@ -6,7 +6,7 @@
 /*   By: tbruinem <tbruinem@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2022/03/05 23:09:04 by tbruinem      #+#    #+#                 */
-/*   Updated: 2022/03/10 21:35:43 by tbruinem      ########   odam.nl         */
+/*   Updated: 2022/03/10 21:48:40 by tbruinem      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -139,9 +139,13 @@ void	player_send_input(Player* player, Game* game) {
 				}
 				dprintf(fd, "\n");
 			}
-			dprintf(fd, "%d\n", COLOR_SIZE);
-			for (size_t i = 0; i < COLOR_SIZE; i++) {
-				dprintf(fd, "%ld %d\n", i, board_size/4);
+			dprintf(fd, "%d\n", COLOR_SIZE/2);
+			for (size_t i = 0; i < COLOR_SIZE/2; i++) {
+				dprintf(fd, "%ld %d\n", player->color + (i* 2), board_size/4);
+			}
+			dprintf(fd, "%d\n", COLOR_SIZE/2);
+			for (size_t i = 0; i < COLOR_SIZE/2; i++) {
+				dprintf(fd, "%ld %d\n", !player->color + (i* 2), board_size/4);
 			}
 		}
 		//Normal round input
