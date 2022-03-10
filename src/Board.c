@@ -6,7 +6,7 @@
 /*   By: tbruinem <tbruinem@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2022/03/05 08:55:31 by tbruinem      #+#    #+#                 */
-/*   Updated: 2022/03/10 13:28:47 by tbruinem      ########   odam.nl         */
+/*   Updated: 2022/03/10 13:51:17 by tbruinem      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,8 +26,6 @@
 #include <stdlib.h>
 #include <alloca.h>
 #include "Game.h"
-
-#define HEXAGON_HEIGHT 75
 
 static const char* side_string_mapping[] = {
 	[SIDE_SOUTH] = "South",
@@ -120,6 +118,7 @@ void	debug_matchinfo(MatchInfo info) {
 	dprintf(2, "MATCH_INFO FOR PLAYER[%s] - Size: %d\n", player_colors[info.color % 2], info.size);
 }
 
+//TODO: add the logic for tie-breaking
 int	board_check_match(Board* board) {
 	MatchInfo	biggest_match[2] = {};
 	//Initialize biggest_match to -1
@@ -237,63 +236,6 @@ v2	get_neighbour_pos(v2 position, BoardSide side) {
 	};
 }
 
-// static const v2 insert_slot[6][7] = {
-// 	[SIDE_SOUTH] = {
-// 		[0] = {0,2},
-// 		[1] = {1,1},
-// 		[2] = {2,1},
-// 		[3] = {3,0},
-// 		[4] = {4,1},
-// 		[5] = {5,1},
-// 		[6] = {6,2}
-// 	},
-// 	[SIDE_SOUTHWEST] = {
-// 		[0] = {3,0},
-// 		[1] = {4,1},
-// 		[2] = {5,1},
-// 		[3] = {6,2},
-// 		[4] = {6,3},
-// 		[5] = {6,4},
-// 		[6] = {6,5}
-// 	},
-// 	[SIDE_NORTHWEST] = {
-// 		[0] = {6,2},
-// 		[1] = {6,3},
-// 		[2] = {6,4},
-// 		[3] = {6,5},
-// 		[4] = {5,5},
-// 		[5] = {4,6},
-// 		[6] = {3,6}
-// 	},
-// 	[SIDE_NORTH] = {
-// 		[0] = {6,5},
-// 		[1] = {5,5},
-// 		[2] = {4,6},
-// 		[3] = {3,6},
-// 		[4] = {2,6},
-// 		[5] = {1,5},
-// 		[6] = {0,5}
-// 	},
-// 	[SIDE_NORTHEAST] = {
-// 		[0] = {3,6},
-// 		[1] = {2,6},
-// 		[2] = {1,5},
-// 		[3] = {0,5},
-// 		[4] = {0,4},
-// 		[5] = {0,3},
-// 		[6] = {0,2}
-// 	},
-// 	[SIDE_SOUTHEAST] = {
-// 		[0] = {0,5},
-// 		[1] = {0,4},
-// 		[2] = {0,3},
-// 		[3] = {0,2},
-// 		[4] = {1,1},
-// 		[5] = {2,1},
-// 		[6] = {3,0}
-// 	},
-// };
-
 Slot*	get_insert_slot(Board* board, BoardSide side, size_t index) {
 	printf("CURRENT DIRECTION: %s\n", side_string_mapping[side]);
 	if (index == (SIDE_LENGTH - 1)) {
@@ -382,22 +324,6 @@ void	pellet_fall(Pellet* pellet, BoardSide side) {
 		pellet->slot = neighbour;
 	}
 }
-
-//deprecated
-// void	slot_fall(Board* board, Slot* slot, BoardSide side) {
-
-// 	assert(slot->color != EMPTY);
-
-// 	v2	neighbour = slot->neighbours[side];
-
-// 	const PelletType color = slot->color;
-// 	while (!pellet_has_reached_bottom(board, neighbour)) {
-// 		slot->color = EMPTY;
-// 		slot = &board->map[(int)neighbour.y][(int)neighbour.x];
-// 		slot->color = color;
-// 		neighbour = slot->neighbours[side];
-// 	}
-// }
 
 bool	pellet_staggered_fall(Pellet* pellet, BoardSide side) {
 	Slot* slot = pellet->slot;
@@ -529,33 +455,19 @@ static Slot* get_corner(Slot* slot, BoardSide side) {
 }
 
 static void	assign_corners(Board* board, Slot* center) {
-	// int mid = SIDE_LENGTH;
-	// v2	positions[SIDE_SIZE] = {};
-	
-	// positions[SIDE_NORTH].y = 0;
-	// positions[SIDE_NORTH].x = mid;
-	// positions[SIDE_NORTHEAST].y = (int)((mid + 1) / 2);
-	// positions[SIDE_NORTHEAST].x = (int)((2 * mid) - 1);
-	// positions[SIDE_SOUTHEAST].y = (int)(mid * 1.5 + 0.5);
-	// positions[SIDE_SOUTHEAST].x = (int)((2 * mid) - 1);
-	// positions[SIDE_SOUTH].y = (int)((mid * 2) - 1);
-	// positions[SIDE_SOUTH].x = (int)(mid);
-	// positions[SIDE_SOUTHWEST].y = (int)(mid * 1.5 + 0.5);
-	// positions[SIDE_SOUTHWEST].x = 0;
-	// positions[SIDE_NORTHWEST].y = (int)((mid + 1) / 2);
-	// positions[SIDE_NORTHWEST].x = 0;
-
-	// for (size_t side = SIDE_SOUTH; side < SIDE_SIZE; side++) {
-	// 	board->corners[side] = tmp[(int)positions[side].y][(int)positions[side].x];
-	// 	dprintf(2, "CORNER[%s] | X:%d|Y:%d\n", side_string_mapping[side], (int)positions[side].x, (int)positions[side].y);
-	// 	slot_neighbour_print(board->corners[side]);
-	// }
 	for (size_t side = SIDE_SOUTH; side < SIDE_SIZE; side++) {
 		board->corners[side] = get_corner(center, side);
 	}
 }
 
-//TODO: save corners, for placement
+static bool	is_inside_board_array(v2 pos) {
+	if (pos.y < 0 || pos.y >= (SIDE_LENGTH * 2))
+		return false;
+	if (pos.x < 0 || pos.x >= (SIDE_LENGTH * 2))
+		return false;
+	return true;
+}
+
 static void	create_slots(Board* board) {
 	const int	board_height = (SIDE_LENGTH * 2);
 	//Could do this more optimally by creating it as needed for every "ring"
@@ -588,7 +500,7 @@ static void	create_slots(Board* board) {
 				dprintf(2, "NEIGHBOUR POS: %d|%d\n", (int)neighbour_position.x, (int)neighbour_position.y);
 				//Retrieve the neighbour
 				Slot* neighbour;
-				if (neighbour_position.x < 0 || neighbour_position.y < 0)
+				if (!is_inside_board_array(neighbour_position))
 					neighbour = NULL;
 				else {
 					neighbour = temp[(int)neighbour_position.y][(int)neighbour_position.x];
@@ -605,7 +517,6 @@ static void	create_slots(Board* board) {
 		list_pushback(&board->slots, new_slots);
 		new_slots = new_neighbours;
 	}
-
 
 	Slot* center_slot = temp[SIDE_LENGTH - 1][SIDE_LENGTH - 1];
 	assign_corners(board, center_slot);

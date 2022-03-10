@@ -6,7 +6,7 @@
 /*   By: tbruinem <tbruinem@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2022/03/05 08:55:45 by tbruinem      #+#    #+#                 */
-/*   Updated: 2022/03/10 13:38:43 by tbruinem      ########   odam.nl         */
+/*   Updated: 2022/03/10 13:49:59 by tbruinem      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,8 +19,9 @@
 #include "Draw.h"
 #include "List.h"
 
-#define MATCH_MINIMUM 4
-#define SIDE_LENGTH 6
+#define MATCH_MINIMUM	4
+#define SIDE_LENGTH		6
+#define HEXAGON_HEIGHT	75
 
 //(SIDE_SIZE + Rotation) % SIDE_SIZE == BoardSide
 typedef enum BoardCycle {
@@ -44,10 +45,6 @@ typedef enum PelletType {
 	RED1,
 }	PelletType;
 
-// typedef struct Hexagon {
-
-// }	Hexagon;
-
 typedef struct MatchInfo {
 	int			size;
 	PelletType	color;
@@ -56,12 +53,10 @@ typedef struct MatchInfo {
 typedef struct Pellet {
 	PelletType	color;
 	Slot*		slot;
-	bool		moving; //for falling purposes
 }	Pellet;
 
 typedef struct Slot {
 	Slot*		neighbours[6];
-	// PelletType	color;
 	v2			position;
 	v2			points[6];
 	size_t		index;
@@ -82,7 +77,6 @@ typedef struct Board {
 void	board_init(Board* board);
 bool	board_inside(v2 pos);
 void	board_render(Board* board, mlx_image_t* target);
-// void	board_update_slot(Board* board, int row, int col, PelletType color);
 void	pellet_fall(Pellet* pellet, BoardSide side);
 bool	pellet_staggered_fall(Pellet* pellet, BoardSide side);
 void	board_rotate(Board* board, BoardSide new_side);
