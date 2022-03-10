@@ -6,7 +6,7 @@
 /*   By: tbruinem <tbruinem@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2022/03/05 08:55:45 by tbruinem      #+#    #+#                 */
-/*   Updated: 2022/03/10 14:28:43 by tbruinem      ########   odam.nl         */
+/*   Updated: 2022/03/10 14:57:12 by tbruinem      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,10 +18,6 @@
 #include "vector.h"
 #include "Draw.h"
 #include "List.h"
-
-#define MATCH_MINIMUM	4
-#define SIDE_LENGTH		6
-#define HEXAGON_HEIGHT	75
 
 //(SIDE_SIZE + Rotation) % SIDE_SIZE == BoardSide
 typedef enum BoardCycle {
