@@ -52,11 +52,11 @@ Next `numberOfColors` lines: 4 space-separated integers:
 First line: An integer `direction`: the current direction (0-5)  
 Next line: `numberOfNewPellets`  
 next `numberOfNewPellets` lines: 4 space-separated integers:  
-`index`: index of the new pellet.  
-`cellIndex`: index of the cell the pellet is currently on.  
-`colorIndex`: index of the pellet's color.  
-`isMine`: 1 if you are the owner of this pellet, 0 otherwise.  
+- `index`: index of the new pellet.  
+- `cellIndex`: index of the cell the pellet is currently on.  
+- `colorIndex`: index of the pellet's color.  
+- `isMine`: 1 if you are the owner of this pellet, 0 otherwise.  
 Next line: `numberOfChangedPellets`  
 next `numberOfChangedPellets` lines: 2 space-separated integers:  
-`index`: index of the pellet.   
-`cellIndex`: index of the cell the pellet is currently on.  
+- `index`: index of the pellet.   
+- `cellIndex`: index of the cell the pellet is currently on.  
