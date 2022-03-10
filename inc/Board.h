@@ -6,7 +6,7 @@
 /*   By: tbruinem <tbruinem@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2022/03/05 08:55:45 by tbruinem      #+#    #+#                 */
-/*   Updated: 2022/03/10 20:54:14 by tbruinem      ########   odam.nl         */
+/*   Updated: 2022/03/10 22:49:59 by tbruinem      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -91,5 +91,6 @@ void	board_place(Board* board, size_t index, PelletType color);
 
 void	player_board_direction_print(BoardSide side, FILE *player);
 v2		get_hex_center(float height, v2 hex_pos);
+void	print_slots(List* slots);
 
 #endif

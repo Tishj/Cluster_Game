@@ -6,7 +6,7 @@
 /*   By: tbruinem <tbruinem@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2022/03/05 23:09:04 by tbruinem      #+#    #+#                 */
-/*   Updated: 2022/03/10 21:48:40 by tbruinem      ########   odam.nl         */
+/*   Updated: 2022/03/10 23:25:41 by tbruinem      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,9 +36,11 @@ void*	read_line(void* param) {
 	size_t	capacity = 0;
 
 	//Blocking - cant guarantee this will stop
+	dprintf(2, "READING INPUT FROM BOT\n");
 	if (getline(&line, &capacity, connection->handle) == -1) {
 		return NULL;
 	}
+	dprintf(2, "DONE READING INPUT FROM BOT\n");
 	if (line == NULL) {
 		return line;
 	}
@@ -129,15 +131,16 @@ void	player_send_input(Player* player, Game* game) {
 		int fd = player->conn.input[WRITE];
 		//Initial input
 		if (!game->state.turn_count) {
+			print_slots(game->board.slots);
 			int board_size = get_board_size();
 			dprintf(fd, "%d\n", board_size);
 			for (List* iter = game->board.slots; iter; iter = iter->next) {
 				Slot* slot = iter->content;
-				dprintf(fd, "%ld", slot->index);
+				int	neighbour_indices[6] = {};
 				for (size_t i = 0; i < 6; i++) {
-					dprintf(fd, "%d", slot->neighbours[i] ? (int)slot->neighbours[i]->index : -1);
+					neighbour_indices[i] = slot->neighbours[i] ? (int)slot->neighbours[i]->index : -1;
 				}
-				dprintf(fd, "\n");
+				dprintf(fd, "%d %d %d %d %d %d %d\n", (int)slot->index, neighbour_indices[0], neighbour_indices[1], neighbour_indices[2], neighbour_indices[3], neighbour_indices[4], neighbour_indices[5]);
 			}
 			dprintf(fd, "%d\n", COLOR_SIZE/2);
 			for (size_t i = 0; i < COLOR_SIZE/2; i++) {
@@ -194,12 +197,19 @@ void	player_send_input(Player* player, Game* game) {
 			dprintf(fd, "0\n"); //numberOfChangedPellets
 		}
 		//Send pellets in hand
-		dprintf(fd, "%d\n", COLORS_P_PLAYER);
+		int drawn_pellets = 0;
+		for (size_t i = 0; i < COLORS_P_PLAYER; i++) {
+			drawn_pellets += player->hand[i];
+		}
+		dprintf(fd, "%d\n", drawn_pellets);
 		for (size_t i = 0; i < COLORS_P_PLAYER; i++) {
 			for (int j = 0; j < player->hand[i]; j++) {
+				dprintf(2, "PLAYER->HAND[I]: %d | I: %ld | J: %d\n", player->hand[i], i, j);
 				dprintf(fd, "%d\n", player->color + ((int)i * 2));
+				dprintf(2, "%d\n", player->color + ((int)i * 2));
 			}
 		}
+		dprintf(2, "FINISHED SENDING INPUT\n");
 	}
 	player->missing_pellets = 0;
 	side = game->board.side;

@@ -6,7 +6,7 @@
 /*   By: tbruinem <tbruinem@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2022/03/07 19:20:13 by tbruinem      #+#    #+#                 */
-/*   Updated: 2022/03/10 22:37:42 by tbruinem      ########   odam.nl         */
+/*   Updated: 2022/03/10 23:28:08 by tbruinem      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -68,12 +68,8 @@ int main() {
 	scanf("%d\n", &numberOfCells);dprintf(fd, "numberOfCells %d\n", numberOfCells);
 	for (int i = 0; i < numberOfCells; i++) {
 		int index;
-		scanf("%d", &index);dprintf(fd, "index %d\n", index);
-		for (int neigh = 0; neigh < 6; neigh++) {
-			int neighIndex;
-			scanf("%d", &neighIndex);dprintf(fd, "neighIndex %d\n", neighIndex);
-		}
-		scanf("\n");
+		int n0,n1,n2,n3,n4,n5;
+		scanf("%d %d %d %d %d %d %d\n", &index, &n0, &n1, &n2, &n3, &n4, &n5);dprintf(fd, "index %d n0 %d n1 %d n2 %d n3 %d n4 %d n5 %d\n", index, n0, n1, n2, n3, n4, n5);
 	}
 
 	int yourColors;
@@ -91,6 +87,7 @@ int main() {
 		scanf("%d %d\n", &colorIndex, &colorAmount);dprintf(fd, "colorIndex %d colorAmount %d\n", colorIndex, colorAmount);
 	}
 	while (true) {
+		dprintf(2, "NEXT ITERATION\n");
 		int direction;
 		scanf("%d\n", &direction);dprintf(fd, "direction %d\n", direction);
 
@@ -117,10 +114,14 @@ int main() {
 
 		int numberOfPelletsInHand;
 		scanf("%d\n", &numberOfPelletsInHand);dprintf(fd, "numberOfPelletsInHand %d\n", numberOfPelletsInHand);
-		for (int i = 0; i < numberOfPelletsInHand; i++) {
+		for (int k = 0; k < numberOfPelletsInHand; k++) {
 			int colorIndex;
-			scanf("%d\n", &colorIndex);dprintf(fd, "colorIndex %d\n", colorIndex);
+			// dprintf(fd, "INDEX OF PELLETS IN HAND ITERATION: %d\n", k);
+			scanf("%d\n", &colorIndex);
+			dprintf(fd, "colorIndex %d | %d\n", colorIndex, k);
+			// dprintf(fd, "\n");
 		}
-		printf("ROTATE 1\n");
+		// close(fd);
+		printf("PLACE 2 2\n");
 	}
 }

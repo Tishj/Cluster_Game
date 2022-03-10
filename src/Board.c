@@ -6,7 +6,7 @@
 /*   By: tbruinem <tbruinem@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2022/03/05 08:55:31 by tbruinem      #+#    #+#                 */
-/*   Updated: 2022/03/10 21:58:34 by tbruinem      ########   odam.nl         */
+/*   Updated: 2022/03/10 22:50:51 by tbruinem      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -468,17 +468,25 @@ void	board_render(Board* board, mlx_image_t* target) {
 	}
 }
 
+void	print_slots(List* slots) {
+	while (slots) {
+		Slot* slot = slots->content;
+		printf("index: %ld\n", slot->index);
+		slots = slots->next;
+	}
+}
+
 Slot*	slot_new(v2 position) {
-	static size_t index = 0;
+	static size_t slot_index = 0;
 	Slot*	slot = malloc(sizeof(Slot));
 	if (!slot) {
 		FATAL(MEMORY_ALLOCATION_FAIL);
 	}
 	slot->position = position;
 	slot->pellet = NULL;
-	slot->index = index++;
 	get_hex_points(slot->points, HEXAGON_HEIGHT, position.y, position.x);
 	bzero(slot->neighbours, sizeof(Slot*) * 6);
+	slot->index = slot_index++;
 	return slot;
 }
 
@@ -557,6 +565,7 @@ static void	create_slots(Board* board) {
 	Slot* center_slot = temp[SIDE_LENGTH - 1][SIDE_LENGTH - 1];
 	assign_corners(board, center_slot);
 	board->center = (v2){center_slot->points[0].x + ((center_slot->points[3].x - center_slot->points[0].x) / 2), center_slot->points[0].y};
+	// print_slots(board->slots);
 }
 
 void	board_destroy(Board* board) {
