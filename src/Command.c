@@ -6,7 +6,7 @@
 /*   By: tbruinem <tbruinem@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2022/03/05 09:53:25 by tbruinem      #+#    #+#                 */
-/*   Updated: 2022/03/09 22:52:32 by tbruinem      ########   odam.nl         */
+/*   Updated: 2022/03/10 15:45:26 by tbruinem      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,6 +18,7 @@
 #include "Error.h"
 #include <stdbool.h>
 #include "Board.h"
+#include "Game.h"
 
 const char* valid_commands[] = {
 	[CMD_PLACE] = "PLACE",
@@ -87,15 +88,29 @@ static bool	slot_index_check(int slot_index) {
 }
 
 //Take player to verify that the color is one chosen for them
-static bool	color_index_check(int color_index) {
-	return (color_index >= 0 && color_index <= 3);
+static bool	color_index_check(int color_index, Player* player) {
+	if (color_index < 0 || color_index > 3) {
+		dprintf(2, "outside of valid range\n");
+		return false;
+	}
+	// if (player->color == PLAYER_RED) {
+	// 	color_index--;
+	// }
+	if (color_index % 2 != player->color) {
+		dprintf(2, "NOT YOUR COLOR!!\n");
+		return false;
+	}
+	return (player->hand[color_index / 2] != 0);
 }
 
 static bool cycles_check(int cycles) {
 	return (cycles >= 1 && cycles <= 5);
 }
 
-Command*	command_parse(char* commandstring) {
+Command*	command_parse(char* commandstring, Player* player) {
+	if (!commandstring) {
+		return command_invalid();
+	}
 	dprintf(2, "RECEIVED COMMAND: '%s'\n", commandstring);
 	char* const	space_pos = strchr(commandstring, ' ');
 
@@ -122,8 +137,10 @@ Command*	command_parse(char* commandstring) {
 		case CMD_PLACE: {
 			int slot_index, color_index;
 			char space;
-			if (sscanf(space_pos + 1, "%d%c%d\n", &slot_index, &space, &color_index) == -1 || !slot_index_check(slot_index) || space != ' ' || !color_index_check(color_index)) {
-				dprintf(2, "INVALID 4 %s\n", space_pos + 1);
+			if (sscanf(space_pos + 1, "%d%c%d\n", &slot_index, &space, &color_index) == -1 || 
+				!slot_index_check(slot_index) ||
+				space != ' ' ||
+				!color_index_check(color_index, player)) {
 				return command_invalid();
 			}
 			return command_place(slot_index, color_index);

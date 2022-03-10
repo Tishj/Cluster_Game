@@ -42,7 +42,9 @@ Command*	command_invalid(void);
 Command*	command_place(int slot_index, int color_index);
 Command*	command_rotate(int cycles);
 
-Command*	command_parse(char* commandstring);
+typedef struct Player Player;
+
+Command*	command_parse(char* commandstring, Player* player);
 void		command_print(Command* command);
 
 

@@ -6,7 +6,7 @@
 /*   By: tbruinem <tbruinem@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2022/03/04 23:13:04 by tbruinem      #+#    #+#                 */
-/*   Updated: 2022/03/08 16:46:57 by tbruinem      ########   odam.nl         */
+/*   Updated: 2022/03/10 15:34:51 by tbruinem      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,11 +18,14 @@
 #include <stddef.h>
 #include "Board.h"
 #include "Player.h"
+#include <time.h>
 
 #define INITIAL_TIMEOUT_DURATION 1000
 #define ROUND_TIMEOUT_DURATION 100
-
-#define HEX_HEIGHT 75
+#define MATCH_MINIMUM	4
+#define SIDE_LENGTH		4
+#define HEXAGON_HEIGHT	(WINDOW_HEIGHT / (((SIDE_LENGTH * 2) - 1) + 2))
+#define PELLET_RADIUS (HEXAGON_HEIGHT / 3)
 
 #define MAX_TURN_COUNT 20
 
@@ -46,6 +49,7 @@ typedef struct Game {
 	GameState		state;
 	PlayerType		starting_player;
 	bool			animating;
+	size_t			onboard[4]; //Each color Pellet currently on board
 }	Game;
 
 void	game_loop(void* param);

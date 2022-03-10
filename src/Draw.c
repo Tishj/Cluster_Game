@@ -6,7 +6,7 @@
 /*   By: tbruinem <tbruinem@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2022/03/05 11:59:23 by tbruinem      #+#    #+#                 */
-/*   Updated: 2022/03/09 12:50:36 by tbruinem      ########   odam.nl         */
+/*   Updated: 2022/03/10 18:28:32 by tbruinem      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -93,10 +93,10 @@ void	draw_hexagon_sides(mlx_image_t* target, unsigned int color, v2* points) {
 }
 
 static const unsigned int color_mapping[] = {
-	[BLUE0] =	0x55c1dbff,
-	[RED0] =	0xb03d2bff,
-	[BLUE1] =	0x0000ffff,
-	[RED1] =	0xff0000ff
+	[COLOR_BLUE0] =	0x55c1dbff,
+	[COLOR_RED0] =	0xb03d2bff,
+	[COLOR_BLUE1] =	0x0000ffff,
+	[COLOR_RED1] =	0xff0000ff
 };
 
 void	draw_pellet(Board* board, Pellet* pellet, mlx_image_t* target) {

@@ -17,6 +17,7 @@
 int main(int argc, char **argv) {
 	Game	game;
 
+	srand(time(NULL));
 	game_init(&game, argc, argv);
 	// simulate_game(&game.board);
 	// print_initial_state(&game);

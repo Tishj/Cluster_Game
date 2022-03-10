@@ -6,7 +6,7 @@
 #    By: tbruinem <tbruinem@student.codam.nl>         +#+                      #
 #                                                    +#+                       #
 #    Created: 2022/02/07 16:04:49 by tbruinem      #+#    #+#                  #
-#    Updated: 2022/03/10 17:41:14 by limartin      ########   odam.nl          #
+#    Updated: 2022/03/10 18:25:21 by tbruinem      ########   odam.nl          #
 #                                                                              #
 # **************************************************************************** #
 
@@ -37,6 +37,7 @@ SRC =	main.c \
 		List.c \
 		split.c \
 		abspath.c \
+		Sack.c \
 		Util.c
 
 OBJ := $(addprefix $(OBJDIR)/, $(SRC:%.c=%.o))

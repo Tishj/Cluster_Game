@@ -6,7 +6,7 @@
 /*   By: tbruinem <tbruinem@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2022/03/07 19:20:13 by tbruinem      #+#    #+#                 */
-/*   Updated: 2022/03/10 17:57:39 by limartin      ########   odam.nl         */
+/*   Updated: 2022/03/10 18:25:27 by tbruinem      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,8 +25,7 @@ int main() {
 	dprintf(2, "LINE: %s\n", line);
 	free(line);
 	while (true) {
-		
-		printf("PLACE 1 1\n");
+		printf("PLACE 2 2\n");
 		usleep(100);
 	}
 }

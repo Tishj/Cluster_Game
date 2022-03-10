@@ -6,7 +6,7 @@
 /*   By: tbruinem <tbruinem@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2022/03/05 11:34:12 by tbruinem      #+#    #+#                 */
-/*   Updated: 2022/03/10 13:38:31 by limartin      ########   odam.nl         */
+/*   Updated: 2022/03/10 18:56:57 by tbruinem      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,6 +19,7 @@
 #include "Player.h"
 #include <sys/time.h>
 #include "Command.h"
+#include "Sack.h"
 
 void	init_players(Player* player, int argc, char **argv) {
 	for (int i = 0; i < 2; i++) {
@@ -44,12 +45,13 @@ void	game_init(Game* game, int argc, char **argv) {
 	state_init(&game->state);
 
 	init_players(game->player, argc-1, argv+1);
+	sack_init(game);
 
 	board_init(&game->board);
 	game->image = mlx_new_image(mlx(), WINDOW_WIDTH, WINDOW_HEIGHT);
 
 	draw_fill(game->image, CLR_TRANSPARENT);
-	mlx_image_to_window(mlx(), game->image, 0,0);
+	mlx_image_to_window(mlx(), game->image, 0,0,0);
 	mlx_loop_hook(mlx(), game_loop, game);
 
 	game->starting_player = PLAYER_BLUE;
@@ -57,7 +59,6 @@ void	game_init(Game* game, int argc, char **argv) {
 
 void	render(Game* game) {
 	board_render(&game->board, game->image);
-	// draw_circle(game->image, game->board.center.x, game->board.center.y, 15, CLR_RED);
 }
 
 void	game_execute_command(Game* game, Player* player, Command* command) {
@@ -70,6 +71,21 @@ void	game_execute_command(Game* game, Player* player, Command* command) {
 			game->animating = true;
 			CommandPlace* cmd = (void*)command;
 			board_place(&game->board, cmd->slot_index, cmd->color_index);
+			//Remove the index from the hand
+			player->hand[cmd->color_index / PLAYER_SIZE]--;
+			//Place all the other pellet(s) back into the bag
+			for (size_t i = 0; i < 2; i++) {
+				int amount = player->hand[i];
+				player->hand[i] = 0;
+				player->bag[i] += amount;
+			}
+			//Add the counter for the board
+			game->onboard[cmd->color_index]++;
+
+			//Update the amount of pellets they are unaware of yet
+			player->missing_pellets++;
+			game->player[!game->state.current_player].missing_pellets++;
+
 			(void)cmd;
 			break;
 		};
@@ -78,11 +94,18 @@ void	game_execute_command(Game* game, Player* player, Command* command) {
 			board_update_direction(&game->board, cmd->cycles);
 			board_rotate(&game->board, game->board.side);
 			game->animating = true;
+			bzero(player->hand, sizeof(int) * 2);
 			break;
 		};
 	}
 	free(command);
 }
+
+static const char*	match_results[] = {
+	[WIN_BLUE] = "Player blue has won!",
+	[WIN_RED] = "Player red has won!",
+	[TIE] = "The game ended in a tie :/"
+};
 
 void	game_loop(void* param) {
 	Game*		game = param;
@@ -93,7 +116,7 @@ void	game_loop(void* param) {
 		state->result = TIE;
 	}
 	if (state->result != IN_PROGRESS) {
-		dprintf(2, "BOT TIMED OUT\n");
+		dprintf(2, "%s\n", match_results[state->result]);
 		mlx_close_window(mlx());
 		return;
 	}
@@ -101,6 +124,7 @@ void	game_loop(void* param) {
 	if (game->animating) {
 		if (game->board.tween.progress >= 1.0) {
 			if (!game->board.moving_pellets) {
+				game->state.result = board_check_match(&game->board);
 				game->animating = false;
 			}
 			else {
@@ -119,6 +143,8 @@ void	game_loop(void* param) {
 	else {
 		Player*	current_player = &game->player[state->current_player];
 
+		sack_drawhand(current_player);
+		sack_debug(current_player);
 		Command* command = player_get_command(current_player, game);
 		command_print(command);
 		game_execute_command(game, current_player, command);
@@ -141,4 +167,7 @@ void	game_loop(void* param) {
 void	game_destroy(Game* game) {
 	mlx_delete_image(mlx(), game->image);
 	board_destroy(&game->board);
+	for (size_t i = 0; i < 2; i++) {
+		player_destroy(&game->player[i]);
+	}
 }

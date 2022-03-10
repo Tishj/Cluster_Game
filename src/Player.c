@@ -6,7 +6,7 @@
 /*   By: tbruinem <tbruinem@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2022/03/05 23:09:04 by tbruinem      #+#    #+#                 */
-/*   Updated: 2022/03/10 18:09:58 by limartin      ########   odam.nl         */
+/*   Updated: 2022/03/10 18:59:51 by tbruinem      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,6 +20,7 @@
 #include <sys/time.h>
 #include <pthread.h>
 #include <string.h>
+#include <signal.h>
 
 #define GAME_CLIENT "./client"
 
@@ -33,7 +34,7 @@ void*	read_line(void* param) {
 
 	//Blocking - cant guarantee this will stop
 	if (getline(&line, &capacity, connection->handle) == -1) {
-		FATAL(MEMORY_ALLOCATION_FAIL);
+		return NULL;
 	}
 	if (line == NULL) {
 		return line;
@@ -46,7 +47,7 @@ void*	read_line(void* param) {
 	return line;
 }
 
-Command*	connection_get_command(Connection* connection, size_t timeout) {
+char*	connection_get_command(Connection* connection, size_t timeout) {
 	pthread_t		thread;
 
 	//Start a thread that is going to try to read a line of input from the bot
@@ -66,12 +67,10 @@ Command*	connection_get_command(Connection* connection, size_t timeout) {
 	}
 	//If the thread was canceled before it finished, it was timed out (Untested)
 	if (line == PTHREAD_CANCELED) {
-		dprintf(2, "BOT TIMED OUT\n");
-		return command_invalid();
+		// dprintf(2, "BOT TIMED OUT\n");
+		return NULL;
 	}
-	Command* command = command_parse(line);
-	free(line);
-	return command;
+	return line;
 }
 
 void	connection_init(Connection* connection, char** abspath, bool bot) {
@@ -121,43 +120,70 @@ void	connection_init(Connection* connection, char** abspath, bool bot) {
 }
 
 void	player_send_input(Player* player, Game* game) {
-	if (player->conn.bot != true) {
-		return;
-	}
-	int fd = player->conn.input[WRITE];
-	//Initial input
-	if (!game->state.turn_count) {
-		dprintf(fd, "INITIAL STATE: \n");
-		dprintf(fd, "Gravity direction: ");
-		player_board_direction_print(game->board.side, player->conn.in);
-		dprintf(fd, "Player colour: %d\n", player->color);
-		dprintf(fd, "Board size: %d\n", get_board_size());
-		dprintf(fd, "All slots: \n");
-		for(List* iter = game->board.slots; iter; iter = iter->next)
-		{
-			Slot* slot = iter->content;
-			dprintf(fd, "Slot ID: %zu\n", slot->index);
-			dprintf(fd, "Slot %zu's neighbours: ", slot->index);
-			for (int i = 0; i < 6; i++)
-			{
-				dprintf(fd, "%zu ", slot->neighbours[i]->index);
+	static BoardSide	side = SIDE_SOUTH;
+
+	if (player->conn.bot == true) {
+		int fd = player->conn.input[WRITE];
+		//Initial input
+		if (!game->state.turn_count) {
+			dprintf(fd, "%d\n", game->board.side);
+			int board_size = get_board_size();
+			dprintf(fd, "%d\n", board_size);
+			for (List* iter = game->board.slots; iter; iter = iter->next) {
+				Slot* slot = iter->content;
+				dprintf(fd, "%ld", slot->index);
+				for (size_t i = 0; i < 6; i++) {
+					dprintf(fd, "%ld", slot->neighbours[i] ? slot->neighbours[i]->index : -1);
+				}
+				dprintf(fd, "\n");
 			}
-			dprintf(fd, "\n");
+			dprintf(fd, "%d\n", COLOR_SIZE);
+			for (size_t i = 0; i < COLOR_SIZE; i++) {
+				dprintf(fd, "%ld %d\n", i, board_size/4);
+			}
+		}
+		//Normal round input
+		else {
+			dprintf(fd, "%d\n", game->board.side);
+			//Rotation happened
+			if (game->board.side != side) {
+				dprintf(fd, "0\n"); //numberOfNewPellets
+				dprintf(fd, "%ld\n", game->board.pellets_placed);
+				for (List* iter = game->board.pellets; iter; iter = iter->next) {
+					Pellet* pellet = iter->content;
+					dprintf(fd, "%ld %ld\n", pellet->index, pellet->slot->index);
+				}
+			}
+			else {
+				List* iter = game->board.pellets;
+				while (iter->next) {
+					iter = iter->next;
+				}
+				dprintf(fd, "1\n");
+				//Dit is kut..
+				//Need to keep track per player which data they're missing, this includes their own pellet placements
+				for (size_t i = 0; i < player->missing_pellets; i++) {
+					Pellet* pellet = iter->content;
+					bool is_mine = (pellet->color % 2) == player->color;
+					dprintf(fd, "%ld %ld %d %d\n", pellet->index, pellet->slot->index, pellet->color, (int)is_mine);
+					iter = iter->prev;
+				}
+				dprintf(fd, "0\n"); //numberOfChangedPellets
+			}
+
 		}
 	}
-	//Normal round input
-	else {
-		dprintf(fd, "normal STATE: \n");
-
-	}
-	// fprintf(player->conn.in, "fsdfsd", ...);
-	(void)game;
+	player->missing_pellets = 0;
+	side = game->board.side;
 }
 
 Command*	player_get_command(Player* player, Game* game) {
 	player_send_input(player, game);
 	size_t	timeout_duration = game->state.turn_count ? ROUND_TIMEOUT_DURATION : INITIAL_TIMEOUT_DURATION;
-	return connection_get_command(&player->conn, timeout_duration);
+	char* line = connection_get_command(&player->conn, timeout_duration);
+	Command* command = command_parse(line, player);
+	free(line);
+	return command;
 }
 
 char**	get_abspath(char* program) {
@@ -181,6 +207,15 @@ char**	get_abspath(char* program) {
 	return arguments;
 }
 
+void	connection_destroy(Connection* connection) {
+	kill(connection->pid, SIGKILL);
+	waitpid(connection->pid, NULL, 0);
+}
+
+void	player_destroy(Player* player) {
+	connection_destroy(&player->conn);
+}
+
 void	player_init(Player* player, PlayerType color, char* program) {
 	bool	bot = program != NULL;
 	char**	abspath = get_abspath(program);
@@ -190,5 +225,6 @@ void	player_init(Player* player, PlayerType color, char* program) {
 		free(abspath[i]);
 	}
 	free(abspath);
+	player->missing_pellets = 0;
 	player->color = color;
 }
