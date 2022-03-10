@@ -139,7 +139,7 @@ void	game_loop(void* param) {
 		Player*	current_player = &game->player[state->current_player];
 
 		sack_drawhand(current_player);
-		sack_debug(current_player);
+		//sack_debug(current_player);
 		Command* command = player_get_command(current_player, game);
 		command_print(command);
 		game_execute_command(game, current_player, command);

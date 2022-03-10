@@ -47,13 +47,34 @@ void	sack_debug(Player* player) {
 	int offset = player->color == PLAYER_RED;
 	for (size_t i = 0 ; i < COLORS_P_PLAYER; i++) {
 		dprintf(STDERR_FILENO, "Hand[%s] = %d\n", color_names[offset + (i * 2)], player->hand[i]);
+		dprintf(STDERR_FILENO, "Bag = %d\t%d\n", player->bag[0], player->bag[1]);
 	}
+}
+
+int sack_probability(Player* player){
+	float	sack_1 = (float)player->bag[0];
+	float	sack_2 = (float)player->bag[1];
+	int 	sack_tot = player->bag[0] + player->bag[1];
+	float	psack_1 = sack_1/sack_tot;
+	float	psack_2 = sack_2/sack_tot;
+
+	sack_debug(player);
+	if ((float)(rand()/MAX_RAND) <= psack_1){
+		printf("Sack 1 prob: %f\n", psack_1);
+		return (0);
+	}
+	else{
+		printf("Sack 2 prob: %f\n", psack_2);
+		return (1);
+	}
+
+	
 }
 
 void	sack_drawhand(Player *player){
 	for (size_t i = 0; i < COLORS_P_PLAYER; i++) {
 		while (true) {
-			int color = rand() % 2;
+			int color = sack_probability(player);
 			//
 			if (player->bag[color]) {
 				player->bag[color]--;
