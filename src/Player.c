@@ -6,7 +6,7 @@
 /*   By: tbruinem <tbruinem@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2022/03/05 23:09:04 by tbruinem      #+#    #+#                 */
-/*   Updated: 2022/03/11 01:03:45 by tbruinem      ########   odam.nl         */
+/*   Updated: 2022/03/11 01:07:57 by tbruinem      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,7 +38,9 @@ Connection*	current_connection = NULL;
 void	sigalarm_handler(int dummy) {
 	(void)dummy;
 	// dprintf(STDERR_FILENO, "Player %s timed out (TIME_OUT is %d ms, but %d ms for the first turn)!\n", g_player->name, TIME_OUT, TIME_OUT * 20);
-	fclose(current_connection->handle);
+	if (fclose(current_connection->handle) == -1) {
+		FATAL(MEMORY_ALLOCATION_FAIL);
+	}
 }
 
 char*	connection_get_command(Connection* connection, size_t timeout) {
@@ -239,9 +241,13 @@ void	player_send_input(Player* player, Game* game) {
 }
 
 Command*	player_get_command(Player* player, Game* game) {
-	// player_send_input(player, game);
-	if (player->conn.bot)
-		fwrite("aaaa\n", 1, 5, player->conn.handle);
+	player_send_input(player, game);
+	// if (player->conn.bot) {
+	// 	if (fwrite("aaaa\n", 1, 5, player->conn.handle) == 0) {
+	// 		FATAL(MEMORY_ALLOCATION_FAIL);
+	// 	}
+	// }
+	fflush(player->conn.handle);
 	size_t	timeout_duration = game->state.turn_count ? ROUND_TIMEOUT_DURATION : INITIAL_TIMEOUT_DURATION;
 	char* line = connection_get_command(&player->conn, timeout_duration);
 	Command* command = command_parse(line, player, &game->board);
@@ -273,7 +279,9 @@ char**	get_abspath(char* program) {
 void	connection_destroy(Connection* connection) {
 	kill(connection->pid, SIGKILL);
 	waitpid(connection->pid, NULL, 0);
-	fclose(connection->handle);
+	if (fclose(connection->handle) == -1) {
+		FATAL(MEMORY_ALLOCATION_FAIL);
+	}
 }
 
 void	player_destroy(Player* player) {
