@@ -6,7 +6,7 @@
 /*   By: tbruinem <tbruinem@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2022/03/05 23:09:04 by tbruinem      #+#    #+#                 */
-/*   Updated: 2022/03/11 09:00:25 by tbruinem      ########   odam.nl         */
+/*   Updated: 2022/03/11 12:42:41 by tbruinem      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -176,10 +176,20 @@ void	player_send_input(Player* player, Game* game) {
 				}
 				dprintf(fd, "%d %d %d %d %d %d %d\n", (int)slot->index, neighbour_indices[0], neighbour_indices[1], neighbour_indices[2], neighbour_indices[3], neighbour_indices[4], neighbour_indices[5]);
 			}
+			dprintf(fd, "%d\n", (SIDE_LENGTH*2)-1); //numberOfColumns
+			for (int i = 0; i < (SIDE_LENGTH*2)-1; i++) {
+				int directions[6];
+				for (int side = 0; side < 6; side++) {
+					directions[side] = get_insert_slot(&game->board, side, i)->index;
+				}
+				dprintf(fd, "%d %d %d %d %d %d %d\n", i, directions[0], directions[1], directions[2], directions[3], directions[4], directions[5]);
+			}
+			//yourColors
 			dprintf(fd, "%d\n", COLOR_SIZE/2);
 			for (size_t i = 0; i < COLOR_SIZE/2; i++) {
 				dprintf(fd, "%ld %d\n", player->color + (i* 2), board_size/4);
 			}
+			//opponentColors
 			dprintf(fd, "%d\n", COLOR_SIZE/2);
 			for (size_t i = 0; i < COLOR_SIZE/2; i++) {
 				dprintf(fd, "%ld %d\n", !player->color + (i* 2), board_size/4);
@@ -188,7 +198,7 @@ void	player_send_input(Player* player, Game* game) {
 		//Normal round input
 		dprintf(fd, "%d\n", game->board.side);
 
-		//numberOfValidInsertSlots;
+		//numberOfValidColumns;
 		Slot*	indices[(SIDE_LENGTH*2)-1] = {};
 		size_t	valid_slots = 0;
 		for (size_t i = 0; i < (SIDE_LENGTH*2)-1; i++) {
