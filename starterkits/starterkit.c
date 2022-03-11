@@ -6,7 +6,7 @@
 /*   By: tbruinem <tbruinem@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2022/03/07 19:20:13 by tbruinem      #+#    #+#                 */
-/*   Updated: 2022/03/11 12:43:15 by tbruinem      ########   odam.nl         */
+/*   Updated: 2022/03/11 12:49:23 by tbruinem      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,6 +14,7 @@
 #include <stdbool.h>
 #include <unistd.h>
 #include <stdlib.h>
+#include <time.h>
 
 // ### Initialization Input
 
@@ -59,6 +60,7 @@
 // - `colorIndex`: index of the pellet's color.
 
 int main() {
+	srand(time(NULL));
 	int numberOfCells;
 	scanf("%d\n", &numberOfCells);
 	for (int i = 0; i < numberOfCells; i++) {
@@ -68,6 +70,7 @@ int main() {
 	}
 
 	int numberOfColumns;
+	int	columns[numberOfColumns];
 	scanf("%d\n", &numberOfColumns);
 	for (int i = 0; i < numberOfColumns; i++) {
 		int index, d0, d1, d2, d3, d4, d5;
@@ -92,6 +95,9 @@ int main() {
 		// pellet_types[colorIndex] = false;
 	}
 	while (true) {
+		for (int i = 0; i < numberOfColumns; i++) {
+			columns[i] = false;
+		}
 
 		int color_to_play;
 		int column_to_play;
@@ -105,6 +111,7 @@ int main() {
 			int column, cellIndex;
 			scanf("%d %d\n", &column, &cellIndex);
 			column_to_play = column;
+			columns[column] = true;
 		}
 
 		int numberOfNewPellets;
@@ -131,6 +138,11 @@ int main() {
 		}
 		fflush(stdout);
 		fflush(stdin);
+		while (true) {
+			column_to_play = rand() % numberOfColumns;
+			if (columns[column_to_play])
+				break;
+		}
 		printf("PLACE %d %d\n", column_to_play, color_to_play);
 		fflush(stdout);
 	}

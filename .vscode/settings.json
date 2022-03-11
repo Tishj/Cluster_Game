@@ -2,6 +2,7 @@
 	"files.associations": {
 		"*.tcc": "c",
 		"string": "c",
-		"streambuf": "c"
+		"streambuf": "c",
+		"time.h": "c"
 	}
 }

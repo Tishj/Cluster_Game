@@ -6,7 +6,7 @@
 /*   By: tbruinem <tbruinem@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2022/03/07 19:20:13 by tbruinem      #+#    #+#                 */
-/*   Updated: 2022/03/11 12:42:58 by tbruinem      ########   odam.nl         */
+/*   Updated: 2022/03/11 12:51:28 by tbruinem      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,6 +14,7 @@
 #include <stdbool.h>
 #include <unistd.h>
 #include <stdlib.h>
+#include <time.h>
 
 // ### Initialization Input
 
@@ -69,6 +70,7 @@ int main() {
 
 	int numberOfColumns;
 	scanf("%d\n", &numberOfColumns);
+	int	columns[numberOfColumns];
 	for (int i = 0; i < numberOfColumns; i++) {
 		int index, d0, d1, d2, d3, d4, d5;
 		scanf("%d %d %d %d %d %d %d\n", &index, &d0, &d1, &d2, &d3, &d4, &d5);
@@ -81,6 +83,8 @@ int main() {
 		int colorIndex;
 		int colorAmount;
 		scanf("%d %d\n", &colorIndex, &colorAmount);
+		if (!i)
+			srand(time(NULL) + colorIndex);
 		// pellet_types[colorIndex] = true;
 	}
 	int opponentColors;
@@ -92,6 +96,9 @@ int main() {
 		// pellet_types[colorIndex] = false;
 	}
 	while (true) {
+		for (int i = 0; i < numberOfColumns; i++) {
+			columns[i] = false;
+		}
 
 		int color_to_play;
 		int column_to_play;
@@ -105,6 +112,7 @@ int main() {
 			int column, cellIndex;
 			scanf("%d %d\n", &column, &cellIndex);
 			column_to_play = column;
+			columns[column] = true;
 		}
 
 		int numberOfNewPellets;
@@ -131,6 +139,11 @@ int main() {
 		}
 		fflush(stdout);
 		fflush(stdin);
+		while (true) {
+			column_to_play = rand() % numberOfColumns;
+			if (columns[column_to_play])
+				break;
+		}
 		printf("PLACE %d %d\n", column_to_play, color_to_play);
 		fflush(stdout);
 	}
