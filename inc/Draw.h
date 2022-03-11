@@ -6,7 +6,7 @@
 /*   By: tbruinem <tbruinem@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2022/03/05 12:10:31 by tbruinem      #+#    #+#                 */
-/*   Updated: 2022/03/10 15:11:10 by tbruinem      ########   odam.nl         */
+/*   Updated: 2022/03/11 12:20:11 by tbruinem      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,7 +18,7 @@
 #include <assert.h>
 
 #define CLR_TRANSPARENT 0x00000000
-#define CLR_WHITE		0xffffffff
+#define CLR_WHITE		0xffffff32
 #define CLR_RED			0xff0000ff
 
 typedef struct Tween {

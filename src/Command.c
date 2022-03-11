@@ -6,7 +6,7 @@
 /*   By: tbruinem <tbruinem@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2022/03/05 09:53:25 by tbruinem      #+#    #+#                 */
-/*   Updated: 2022/03/11 00:25:57 by tbruinem      ########   odam.nl         */
+/*   Updated: 2022/03/11 11:41:19 by tbruinem      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,6 +52,7 @@ void	command_print(Command* command) {
 }
 
 Command*	command_invalid() {
+	printf("COMMAND INVALID!!!!\n");
 	CommandInvalid*	cmd = malloc(sizeof(CommandInvalid));
 	if (!cmd) {
 		FATAL(MEMORY_ALLOCATION_FAIL);

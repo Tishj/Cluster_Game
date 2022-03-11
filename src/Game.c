@@ -6,7 +6,7 @@
 /*   By: tbruinem <tbruinem@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2022/03/05 11:34:12 by tbruinem      #+#    #+#                 */
-/*   Updated: 2022/03/11 08:43:03 by tbruinem      ########   odam.nl         */
+/*   Updated: 2022/03/11 11:51:52 by tbruinem      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -64,7 +64,9 @@ void	render(Game* game) {
 void	game_execute_command(Game* game, Player* player, Command* command) {
 	switch (command->type) {
 		case CMD_INVALID: {
+			CommandInvalid* cmd = (void*)command;
 			game->state.result = !player->color;
+			free(cmd);
 			break;
 		};
 		case CMD_PLACE: {
@@ -86,6 +88,7 @@ void	game_execute_command(Game* game, Player* player, Command* command) {
 			player->missing_pellets++;
 			game->player[!game->state.current_player].missing_pellets++;
 
+			free(cmd);
 			(void)cmd;
 			break;
 		};
@@ -95,10 +98,10 @@ void	game_execute_command(Game* game, Player* player, Command* command) {
 			board_rotate(&game->board, game->board.side);
 			game->animating = true;
 			bzero(player->hand, sizeof(int) * 2);
+			free(cmd);
 			break;
 		};
 	}
-	free(command);
 }
 
 static const char*	match_results[] = {
@@ -175,4 +178,5 @@ void	game_destroy(Game* game) {
 	for (size_t i = 0; i < 2; i++) {
 		player_destroy(&game->player[i]);
 	}
+	printf("WE DONE CLEANING SHIT\n");
 }

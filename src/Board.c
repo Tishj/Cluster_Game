@@ -6,7 +6,7 @@
 /*   By: tbruinem <tbruinem@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2022/03/05 08:55:31 by tbruinem      #+#    #+#                 */
-/*   Updated: 2022/03/10 22:50:51 by tbruinem      ########   odam.nl         */
+/*   Updated: 2022/03/11 12:00:16 by tbruinem      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -178,11 +178,12 @@ int	board_check_match(Board* board) {
 		if (blue_size > red_size) {
 			return WIN_BLUE;
 		}
-		else if (red_size < blue_size) {
+		else if (red_size > blue_size) {
 			return WIN_RED;
 		}
 		//Even further potential tie
 		else {
+			assert(red_size == blue_size);
 			//Check which color has the least pellets of that color on the board -> winner
 			//If those are equal -> then it's a tie
 			int pellets_blue = board->onboard[biggest_match[PLAYER_BLUE].color];

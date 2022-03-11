@@ -6,7 +6,7 @@
 /*   By: tbruinem <tbruinem@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2022/03/04 22:54:27 by tbruinem      #+#    #+#                 */
-/*   Updated: 2022/03/10 17:47:50 by limartin      ########   odam.nl         */
+/*   Updated: 2022/03/11 11:45:04 by tbruinem      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,5 +26,6 @@ int main(int argc, char **argv) {
 	mlx_loop(mlx());
 	game_destroy(&game);
 	mlx_terminate(mlx());
+	printf("RIGHT BEFORE RETURN\n");
 	return (0);
 }

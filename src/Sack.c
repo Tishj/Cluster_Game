@@ -16,7 +16,7 @@ void	sack_init(Game* game){
 	// size_t BLUE_B_0	2
 	// size_t BLUE_B_1	3
 
-	size_t	max_pellet = (board_tiles()/4);
+	size_t	max_pellet = (get_board_size()/4);
 	//Round down to the first multiple of 4
 	max_pellet -= (max_pellet % 4);
 	for (int j = 0; j < PLAYER_SIZE; j++){
@@ -58,6 +58,7 @@ int		remaining_pellets_for_player(Player* player) {
 	for (size_t i = 0; i < COLORS_P_PLAYER; i++) {
 		total += player->bag[i];
 	}
+	printf("REMAINING PELLETS FOR PLAYER[%d] - %d\n", player->color, total);
 	return total;
 }
 
