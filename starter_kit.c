@@ -6,7 +6,7 @@
 /*   By: tbruinem <tbruinem@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2022/03/07 19:20:13 by tbruinem      #+#    #+#                 */
-/*   Updated: 2022/03/11 08:29:30 by tbruinem      ########   odam.nl         */
+/*   Updated: 2022/03/11 11:30:09 by tbruinem      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -72,11 +72,13 @@ int main() {
 	}
 
 	int yourColors;
+	// int pellet_types[yourColors * 2];
 	scanf("%d\n", &yourColors);
 	for (int i = 0; i < yourColors; i++) {
 		int colorIndex;
 		int colorAmount;
 		scanf("%d %d\n", &colorIndex, &colorAmount);
+		// pellet_types[colorIndex] = true;
 	}
 	int opponentColors;
 	scanf("%d\n", &opponentColors);
@@ -84,8 +86,13 @@ int main() {
 		int colorIndex;
 		int colorAmount;
 		scanf("%d %d\n", &colorIndex, &colorAmount);
+		// pellet_types[colorIndex] = false;
 	}
 	while (true) {
+
+		int color_to_play;
+		int column_to_play;
+
 		int direction;
 		scanf("%d\n", &direction);
 
@@ -94,6 +101,7 @@ int main() {
 		for (int i = 0; i < numberOfValidInsertSlots; i++) {
 			int column, cellIndex;
 			scanf("%d %d\n", &column, &cellIndex);
+			column_to_play = column;
 		}
 
 		int numberOfNewPellets;
@@ -116,10 +124,11 @@ int main() {
 			int colorIndex;
 			char newline;
 			scanf("%d%c", &colorIndex, &newline);
+			color_to_play = colorIndex;
 		}
 		fflush(stdout);
 		fflush(stdin);
-		printf("ROTATE 1\n");
+		printf("PLACE %d %d\n", column_to_play, color_to_play);
 		fflush(stdout);
 	}
 }

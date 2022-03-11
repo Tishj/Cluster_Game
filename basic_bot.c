@@ -6,7 +6,7 @@
 /*   By: tbruinem <tbruinem@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2022/03/07 19:20:13 by tbruinem      #+#    #+#                 */
-/*   Updated: 2022/03/11 08:27:25 by tbruinem      ########   odam.nl         */
+/*   Updated: 2022/03/11 11:27:56 by tbruinem      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -74,10 +74,12 @@ int main() {
 	}
 
 	int yourColors;
+	int pellet_types[yourColors * 2];
 	scanf("%d\n", &yourColors);dprintf(fd, "yourColors %d\n", yourColors);
 	for (int i = 0; i < yourColors; i++) {
 		int colorIndex;
 		int colorAmount;
+		pellet_types[colorIndex] = true;
 		scanf("%d %d\n", &colorIndex, &colorAmount); dprintf(fd, "colorIndex %d colorAmount %d\n", colorIndex, colorAmount);
 	}
 	int opponentColors;
@@ -85,6 +87,7 @@ int main() {
 	for (int i = 0; i < opponentColors; i++) {
 		int colorIndex;
 		int colorAmount;
+		pellet_types[colorIndex] = false;
 		scanf("%d %d\n", &colorIndex, &colorAmount);dprintf(fd, "colorIndex %d colorAmount %d\n", colorIndex, colorAmount);
 	}
 	while (true) {
@@ -96,6 +99,9 @@ int main() {
 		// dprintf(2, "RECEIVED LINE: %s | RET: %d", line, ret);
 		// free(line);
 	// 	dprintf(2, "NEXT ITERATION\n");
+
+		int column_to_play;
+
 		int direction;
 		scanf("%d\n", &direction);dprintf(fd, "direction %d\n", direction);
 
@@ -104,6 +110,7 @@ int main() {
 		for (int i = 0; i < numberOfValidInsertSlots; i++) {
 			int column, cellIndex;
 			scanf("%d %d\n", &column, &cellIndex);dprintf(fd, "column %d cellIndex %d\n", column, cellIndex);
+			column_to_play = column;
 		}
 
 		int numberOfNewPellets;
@@ -125,6 +132,7 @@ int main() {
 
 		// TODO: figure out why this is causing the loop to halt
 		//WHY IS THE FIX TO CHANGE 	'\n' to %c !!!??????
+		int color_to_play;
 		for (int k = 0; k < numberOfPelletsInHand; k++) {
 			int colorIndex;
 			char newline;
@@ -134,6 +142,7 @@ int main() {
 				dprintf(2, "HOUSTON WE HAVE A PROBLEM!!!!\n");
 				exit(1);
 			}
+			color_to_play = colorIndex;
 			dprintf(fd, "colorIndex %d\n", colorIndex);
 			dprintf(2, "colorIndex: %d\n", colorIndex);
 			// dprintf(fd, "\n");
@@ -143,7 +152,7 @@ int main() {
 	// 	// read(STDIN_FILENO, buf, 50);
 		fflush(stdout);
 		fflush(stdin);
-		printf("PLACE 2 2\n");
+		printf("PLACE %d %d\n", column_to_play, color_to_play);
 		dprintf(2, "BOT LOOP\n");
 		fflush(stdout);
 	}
