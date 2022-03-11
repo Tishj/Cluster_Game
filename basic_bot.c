@@ -6,7 +6,7 @@
 /*   By: tbruinem <tbruinem@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2022/03/07 19:20:13 by tbruinem      #+#    #+#                 */
-/*   Updated: 2022/03/11 01:09:54 by tbruinem      ########   odam.nl         */
+/*   Updated: 2022/03/11 01:12:10 by tbruinem      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -122,13 +122,17 @@ int main() {
 
 		int numberOfPelletsInHand;
 		scanf("%d\n", &numberOfPelletsInHand);dprintf(fd, "numberOfPelletsInHand %d\n", numberOfPelletsInHand);
-		for (int k = 0; k < numberOfPelletsInHand; k++) {
-			int colorIndex;
-			// dprintf(fd, "INDEX OF PELLETS IN HAND ITERATION: %d\n", k);
-			scanf("%d\n", &colorIndex);
-			dprintf(fd, "colorIndex %d | %d\n", colorIndex, k);
-			// dprintf(fd, "\n");
-		}
+
+		//TODO: figure out why this is causing the loop to halt
+		// for (int k = 0; k < numberOfPelletsInHand; k++) {
+		// 	int colorIndex;
+		// 	// dprintf(fd, "INDEX OF PELLETS IN HAND ITERATION: %d\n", k);
+		// 	scanf("%d\n", &colorIndex);
+		// 	dprintf(fd, "colorIndex %d | %d\n", colorIndex, k);
+		// 	// dprintf(fd, "\n");
+		// }
+
+
 	// 	// close(fd);
 	// 	// read(STDIN_FILENO, buf, 50);
 		fflush(stdout);
