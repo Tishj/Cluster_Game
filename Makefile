@@ -6,7 +6,7 @@
 #    By: tbruinem <tbruinem@student.codam.nl>         +#+                      #
 #                                                    +#+                       #
 #    Created: 2022/02/07 16:04:49 by tbruinem      #+#    #+#                  #
-#    Updated: 2022/03/10 18:25:21 by tbruinem      ########   odam.nl          #
+#    Updated: 2022/03/11 08:29:00 by tbruinem      ########   odam.nl          #
 #                                                                              #
 # **************************************************************************** #
 
@@ -54,8 +54,8 @@ endif
 
 all: $(NAME) bot client
 
-bot: basic_bot.c
-	gcc $(FLAGS) basic_bot.c -o $@
+bot: starter_kit.c
+	gcc $(FLAGS) starter_kit.c -o $@
 
 client: client.c
 	gcc $(FLAGS) client.c -o $@

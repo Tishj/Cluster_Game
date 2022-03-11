@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        ::::::::            */
-/*   starterkit.c                                       :+:    :+:            */
+/*   starter_kit.c                                      :+:    :+:            */
 /*                                                     +:+                    */
 /*   By: tbruinem <tbruinem@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2022/03/07 19:20:13 by tbruinem      #+#    #+#                 */
-/*   Updated: 2022/03/11 08:30:58 by tbruinem      ########   odam.nl         */
+/*   Updated: 2022/03/11 08:29:30 by tbruinem      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -114,12 +114,12 @@ int main() {
 		scanf("%d\n", &numberOfPelletsInHand);
 		for (int i = 0; i < numberOfPelletsInHand; i++) {
 			int colorIndex;
-			char newline; //DO NOT CHANGE
-			scanf("%d%c", &colorIndex, &newline); //DO NOT CHANGE %c
+			char newline;
+			scanf("%d%c", &colorIndex, &newline);
 		}
-		fflush(stdout); //DO NOT REMOVE
-		fflush(stdin); //DO NOT REMOVE
+		fflush(stdout);
+		fflush(stdin);
 		printf("ROTATE 1\n");
-		fflush(stdout); //DO NOT REMOVE
+		fflush(stdout);
 	}
 }

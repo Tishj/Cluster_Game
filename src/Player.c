@@ -6,7 +6,7 @@
 /*   By: tbruinem <tbruinem@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2022/03/05 23:09:04 by tbruinem      #+#    #+#                 */
-/*   Updated: 2022/03/11 01:07:57 by tbruinem      ########   odam.nl         */
+/*   Updated: 2022/03/11 08:31:26 by tbruinem      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -221,19 +221,33 @@ void	player_send_input(Player* player, Game* game) {
 			}
 			dprintf(fd, "0\n"); //numberOfChangedPellets
 		}
-		//Send pellets in hand
+
+		// Send pellets in hand
 		int drawn_pellets = 0;
 		for (size_t i = 0; i < COLORS_P_PLAYER; i++) {
 			drawn_pellets += player->hand[i];
 		}
 		dprintf(fd, "%d\n", drawn_pellets);
-		for (size_t i = 0; i < COLORS_P_PLAYER; i++) {
+		dprintf(2, "%d\n", drawn_pellets);
+
+		int counter = 0;
+		int in_hand[drawn_pellets];
+		for (int i = 0; i < COLORS_P_PLAYER; i++) {
 			for (int j = 0; j < player->hand[i]; j++) {
-				dprintf(2, "PLAYER->HAND[I]: %d | I: %ld | J: %d\n", player->hand[i], i, j);
-				dprintf(fd, "%d\n", player->color + ((int)i * 2));
-				dprintf(2, "%d\n", player->color + ((int)i * 2));
+				dprintf(2, "PLAYER->HAND[I]: %d | I: %d | J: %d\n", player->hand[i], i, j);
+				int color_index = player->color + ((int)i * 2);
+				in_hand[counter++] = color_index;
 			}
 		}
+
+		for (int i = 0; i < drawn_pellets; i++) {
+			dprintf(fd, "%d\n", in_hand[i]);
+			dprintf(2, "%d\n", in_hand[i]);
+		}
+		dprintf(fd, "%s", "\n");
+		fsync(fd);
+		fflush(player->conn.handle);
+
 		dprintf(2, "FINISHED SENDING INPUT\n");
 	}
 	player->missing_pellets = 0;

@@ -54,4 +54,53 @@ column 6 cellIndex 33
 numberOfNewPellets 0
 numberOfChangedPellets 0
 numberOfPelletsInHand 2
-direction 0
+colorIndex 0
+colorIndex 2
+direction 4
+numberOfValidInsertSlots 7
+column 0 cellIndex 19
+column 1 cellIndex 20
+column 2 cellIndex 22
+column 3 cellIndex 24
+column 4 cellIndex 25
+column 5 cellIndex 26
+column 6 cellIndex 27
+numberOfNewPellets 0
+numberOfChangedPellets 1
+index 0 cellIndex 35
+numberOfPelletsInHand 2
+colorIndex 0
+colorIndex 2
+direction 1
+numberOfValidInsertSlots 7
+column 0 cellIndex 30
+column 1 cellIndex 31
+column 2 cellIndex 32
+column 3 cellIndex 33
+column 4 cellIndex 34
+column 5 cellIndex 35
+column 6 cellIndex 36
+numberOfNewPellets 0
+numberOfChangedPellets 2
+index 1 cellIndex 22
+index 0 cellIndex 20
+numberOfPelletsInHand 2
+colorIndex 2
+colorIndex 2
+direction 3
+numberOfValidInsertSlots 7
+column 0 cellIndex 36
+column 1 cellIndex 23
+column 2 cellIndex 21
+column 3 cellIndex 19
+column 4 cellIndex 20
+column 5 cellIndex 22
+column 6 cellIndex 24
+numberOfNewPellets 0
+numberOfChangedPellets 3
+index 2 cellIndex 27
+index 1 cellIndex 28
+index 0 cellIndex 29
+numberOfPelletsInHand 2
+colorIndex 0
+colorIndex 2

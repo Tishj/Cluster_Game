@@ -6,7 +6,7 @@
 /*   By: tbruinem <tbruinem@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2022/03/07 19:20:13 by tbruinem      #+#    #+#                 */
-/*   Updated: 2022/03/11 01:12:10 by tbruinem      ########   odam.nl         */
+/*   Updated: 2022/03/11 08:27:25 by tbruinem      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -123,15 +123,21 @@ int main() {
 		int numberOfPelletsInHand;
 		scanf("%d\n", &numberOfPelletsInHand);dprintf(fd, "numberOfPelletsInHand %d\n", numberOfPelletsInHand);
 
-		//TODO: figure out why this is causing the loop to halt
-		// for (int k = 0; k < numberOfPelletsInHand; k++) {
-		// 	int colorIndex;
-		// 	// dprintf(fd, "INDEX OF PELLETS IN HAND ITERATION: %d\n", k);
-		// 	scanf("%d\n", &colorIndex);
-		// 	dprintf(fd, "colorIndex %d | %d\n", colorIndex, k);
-		// 	// dprintf(fd, "\n");
-		// }
-
+		// TODO: figure out why this is causing the loop to halt
+		//WHY IS THE FIX TO CHANGE 	'\n' to %c !!!??????
+		for (int k = 0; k < numberOfPelletsInHand; k++) {
+			int colorIndex;
+			char newline;
+			// dprintf(fd, "INDEX OF PELLETS IN HAND ITERATION: %d\n", k);
+			scanf("%d%c", &colorIndex, &newline);
+			if (newline != '\n') {
+				dprintf(2, "HOUSTON WE HAVE A PROBLEM!!!!\n");
+				exit(1);
+			}
+			dprintf(fd, "colorIndex %d\n", colorIndex);
+			dprintf(2, "colorIndex: %d\n", colorIndex);
+			// dprintf(fd, "\n");
+		}
 
 	// 	// close(fd);
 	// 	// read(STDIN_FILENO, buf, 50);
