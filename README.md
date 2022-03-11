@@ -76,3 +76,22 @@ next `numberOfChangedPellets` lines: 2 space-separated integers:
 Next line: `numberOfPelletsInHand`
 next `numberOfPelletsInHand` lines: 1 integer:
 - `colorIndex`: index of the pellet's color.
+
+## GAME END CONDITIONS
+
+### Loss
+If you run out of pellets  
+If you timeout(bot only)  
+If you make an invalid move  
+
+### Win
+Make a match bigger or equal to 4, and bigger than your opponent  
+If both players have an equal size match, the amount of pellets they have on the board of their winning color will serve as tie-breaker  
+
+### Tie
+Both players have a match of equal size, with equal number of tiles of their winning color on the board  
+
+Invalid moves:  
+Move is not among the valid moves, or does not follow the correct format for the move  
+PLACE command was done for a column that is already full  
+Sending a command before reading all the input  
