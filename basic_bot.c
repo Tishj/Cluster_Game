@@ -6,7 +6,7 @@
 /*   By: tbruinem <tbruinem@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2022/03/07 19:20:13 by tbruinem      #+#    #+#                 */
-/*   Updated: 2022/03/10 23:45:09 by tbruinem      ########   odam.nl         */
+/*   Updated: 2022/03/11 00:36:10 by tbruinem      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -88,6 +88,13 @@ int main() {
 	// 	scanf("%d %d\n", &colorIndex, &colorAmount);dprintf(fd, "colorIndex %d colorAmount %d\n", colorIndex, colorAmount);
 	// }
 	while (true) {
+		// char*	line = NULL;
+		// size_t	cap = 0;
+		// fflush(stdin);
+		// fflush(stdout);
+		// int ret = getline(&line, &cap, stdin);
+		// dprintf(2, "RECEIVED LINE: %s | RET: %d", line, ret);
+		// free(line);
 	// 	dprintf(2, "NEXT ITERATION\n");
 	// 	int direction;
 	// 	scanf("%d\n", &direction);dprintf(fd, "direction %d\n", direction);
@@ -127,5 +134,7 @@ int main() {
 	// 	fflush(stdout);
 	// 	fflush(stdin);
 		printf("PLACE 2 2\n");
+		// dprintf(2, "BOT LOOP\n");
+		// fflush(stdout);
 	}
 }

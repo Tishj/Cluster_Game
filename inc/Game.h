@@ -6,7 +6,7 @@
 /*   By: tbruinem <tbruinem@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2022/03/04 23:13:04 by tbruinem      #+#    #+#                 */
-/*   Updated: 2022/03/10 22:43:30 by tbruinem      ########   odam.nl         */
+/*   Updated: 2022/03/10 23:53:28 by tbruinem      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,8 +20,8 @@
 #include "Player.h"
 #include <time.h>
 
-#define INITIAL_TIMEOUT_DURATION 10000
-#define ROUND_TIMEOUT_DURATION 1000
+#define INITIAL_TIMEOUT_DURATION 1000
+#define ROUND_TIMEOUT_DURATION 100
 #define MATCH_MINIMUM	4
 #define SIDE_LENGTH		4
 #define HEXAGON_HEIGHT	(WINDOW_HEIGHT / (((SIDE_LENGTH * 2) - 1) + 2))
