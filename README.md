@@ -43,6 +43,11 @@ Next `numberOfCells` lines: 7 space-separated integers:
 - `index` for the cell's index.  
 - 6 `neigh` variables, one for each direction, containing the index of a neighboring cell or -1 if is there is no neighbor.  
 
+Next line: An integer `numberOfColumns`
+for `numberOfColumns` lines: 7 space-separated integers
+- column number
+- 6 cellIndex variables, one for each direction, containing the index of the cell that is at the top of that column, for that direction.
+
 Next line: An integer `yourColors`  
 Next `yourColors` lines: 2 space-separated integers:
 - `index` for the color's index.  
@@ -56,8 +61,8 @@ Next `opponentColors` lines: 2 space-separated integers:
 ### Input for One Game Turn
 First line: An integer `direction` (between 0 and 5): the direction of gravity.  
 
-Next line: `numberOfValidInsertSlots`  
-next `numberOfValidInsertSlots` lines: 2 space-separated integers  
+Next line: `numberOfValidColumns`  
+next `numberOfValidColumns` lines: 2 space-separated integers  
 - `column`: the column to use for a PLACE command  
 - `cellIndex`: the cell that correspond to the top of the column, according to the current gravity  
 

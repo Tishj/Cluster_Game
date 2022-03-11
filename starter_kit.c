@@ -6,7 +6,7 @@
 /*   By: tbruinem <tbruinem@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2022/03/07 19:20:13 by tbruinem      #+#    #+#                 */
-/*   Updated: 2022/03/11 11:30:09 by tbruinem      ########   odam.nl         */
+/*   Updated: 2022/03/11 12:42:58 by tbruinem      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -63,12 +63,15 @@ int main() {
 	scanf("%d\n", &numberOfCells);
 	for (int i = 0; i < numberOfCells; i++) {
 		int index;
-		scanf("%d", &index);
-		for (int neigh = 0; neigh < 6; neigh++) {
-			int neighIndex;
-			scanf("%d", &neighIndex);
-		}
-		scanf("\n");
+		int n0,n1,n2,n3,n4,n5;
+		scanf("%d %d %d %d %d %d %d\n", &index, &n0, &n1, &n2, &n3, &n4, &n5);
+	}
+
+	int numberOfColumns;
+	scanf("%d\n", &numberOfColumns);
+	for (int i = 0; i < numberOfColumns; i++) {
+		int index, d0, d1, d2, d3, d4, d5;
+		scanf("%d %d %d %d %d %d %d\n", &index, &d0, &d1, &d2, &d3, &d4, &d5);
 	}
 
 	int yourColors;
@@ -96,9 +99,9 @@ int main() {
 		int direction;
 		scanf("%d\n", &direction);
 
-		int numberOfValidInsertSlots;
-		scanf("%d\n", &numberOfValidInsertSlots);
-		for (int i = 0; i < numberOfValidInsertSlots; i++) {
+		int numberOfValidColumns;
+		scanf("%d\n", &numberOfValidColumns);
+		for (int i = 0; i < numberOfValidColumns; i++) {
 			int column, cellIndex;
 			scanf("%d %d\n", &column, &cellIndex);
 			column_to_play = column;

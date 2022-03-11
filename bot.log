@@ -42,6 +42,7 @@ colorIndex 2 colorAmount 9
 opponentColors 2
 colorIndex 1 colorAmount 9
 colorIndex 3 colorAmount 9
+
 direction 0
 numberOfValidInsertSlots 7
 column 0 cellIndex 27

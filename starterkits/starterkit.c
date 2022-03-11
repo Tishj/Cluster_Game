@@ -6,7 +6,7 @@
 /*   By: tbruinem <tbruinem@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2022/03/07 19:20:13 by tbruinem      #+#    #+#                 */
-/*   Updated: 2022/03/11 08:30:58 by tbruinem      ########   odam.nl         */
+/*   Updated: 2022/03/11 12:43:15 by tbruinem      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -63,20 +63,25 @@ int main() {
 	scanf("%d\n", &numberOfCells);
 	for (int i = 0; i < numberOfCells; i++) {
 		int index;
-		scanf("%d", &index);
-		for (int neigh = 0; neigh < 6; neigh++) {
-			int neighIndex;
-			scanf("%d", &neighIndex);
-		}
-		scanf("\n");
+		int n0,n1,n2,n3,n4,n5;
+		scanf("%d %d %d %d %d %d %d\n", &index, &n0, &n1, &n2, &n3, &n4, &n5);
+	}
+
+	int numberOfColumns;
+	scanf("%d\n", &numberOfColumns);
+	for (int i = 0; i < numberOfColumns; i++) {
+		int index, d0, d1, d2, d3, d4, d5;
+		scanf("%d %d %d %d %d %d %d\n", &index, &d0, &d1, &d2, &d3, &d4, &d5);
 	}
 
 	int yourColors;
+	// int pellet_types[yourColors * 2];
 	scanf("%d\n", &yourColors);
 	for (int i = 0; i < yourColors; i++) {
 		int colorIndex;
 		int colorAmount;
 		scanf("%d %d\n", &colorIndex, &colorAmount);
+		// pellet_types[colorIndex] = true;
 	}
 	int opponentColors;
 	scanf("%d\n", &opponentColors);
@@ -84,16 +89,22 @@ int main() {
 		int colorIndex;
 		int colorAmount;
 		scanf("%d %d\n", &colorIndex, &colorAmount);
+		// pellet_types[colorIndex] = false;
 	}
 	while (true) {
+
+		int color_to_play;
+		int column_to_play;
+
 		int direction;
 		scanf("%d\n", &direction);
 
-		int numberOfValidInsertSlots;
-		scanf("%d\n", &numberOfValidInsertSlots);
-		for (int i = 0; i < numberOfValidInsertSlots; i++) {
+		int numberOfValidColumns;
+		scanf("%d\n", &numberOfValidColumns);
+		for (int i = 0; i < numberOfValidColumns; i++) {
 			int column, cellIndex;
 			scanf("%d %d\n", &column, &cellIndex);
+			column_to_play = column;
 		}
 
 		int numberOfNewPellets;
@@ -114,12 +125,13 @@ int main() {
 		scanf("%d\n", &numberOfPelletsInHand);
 		for (int i = 0; i < numberOfPelletsInHand; i++) {
 			int colorIndex;
-			char newline; //DO NOT CHANGE
-			scanf("%d%c", &colorIndex, &newline); //DO NOT CHANGE %c
+			char newline;
+			scanf("%d%c", &colorIndex, &newline);
+			color_to_play = colorIndex;
 		}
-		fflush(stdout); //DO NOT REMOVE
-		fflush(stdin); //DO NOT REMOVE
-		printf("ROTATE 1\n");
-		fflush(stdout); //DO NOT REMOVE
+		fflush(stdout);
+		fflush(stdin);
+		printf("PLACE %d %d\n", column_to_play, color_to_play);
+		fflush(stdout);
 	}
 }
