@@ -6,7 +6,7 @@
 /*   By: tbruinem <tbruinem@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2022/03/05 11:34:12 by tbruinem      #+#    #+#                 */
-/*   Updated: 2022/03/10 22:59:36 by tbruinem      ########   odam.nl         */
+/*   Updated: 2022/03/11 08:43:03 by tbruinem      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -143,20 +143,25 @@ void	game_loop(void* param) {
 	else {
 		Player*	current_player = &game->player[state->current_player];
 
-		sack_drawhand(current_player);
-		sack_debug(current_player);
-		Command* command = player_get_command(current_player, game);
-		command_print(command);
-		game_execute_command(game, current_player, command);
-		board_direction_print(game->board.side);
+		int remaining = remaining_pellets_for_player(current_player);
+		if (remaining) {
+			sack_drawhand(current_player, remaining);
+			sack_debug(current_player);
+			Command* command = player_get_command(current_player, game);
+			command_print(command);
+			game_execute_command(game, current_player, command);
+			board_direction_print(game->board.side);
 
-		//Switch to other player
-		// Blue -> Red
-		// Red  -> Blue
-		state->current_player = !state->current_player;
-		if (state->current_player == game->starting_player)
-			state->turn_count += 1;
-
+			//Switch to other player
+			// Blue -> Red
+			// Red  -> Blue
+			state->current_player = !state->current_player;
+			if (state->current_player == game->starting_player)
+				state->turn_count += 1;
+		}
+		else {
+			state->result = !current_player->color;
+		}
 	}
 	//Reset image, refactor this for the love of god....
 	draw_fill(game->image, CLR_TRANSPARENT);

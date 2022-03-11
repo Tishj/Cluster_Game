@@ -11,6 +11,7 @@
 
 void	sack_init(Game* game);
 void	sack_debug(Player* player);
-void	sack_drawhand(Player *player);
+void	sack_drawhand(Player *player, int remaining);
+int		remaining_pellets_for_player(Player* player);
 
 #endif
