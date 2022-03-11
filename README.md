@@ -22,7 +22,7 @@ The second path is optional, allowing you to play against a bot manually (withou
 
 VALID MOVES:  
 `PLACE column color`  
-`ROTATE cycles`
+`ROTATE cycles` (1-5 are valid amounts for `cycles`)
 
 If an invalid move is made, or a bot times out, the opposing player wins and the game is over.
 
