@@ -6,7 +6,7 @@
 /*   By: tbruinem <tbruinem@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2022/03/05 23:09:04 by tbruinem      #+#    #+#                 */
-/*   Updated: 2022/03/11 08:31:26 by tbruinem      ########   odam.nl         */
+/*   Updated: 2022/03/11 08:58:05 by tbruinem      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,36 +33,49 @@
 //Bots get input sent to them from the game process
 //Bots sent output to the game process
 
-Connection*	current_connection = NULL;
+void*	read_line(void* param) {
+	Connection*	connection = param;
+	char*	line = NULL;
+	size_t	capacity = 0;
 
-void	sigalarm_handler(int dummy) {
-	(void)dummy;
-	// dprintf(STDERR_FILENO, "Player %s timed out (TIME_OUT is %d ms, but %d ms for the first turn)!\n", g_player->name, TIME_OUT, TIME_OUT * 20);
-	if (fclose(current_connection->handle) == -1) {
+	//Blocking - cant guarantee this will stop
+	if (getline(&line, &capacity, connection->handle) == -1) {
 		FATAL(MEMORY_ALLOCATION_FAIL);
 	}
+	if (line == NULL) {
+		return line;
+	}
+	for (size_t i = 0; line[i]; i++) {
+		if (line[i] == '\n')
+			line[i] = '\0';
+	}
+	return line;
 }
 
 char*	connection_get_command(Connection* connection, size_t timeout) {
-	char	*input_line = NULL;
-	size_t	line_cap = 0;
+	pthread_t		thread;
 
-	(void)timeout;
-
-	current_connection = connection;
-	// signal(SIGALRM, &sigalarm_handler);
-	// ualarm(timeout * 100000 * 20, 0);
-
-	// errno = 0;
-	if (getline(&input_line, &line_cap, connection->handle) == -1) {
-		perror("GETLINE");
-		dprintf(2, "WTF %s\n", strerror(errno));
-		free(input_line);
-		return NULL;
+	//Start a thread that is going to try to read a line of input from the bot
+	if (pthread_create(&thread, NULL, read_line, connection) == -1) {
+		FATAL(MEMORY_ALLOCATION_FAIL);
 	}
 
-	// ualarm(0, 0);
-	return input_line;
+	wait_duration(timeout);
+
+	//Only timeout if the player is a bot
+	//(Not protected because this *should* never be able to fail)
+	if (connection->bot) {
+		pthread_cancel(thread);
+	}
+	char*	line = NULL;
+	if (pthread_join(thread, (void**)&line) == -1) {
+		FATAL(MEMORY_ALLOCATION_FAIL);
+	}
+	//If the thread was canceled before it finished, it was timed out (Untested)
+	if (line == PTHREAD_CANCELED) {
+		return NULL;
+	}
+	return line;
 }
 
 void	connection_init(Connection* connection, char** abspath, bool bot) {
@@ -256,11 +269,6 @@ void	player_send_input(Player* player, Game* game) {
 
 Command*	player_get_command(Player* player, Game* game) {
 	player_send_input(player, game);
-	// if (player->conn.bot) {
-	// 	if (fwrite("aaaa\n", 1, 5, player->conn.handle) == 0) {
-	// 		FATAL(MEMORY_ALLOCATION_FAIL);
-	// 	}
-	// }
 	fflush(player->conn.handle);
 	size_t	timeout_duration = game->state.turn_count ? ROUND_TIMEOUT_DURATION : INITIAL_TIMEOUT_DURATION;
 	char* line = connection_get_command(&player->conn, timeout_duration);
