@@ -6,7 +6,7 @@
 /*   By: tbruinem <tbruinem@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2022/03/05 09:53:25 by tbruinem      #+#    #+#                 */
-/*   Updated: 2022/03/10 20:51:28 by tbruinem      ########   odam.nl         */
+/*   Updated: 2022/03/11 00:25:57 by tbruinem      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -117,6 +117,7 @@ static bool cycles_check(int cycles) {
 //Needs board to check for invalid placement
 Command*	command_parse(char* commandstring, Player* player, Board* board) {
 	if (!commandstring) {
+		dprintf(2, "BOT HAS TIMED OUT\n");
 		return command_invalid();
 	}
 	dprintf(2, "RECEIVED COMMAND: '%s'\n", commandstring);

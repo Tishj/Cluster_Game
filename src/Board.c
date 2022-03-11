@@ -6,7 +6,7 @@
 /*   By: tbruinem <tbruinem@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2022/03/05 08:55:31 by tbruinem      #+#    #+#                 */
-/*   Updated: 2022/03/10 20:44:45 by tbruinem      ########   odam.nl         */
+/*   Updated: 2022/03/10 22:50:51 by tbruinem      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,6 +27,18 @@
 #include <alloca.h>
 #include "Game.h"
 
+int get_board_size()
+{
+	int i = 1;
+	int size = 1;
+	while (i < SIDE_LENGTH)
+	{
+		size = size + (i * 6);
+		i++;
+	}
+	return (size);
+}
+
 static const char* side_string_mapping[] = {
 	[SIDE_SOUTH] = "South",
 	[SIDE_SOUTHEAST] = "South East",
@@ -38,6 +50,10 @@ static const char* side_string_mapping[] = {
 
 void	board_direction_print(BoardSide side) {
 	dprintf(2, "Direction: (%d) - %s\n", side, side_string_mapping[side]);
+}
+
+void	player_board_direction_print(BoardSide side, FILE *player) {
+	fprintf(player, "(%d) - %s\n", side, side_string_mapping[side]);
 }
 
 void	slot_neighbour_print(Slot* slot) {
@@ -225,7 +241,7 @@ v2	get_neighbour_pos(v2 position, BoardSide side) {
 }
 
 Slot*	get_insert_slot(Board* board, BoardSide side, size_t index) {
-	printf("CURRENT DIRECTION: %s\n", side_string_mapping[side]);
+	// printf("CURRENT DIRECTION: %s\n", side_string_mapping[side]);
 	if (index == (SIDE_LENGTH - 1)) {
 		return board->corners[side_invert(side)];
 	}
@@ -249,14 +265,14 @@ Slot*	get_insert_slot(Board* board, BoardSide side, size_t index) {
 	if (index == 0 || index == (SIDE_LENGTH * 2) - 2)
 		return slot;
 
-	slot_neighbour_print(slot);
+	// slot_neighbour_print(slot);
 	board_direction_print(travel_direction);
 
 	int steps = abs(corner_index - (int)index);
-	printf("steps: %d\n", steps);
+	// printf("steps: %d\n", steps);
 
 	for (int i = 0; i < steps; i++) {
-		printf("%d\n", i);
+		// printf("%d\n", i);
 		slot = slot->neighbours[travel_direction];
 		assert(slot != NULL);
 	}
@@ -264,12 +280,14 @@ Slot*	get_insert_slot(Board* board, BoardSide side, size_t index) {
 }
 
 Pellet*	pellet_new(PelletType color, Slot* slot) {
+	static size_t	index = 0;
 	Pellet*	pellet = malloc(sizeof(Pellet));
 	if (!pellet) {
 		FATAL(MEMORY_ALLOCATION_FAIL);
 	}
 	pellet->color = color;
 	pellet->slot = slot;
+	pellet->index = index++;
 	return pellet;
 }
 
@@ -319,7 +337,6 @@ bool	pellet_staggered_fall(Pellet* pellet, BoardSide side) {
 	v2 position = slot->position;
 
 	dprintf(2, "STAGGERED FALLING X:%d|Y:%d\n", (int)position.x, (int)position.y);
-	assert(pellet->color != EMPTY);
 
 	Slot* neighbour = slot->neighbours[side];
 	if (pellet_has_reached_bottom(neighbour))
@@ -451,17 +468,25 @@ void	board_render(Board* board, mlx_image_t* target) {
 	}
 }
 
+void	print_slots(List* slots) {
+	while (slots) {
+		Slot* slot = slots->content;
+		printf("index: %ld\n", slot->index);
+		slots = slots->next;
+	}
+}
+
 Slot*	slot_new(v2 position) {
-	static int index = 0;
+	static size_t slot_index = 0;
 	Slot*	slot = malloc(sizeof(Slot));
 	if (!slot) {
 		FATAL(MEMORY_ALLOCATION_FAIL);
 	}
 	slot->position = position;
 	slot->pellet = NULL;
-	slot->index = index++;
 	get_hex_points(slot->points, HEXAGON_HEIGHT, position.y, position.x);
 	bzero(slot->neighbours, sizeof(Slot*) * 6);
+	slot->index = slot_index++;
 	return slot;
 }
 
@@ -503,7 +528,7 @@ static void	create_slots(Board* board) {
 	};
 	// v2	center_hex_middle = get_hex_center(HEXAGON_HEIGHT, middle_pos);
 	Slot*	middle = slot_new(middle_pos);
-	slot_neighbour_print(middle);
+	// slot_neighbour_print(middle);
 	temp[(int)middle_pos.y][(int)middle_pos.x] = middle;
 
 	list_pushback(&new_slots, list_new(middle));
@@ -516,7 +541,7 @@ static void	create_slots(Board* board) {
 			for (size_t side = SIDE_SOUTH; side < SIDE_SIZE; side++) {
 				v2 position = slot->position;
 				v2 neighbour_position = get_neighbour_pos(position, side);
-				dprintf(2, "NEIGHBOUR POS: %d|%d\n", (int)neighbour_position.x, (int)neighbour_position.y);
+				// dprintf(2, "NEIGHBOUR POS: %d|%d\n", (int)neighbour_position.x, (int)neighbour_position.y);
 				//Retrieve the neighbour
 				Slot* neighbour;
 				if (!is_inside_board_array(neighbour_position))
@@ -540,6 +565,7 @@ static void	create_slots(Board* board) {
 	Slot* center_slot = temp[SIDE_LENGTH - 1][SIDE_LENGTH - 1];
 	assign_corners(board, center_slot);
 	board->center = (v2){center_slot->points[0].x + ((center_slot->points[3].x - center_slot->points[0].x) / 2), center_slot->points[0].y};
+	// print_slots(board->slots);
 }
 
 void	board_destroy(Board* board) {

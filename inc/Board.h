@@ -6,7 +6,7 @@
 /*   By: tbruinem <tbruinem@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2022/03/05 08:55:45 by tbruinem      #+#    #+#                 */
-/*   Updated: 2022/03/10 20:48:33 by tbruinem      ########   odam.nl         */
+/*   Updated: 2022/03/10 22:49:59 by tbruinem      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,11 +34,11 @@ typedef enum BoardCycle {
 //1 and 3 are PLAYER_RED
 //X % 2 == PlayerType
 typedef enum PelletType {
-	EMPTY = -1,
-	BLUE0,
-	RED0,
-	BLUE1,
-	RED1,
+	COLOR_BLUE0,
+	COLOR_RED0,
+	COLOR_BLUE1,
+	COLOR_RED1,
+	COLOR_SIZE
 }	PelletType;
 
 typedef struct MatchInfo {
@@ -49,6 +49,7 @@ typedef struct MatchInfo {
 typedef struct Pellet {
 	PelletType	color;
 	Slot*		slot;
+	size_t		index;
 }	Pellet;
 
 typedef struct Slot {
@@ -71,6 +72,8 @@ typedef struct Board {
 	size_t		onboard[4]; //Each color Pellet currently on board
 }	Board;
 
+int		get_board_size();
+
 void	board_init(Board* board);
 void	board_render(Board* board, mlx_image_t* target);
 void	pellet_fall(Pellet* pellet, BoardSide side);
@@ -86,6 +89,8 @@ Slot*	get_insert_slot(Board* board, BoardSide side, size_t index);
 
 void	board_place(Board* board, size_t index, PelletType color);
 
+void	player_board_direction_print(BoardSide side, FILE *player);
 v2		get_hex_center(float height, v2 hex_pos);
+void	print_slots(List* slots);
 
 #endif

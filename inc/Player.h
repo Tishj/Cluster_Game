@@ -6,7 +6,7 @@
 /*   By: tbruinem <tbruinem@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2022/03/05 23:13:40 by tbruinem      #+#    #+#                 */
-/*   Updated: 2022/03/10 12:50:00 by tbruinem      ########   odam.nl         */
+/*   Updated: 2022/03/10 18:55:19 by tbruinem      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,6 +30,7 @@ typedef struct Connection {
 	int			output[2];
 	bool		bot;
 	FILE*		handle;
+	FILE*		in;
 }	Connection;
 
 typedef struct Player {
@@ -37,6 +38,7 @@ typedef struct Player {
 	int 		hand[2]; //Pellets currently in hand
 	int			bag[2];	//Number of each pellet left in bag
 	Connection	conn;
+	size_t		missing_pellets;
 }	Player;
 
 //fwd declare

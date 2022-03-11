@@ -37,10 +37,10 @@ bool	all_bags_empty(int bags[COLORS_P_PLAYER]) {
 }
 
 static const char* color_names[] = {
-	[BLUE0] = "BLUE0",
-	[RED0] = "RED0",
-	[BLUE1] = "BLUE1",
-	[RED1] = "RED1"
+	[COLOR_BLUE0] = "BLUE0",
+	[COLOR_RED0] = "RED0",
+	[COLOR_BLUE1] = "BLUE1",
+	[COLOR_RED1] = "RED1"
 };
 
 void	sack_debug(Player* player) {

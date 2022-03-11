@@ -6,7 +6,7 @@
 /*   By: tbruinem <tbruinem@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2022/03/05 23:09:04 by tbruinem      #+#    #+#                 */
-/*   Updated: 2022/03/10 20:50:37 by tbruinem      ########   odam.nl         */
+/*   Updated: 2022/03/11 08:31:26 by tbruinem      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,56 +23,46 @@
 #include <signal.h>
 #include <sys/types.h>
 #include <sys/wait.h>
+#include "Sack.h"
+#include <limits.h>
+#include <errno.h>
+#include <stdio.h>
 
 #define GAME_CLIENT "./client"
 
 //Bots get input sent to them from the game process
 //Bots sent output to the game process
 
-void*	read_line(void* param) {
-	Connection*	connection = param;
-	char*	line = NULL;
-	size_t	capacity = 0;
+Connection*	current_connection = NULL;
 
-	//Blocking - cant guarantee this will stop
-	if (getline(&line, &capacity, connection->handle) == -1) {
-		return NULL;
+void	sigalarm_handler(int dummy) {
+	(void)dummy;
+	// dprintf(STDERR_FILENO, "Player %s timed out (TIME_OUT is %d ms, but %d ms for the first turn)!\n", g_player->name, TIME_OUT, TIME_OUT * 20);
+	if (fclose(current_connection->handle) == -1) {
+		FATAL(MEMORY_ALLOCATION_FAIL);
 	}
-	if (line == NULL) {
-		return line;
-	}
-	//deprecated
-	// for (size_t i = 0; line[i]; i++) {
-	// 	if (line[i] == '\n')
-	// 		line[i] = '\0';
-	// }
-	return line;
 }
 
 char*	connection_get_command(Connection* connection, size_t timeout) {
-	pthread_t		thread;
+	char	*input_line = NULL;
+	size_t	line_cap = 0;
 
-	//Start a thread that is going to try to read a line of input from the bot
-	if (pthread_create(&thread, NULL, read_line, connection) == -1) {
-		FATAL(MEMORY_ALLOCATION_FAIL);
-	}
+	(void)timeout;
 
-	wait_duration(timeout);
+	current_connection = connection;
+	// signal(SIGALRM, &sigalarm_handler);
+	// ualarm(timeout * 100000 * 20, 0);
 
-	//Only timeout if the player is a bot
-	if (connection->bot) {
-		pthread_cancel(thread);
-	}
-	char*	line = NULL;
-	if (pthread_join(thread, (void**)&line) == -1) {
-		FATAL(MEMORY_ALLOCATION_FAIL);
-	}
-	//If the thread was canceled before it finished, it was timed out (Untested)
-	if (line == PTHREAD_CANCELED) {
-		// dprintf(2, "BOT TIMED OUT\n");
+	// errno = 0;
+	if (getline(&input_line, &line_cap, connection->handle) == -1) {
+		perror("GETLINE");
+		dprintf(2, "WTF %s\n", strerror(errno));
+		free(input_line);
 		return NULL;
 	}
-	return line;
+
+	// ualarm(0, 0);
+	return input_line;
 }
 
 void	connection_init(Connection* connection, char** abspath, bool bot) {
@@ -85,32 +75,74 @@ void	connection_init(Connection* connection, char** abspath, bool bot) {
 			FATAL(MEMORY_ALLOCATION_FAIL);
 		}
 		pid_t pid = fork();
+		if (pid == -1) {
+			FATAL(MEMORY_ALLOCATION_FAIL);
+		}
 		if (pid == 0) {
 			//Read end of input pipe is connected to STDIN
-			dup2(connection->input[READ], STDIN_FILENO);
-			close(connection->input[READ]);
+			if (dup2(connection->input[READ], STDIN_FILENO) == -1) {
+				FATAL(MEMORY_ALLOCATION_FAIL);
+			}
+			if (close(connection->input[READ]) == -1) {
+				FATAL(MEMORY_ALLOCATION_FAIL);
+			}
 
-			dup2(connection->output[WRITE], STDOUT_FILENO);
-			close(connection->output[WRITE]);
+			if (dup2(connection->output[WRITE], STDOUT_FILENO) == -1) {
+				FATAL(MEMORY_ALLOCATION_FAIL);
+			}
+			if (close(connection->output[WRITE]) == -1) {
+				FATAL(MEMORY_ALLOCATION_FAIL);
+			}
+
+			if (close(connection->output[READ]) == -1) {
+				FATAL(MEMORY_ALLOCATION_FAIL);
+			}
+			if (close(connection->input[WRITE]) == -1) {
+				FATAL(MEMORY_ALLOCATION_FAIL);
+			}
+
 			execv(abspath[0], abspath);
 			exit(1);
 		}
-		close(connection->input[READ]);
-		close(connection->output[WRITE]);
+		connection->pid = pid;
+		if (close(connection->input[READ]) == -1) {
+			FATAL(MEMORY_ALLOCATION_FAIL);
+		}
+		if (close(connection->output[WRITE]) == -1) {
+			FATAL(MEMORY_ALLOCATION_FAIL);
+		}
 	}
 	else {
 		if (pipe(connection->output) == -1) {
 			FATAL(MEMORY_ALLOCATION_FAIL);
 		}
 		pid_t pid = fork();
+		if (pid == -1) {
+			FATAL(MEMORY_ALLOCATION_FAIL);
+		}
 		if (pid == 0) {
-			dup2(connection->output[WRITE], STDOUT_FILENO);
-			close(connection->output[WRITE]);
-			execv(abspath[0], abspath);
+			if (dup2(connection->output[WRITE], STDOUT_FILENO) == -1) {
+				FATAL(MEMORY_ALLOCATION_FAIL);
+			}
+			if (close(connection->output[WRITE]) == -1) {
+				FATAL(MEMORY_ALLOCATION_FAIL);
+			}
+
+			if (close(connection->output[READ]) == -1) {
+				FATAL(MEMORY_ALLOCATION_FAIL);
+			}
+
+			if (execv(abspath[0], abspath) == -1) {
+				FATAL(MEMORY_ALLOCATION_FAIL);
+			}
 			exit(1);
 		}
-		close(connection->output[WRITE]);
+		connection->pid = pid;
+		if (close(connection->output[WRITE]) == -1) {
+			FATAL(MEMORY_ALLOCATION_FAIL);
+		}
 	}
+	dprintf(2, "initializing connection->handle\n");
 	connection->handle = fdopen(connection->output[READ], "r");
 	if (!connection->handle) {
 		FATAL(MEMORY_ALLOCATION_FAIL);
@@ -118,14 +150,118 @@ void	connection_init(Connection* connection, char** abspath, bool bot) {
 }
 
 void	player_send_input(Player* player, Game* game) {
-	if (player->conn.bot != true) {
-		return;
+	static BoardSide	side = SIDE_SOUTH;
+
+	if (player->conn.bot == true) {
+		int fd = player->conn.input[WRITE];
+		//Initial input
+		if (!game->state.turn_count) {
+			print_slots(game->board.slots);
+			int board_size = get_board_size();
+			dprintf(fd, "%d\n", board_size);
+			for (List* iter = game->board.slots; iter; iter = iter->next) {
+				Slot* slot = iter->content;
+				int	neighbour_indices[6] = {};
+				for (size_t i = 0; i < 6; i++) {
+					neighbour_indices[i] = slot->neighbours[i] ? (int)slot->neighbours[i]->index : -1;
+				}
+				dprintf(fd, "%d %d %d %d %d %d %d\n", (int)slot->index, neighbour_indices[0], neighbour_indices[1], neighbour_indices[2], neighbour_indices[3], neighbour_indices[4], neighbour_indices[5]);
+			}
+			dprintf(fd, "%d\n", COLOR_SIZE/2);
+			for (size_t i = 0; i < COLOR_SIZE/2; i++) {
+				dprintf(fd, "%ld %d\n", player->color + (i* 2), board_size/4);
+			}
+			dprintf(fd, "%d\n", COLOR_SIZE/2);
+			for (size_t i = 0; i < COLOR_SIZE/2; i++) {
+				dprintf(fd, "%ld %d\n", !player->color + (i* 2), board_size/4);
+			}
+		}
+		//Normal round input
+		dprintf(fd, "%d\n", game->board.side);
+
+		//numberOfValidInsertSlots;
+		Slot*	indices[(SIDE_LENGTH*2)-1] = {};
+		size_t	valid_slots = 0;
+		for (size_t i = 0; i < (SIDE_LENGTH*2)-1; i++) {
+			indices[i] = get_insert_slot(&game->board, game->board.side, i);
+			if (indices[i]->pellet) {
+				indices[i] = NULL;
+			}
+			else {
+				valid_slots++;
+			}
+		}
+		dprintf(fd, "%ld\n", valid_slots);
+		for (size_t i = 0; i < (SIDE_LENGTH*2)-1; i++) {
+			if (!indices[i])
+				continue;
+			dprintf(fd, "%ld %ld\n", i, indices[i]->index);
+		}
+
+		//Rotation happened
+		if (game->board.side != side) {
+			dprintf(fd, "0\n"); //numberOfNewPellets
+			dprintf(fd, "%ld\n", game->board.pellets_placed);
+			for (List* iter = game->board.pellets; iter; iter = iter->next) {
+				Pellet* pellet = iter->content;
+				dprintf(fd, "%ld %ld\n", pellet->index, pellet->slot->index);
+			}
+		}
+		else {
+			List* iter = game->board.pellets;
+			while (iter && iter->next) {
+				iter = iter->next;
+			}
+			dprintf(fd, "%ld\n", player->missing_pellets);
+			for (size_t i = 0; i < player->missing_pellets; i++) {
+				Pellet* pellet = iter->content;
+				bool is_mine = (pellet->color % 2) == player->color;
+				dprintf(fd, "%ld %ld %d %d\n", pellet->index, pellet->slot->index, pellet->color, (int)is_mine);
+				iter = iter->prev;
+			}
+			dprintf(fd, "0\n"); //numberOfChangedPellets
+		}
+
+		// Send pellets in hand
+		int drawn_pellets = 0;
+		for (size_t i = 0; i < COLORS_P_PLAYER; i++) {
+			drawn_pellets += player->hand[i];
+		}
+		dprintf(fd, "%d\n", drawn_pellets);
+		dprintf(2, "%d\n", drawn_pellets);
+
+		int counter = 0;
+		int in_hand[drawn_pellets];
+		for (int i = 0; i < COLORS_P_PLAYER; i++) {
+			for (int j = 0; j < player->hand[i]; j++) {
+				dprintf(2, "PLAYER->HAND[I]: %d | I: %d | J: %d\n", player->hand[i], i, j);
+				int color_index = player->color + ((int)i * 2);
+				in_hand[counter++] = color_index;
+			}
+		}
+
+		for (int i = 0; i < drawn_pellets; i++) {
+			dprintf(fd, "%d\n", in_hand[i]);
+			dprintf(2, "%d\n", in_hand[i]);
+		}
+		dprintf(fd, "%s", "\n");
+		fsync(fd);
+		fflush(player->conn.handle);
+
+		dprintf(2, "FINISHED SENDING INPUT\n");
 	}
-	(void)game;
+	player->missing_pellets = 0;
+	side = game->board.side;
 }
 
 Command*	player_get_command(Player* player, Game* game) {
 	player_send_input(player, game);
+	// if (player->conn.bot) {
+	// 	if (fwrite("aaaa\n", 1, 5, player->conn.handle) == 0) {
+	// 		FATAL(MEMORY_ALLOCATION_FAIL);
+	// 	}
+	// }
+	fflush(player->conn.handle);
 	size_t	timeout_duration = game->state.turn_count ? ROUND_TIMEOUT_DURATION : INITIAL_TIMEOUT_DURATION;
 	char* line = connection_get_command(&player->conn, timeout_duration);
 	Command* command = command_parse(line, player, &game->board);
@@ -157,6 +293,9 @@ char**	get_abspath(char* program) {
 void	connection_destroy(Connection* connection) {
 	kill(connection->pid, SIGKILL);
 	waitpid(connection->pid, NULL, 0);
+	if (fclose(connection->handle) == -1) {
+		FATAL(MEMORY_ALLOCATION_FAIL);
+	}
 }
 
 void	player_destroy(Player* player) {
@@ -172,5 +311,6 @@ void	player_init(Player* player, PlayerType color, char* program) {
 		free(abspath[i]);
 	}
 	free(abspath);
+	player->missing_pellets = 0;
 	player->color = color;
 }
